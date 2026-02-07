@@ -1,4 +1,4 @@
-Code is production-ready; however, the documentation below just covers some basics ATM. I might improve it at a later stage should there be any user interest.
+The code in this repository is production-ready; however, for the time being the documentation below just covers some basics. I might improve it at a later stage should there be any user interest.
 
 
 # 🌡️ Home Assistant Heating Automation System (HAeating)
