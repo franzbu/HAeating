@@ -169,7 +169,7 @@ Each room is managed via a dedicated dashboard view containing the following dat
 <img width="385" height="112" alt="Screenshot 2026-02-07 at 10 35 32 AM" src="https://github.com/user-attachments/assets/0c0b9c39-e116-45f0-83b4-16c06f6ccf9b" />
 
 * **Live Metrics:** Current temperature, heating valve opening percentage, and humidity.
-* **Targeting:** Current heating target temperature and the name of the currently active schedule.
+* **Target temp:** Current heating target temperature and the name of the currently active schedule.
 * **Event Info:** Swipe horizontally to view detailed information regarding the current or next heating event.
 <img width="395" height="108" alt="Screenshot 2026-02-07 at 10 36 04 AM" src="https://github.com/user-attachments/assets/b0c5bb49-fd8e-4411-a793-c64a77b5ef8e" />
 
@@ -202,6 +202,7 @@ The schedules are the heart of the automation. The system follows the logic of t
 ### Schedule Types
 1.  **Standard:** Your everyday routine.
 <img width="380" height="102" alt="Screenshot 2026-02-07 at 10 40 48 AM" src="https://github.com/user-attachments/assets/ca37c6a0-a288-449f-bbbb-2a8408b2c05c" />
+
 2.  **Holiday:** Energy-saving mode for when you are away.
 <img width="382" height="106" alt="Screenshot 2026-02-07 at 10 41 16 AM" src="https://github.com/user-attachments/assets/08e5b9b5-98db-4060-8458-8154720a922e" />
 
