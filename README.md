@@ -13,7 +13,7 @@ In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp an
 
 <img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
-The firmware for the ESP can be found in this repo.
+The firmware for the ESP can be found in this repo and can easily be adjusted to quite any ESP; however, for reliability reasons it is recommended to use one with ethernet.
 
 To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is needed; in my setup the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter does the job.
 
