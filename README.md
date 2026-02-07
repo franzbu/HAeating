@@ -7,7 +7,7 @@ This repository contains a demand-driven heating control system built for **Home
 
 Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create instances of a class. This feature allows creating instances of HeatingAutomation for each room of the house, allowing for efficient and straightforward coding. 
 
-The class HeatingPumpControl acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp, which in turn can be picked up by the actual code controlling the heating (pump), in this chase by the class HeatingPumpControl. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
+The class HeatingPumpControl acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatingPumpControl), which in turn can be picked up by the actual code controlling the heating (pump), in this chase by an ESP. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
 
 In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the correct flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
 
