@@ -5,7 +5,7 @@ The code in this repository is production-ready; however, for the time being the
 
 This repository contains a demand-driven heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
 
-Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create instances of a class. This feature allows creating instances of HeatingAutomation for each room of the house, allowing for efficient and straightforward coding. 
+Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances of a class. This feature allows creating instances of HeatingAutomation for each room of the house, allowing for efficient and straightforward coding. 
 
 The class HeatingPumpControl acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatingPumpControl), which in turn can be picked up by the actual code controlling the heating (pump), in this case by the ESP WT32-ETH01. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
 
