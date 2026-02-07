@@ -1,10 +1,33 @@
-Code is in advanced state; however, the documentation below is not. I might improve it at a later stage if there is any user interest.
+Code is production-ready; however, the documentation below just covers some basics ATM. I might improve it at a later stage should there be any user interest.
 
 
+# 🌡️ Home Assistant Heating Automation System
 
- 🌡️ Home Assistant Heating Automation System
+This repository contains a demand-driven heating control system built for **AppDaemon** and **Home Assistant**.
 
-This repository contains a sophisticated, demand-driven heating control system built for **AppDaemon** and **Home Assistant**. Unlike traditional systems that run on fixed timers, this automation utilizes a **"Heating Claim" architecture** to optimize energy consumption and comfort levels.
+Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create instances of a class. This feature allows creating instances of HeatingAutomation for each room of the house, allowing straightforward coding. 
+
+The class HeatingPumpControl acts as control center to determine the room's heating demands and control whatever means of heating a house has. Heating starts by writing the desired flow temperature to the HA Helper input_number.target_flow_temp, which in turn can be picked up by the actual code controlling the heating (pump), in this chase by the class HeatingPumpControl. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
+
+In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the correct flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
+
+<img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
+
+The firmware for the ESP can be found in this repo.
+
+To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is needed; here the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter does the job.
+
+<img width="698" height="491" alt="Screenshot 2026-02-07 at 10 56 14 AM" src="https://github.com/user-attachments/assets/7e730be2-fc2a-40d4-a25d-f43063d35c0e" />
+
+The web interface for the ESP has the additional ability to work autonomously (Master mode), wo which it switches if the connection to HA is broken. Then it calculates the heating flow temperature according to the settings in the web interface and heats according to the schedule in the web interface (# ignores anything afterwards; '8-10' determines the heating perdiod, and '@', if present, stands for the added (or reduced) flow temp - for example, this can be interesting in the morning when the delta between room temp and target temp is bigger)
+
+<img width="655" height="767" alt="Screenshot 2026-02-07 at 10 58 51 AM" src="https://github.com/user-attachments/assets/d30b8541-bf4e-4889-8b2a-6131879ad96d" />
+
+The ESP gets its time from a time server; in case of offline mode it can also be entered manually (will be overriden when the NTP server becomes available) for scheduled heating to work.
+
+As will be discussed below, special strengths of this heating automation are the ability to adjust the flow temperature according to the amount of rooms currently heating, and the already mentioned delta temperature between current and target temperature)
+
+Additionally, optional sun compensation is available, which can be set up with a brightness sensor (code has to be adjusted for that) or, in my case, by utilizing the current temperature of a close-by greenhouse.
 
 ---
 
@@ -12,7 +35,8 @@ This repository contains a sophisticated, demand-driven heating control system b
 The automation is split into two specialized layers to separate room logic from boiler hardware control:
 
 1.  **`HeatingAutomation` (The Brain):** An instance runs for every room. It handles schedules, hysteresis, solar gain compensation, and calculates the "claim" for heat.
-2.  **`HeatingPumpControl` (The Muscle):** A single central instance that monitors all room claims, calculates the optimal flow temperature, and interfaces with the boiler via Modbus.
+2.  **`HeatingPumpControl` (The Muscle):** A single central instance that monitors <img width="689" height="477" alt="Screenshot 2026-02-07 at 10 57 02 AM" src="https://github.com/user-attachments/assets/e729f57b-0ec8-4a12-9ebd-47893470d129" />
+all room claims, calculates the optimal flow temperature, and interfaces with the boiler via Modbus.
 
 
 
