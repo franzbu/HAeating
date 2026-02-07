@@ -1,7 +1,7 @@
 The code in this repository is production-ready; however, for the time being the documentation below just covers some basics. I might improve it at a later stage should there be sufficient user interest.
 
 
-# 🌡️ Home Assistant Heating Automation System (HAeating)
+# 🌡️ Home Assistant Heating (HAeating) Automation System 
 
 This repository contains a demand-driven heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
 
