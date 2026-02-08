@@ -161,16 +161,20 @@ class HeatingAutomation(hass.Hass):
         if self.get_state("input_select.heating_mode") == "Off":
             self.update_heating_claim(False)
             self.update_boost_attributes(0.0, 0.0, "off")
+            self.update_sun_sensor(0.0)
             return
 
         if self.current_schedule() == f'schedule.off_{self.location}' or not self.current_schedule_active():
             self.update_heating_claim(False)
             self.update_boost_attributes(0.0, 0.0, "off")
+            self.update_sun_sensor(0.0)
             return
             
         curr_t = self.current_temp()
         targ_t = override_target if override_target is not None else self.target_temp()
         if curr_t is None: return
+
+        self.update_sun_sensor(self.get_sun_offset())
 
         current_state = self.get_state(f'input_boolean.heating_claim_{self.location}')
         has_claim = (current_state == 'on') if not force_reset else False
@@ -269,10 +273,13 @@ class HeatingAutomation(hass.Hass):
 
     def update_sun_sensor(self, offset):
         """Command: Updates the HA binary sensor."""
+        # Kept as binary_sensor to match boost_status behavior
         ent_sun = f"binary_sensor.sun_compensation_{self.location}"
+        
         is_active = offset > 0
         g_val = self.get_state(self.garten_temp_sensor)
         
+        # State is on/off, but the specific delta is available in the 'compensation' attribute
         self.set_state(ent_sun, state="on" if is_active else "off", attributes={
             "friendly_name": f"Sun Compensation {self.location.capitalize()}",
             "compensation": offset,
