@@ -5,11 +5,12 @@ esphome:
     board_build.flash_mode: qio
 
   on_boot:
-    - priority: 250
-      then:
-        - select.set:
-            id: hk2_clearance_template
-            option: "On"
+    #- priority: 250
+    #  then:
+    #    - select.set:
+    #        id: hk2_clearance_template
+    #        option: "On"
+
     - priority: -10 
       then:
         - component.update: lambdatronic 
@@ -29,20 +30,26 @@ esp32:
 # ----------------------------------------------------------------------
 ethernet:
   type: LAN8720
-  phy_addr: 1
   mdc_pin: GPIO23
   mdio_pin: GPIO18
-  clk_mode: GPIO0_IN
+  clk:
+    pin: 17
+    mode: CLK_OUT
+  phy_addr: 1
   power_pin: GPIO16
 
 uart:
   id: froeling_uart
-  tx_pin: GPIO17 
-  rx_pin: GPIO5
+  tx_pin: GPIO14  # Safe pin for TX
+  rx_pin: GPIO4   # Safe pin for RX
   baud_rate: 57600
   stop_bits: 1
   data_bits: 8
   parity: NONE
+
+one_wire:
+  - platform: gpio
+    pin: 32
 
 modbus:
   id: modbus_hub
@@ -57,13 +64,8 @@ modbus_controller:
     command_throttle: 50ms 
     update_interval: 30s
 
-one_wire:
-  - platform: gpio
-    pin: 
-      number: 4  
-
 logger:
-  level: INFO 
+  level: DEBUG 
   baud_rate: 0 
 
 ota:
@@ -744,6 +746,7 @@ sensor:
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     name: "Collector Pump Control"
+    id: coll_pump_raw
     address: 2600
     register_type: read
     value_type: U_WORD
@@ -760,10 +763,32 @@ sensor:
     unit_of_measurement: "%"
     entity_category: diagnostic
 
+  # NEW: Numerical sensors for status to avoid HEX conflicts
+  - platform: modbus_controller
+    modbus_controller_id: lambdatronic
+    id: boiler_state_raw
+    address: 4001
+    register_type: read
+    value_type: U_WORD
+    internal: true
+
+  - platform: modbus_controller
+    modbus_controller_id: lambdatronic
+    id: boiler_system_state_raw
+    address: 4000
+    register_type: read
+    value_type: U_WORD
+    internal: true
+
   - platform: dallas_temp
     name: "Outside Temp"
-    address: 0x0000000000000000 
-    update_interval: 10s
+    address: 0xa6000000b3211a28 
+    update_interval: 60s
+
+  - platform: dallas_temp
+    name: "Room Temp"
+    address: 0xe3000000b318b828 
+    update_interval: 60s
 
 # ----------------------------------------------------------------------
 # 7. BINARY SENSORS
@@ -771,7 +796,6 @@ sensor:
 binary_sensor:
   - platform: template
     name: "AppDaemon Status" 
-    # This pulls the state from the invisible Home Assistant sensor
     lambda: 'return id(ad_heartbeat_status).state;'
     device_class: connectivity
     entity_category: ""
@@ -781,7 +805,6 @@ binary_sensor:
     id: esp_api_status
     entity_category: ""
 
-  # FIX: Passive Sensor (Logic moved to interval)
   - platform: template
     name: "ESP Modbus Status"
     id: froeling_modbus_status
@@ -846,15 +869,10 @@ binary_sensor:
     entity_category: diagnostic
     device_class: running
 
-  - platform: modbus_controller
-    modbus_controller_id: lambdatronic
+  - platform: template
     name: "Collector Pump Status"
-    id: solar_pump_status
-    address: 2600
-    register_type: read
-    lambda: "return x > 0;" 
-    entity_category: diagnostic
     device_class: running
+    lambda: 'return id(coll_pump_raw).state > 0;'
 
   - platform: template
     name: "Collector Boiler Pump Status"
@@ -882,23 +900,18 @@ text_sensor:
         int m = id(heating_countdown_seconds) / 60;
         int s = id(heating_countdown_seconds) % 60;
         char buf[32];
-        sprintf(buf, "HAeating Countdown: %02d:%02d", m, s);
-        return {buf};
+        sprintf(buf, "Heating Countdown: %02d:%02d", m, s);
+        return std::string(buf); 
       }
       return {"Master"};
 
-  - platform: modbus_controller
-    modbus_controller_id: lambdatronic
+  - platform: template
     name: "Boiler State"
     id: boiler_state_text
-    address: 4001
-    register_type: read
-    raw_encode: HEXBYTES
-    entity_category: diagnostic
     icon: "mdi:pipe-valve"
+    entity_category: diagnostic
     lambda: |-
-      if (x.length() < 4) return std::string("Initializing...");
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      int value = (int)id(boiler_state_raw).state;
       switch (value) {
         case 0: return std::string("MALFUNCTION");
         case 1: return std::string("Boiler off");
@@ -983,28 +996,23 @@ text_sensor:
         case 80: return std::string("SH Ignite");
         case 81: return std::string("SH Malfunction");
         case 82: return std::string("Sensor check");
-        default: return "Unknown (" + to_string(value) + ")";
+        default: return "State " + to_string(value);
       }
 
-  - platform: modbus_controller
-    modbus_controller_id: lambdatronic
+  - platform: template
     name: "Boiler System State"
     id: system_state_text
-    address: 4000
-    register_type: read
-    raw_encode: HEXBYTES
-    entity_category: diagnostic
     icon: "mdi:cog"
+    entity_category: diagnostic
     lambda: |-
-      if (x.length() < 4) return std::string("Initializing...");
-      uint16_t value = modbus_controller::word_from_hex_str(x, 0);
+      int value = (int)id(boiler_system_state_raw).state;
       switch (value) {
         case 1: return std::string("Automatic");
         case 2: return std::string("Summer mode");
         case 3: return std::string("Frost protection");
         case 4: return std::string("Service mode");
         case 5: return std::string("Switched Off");
-        default: return "Unknown (" + to_string(value) + ")";
+        default: return "System " + to_string(value);
       }
 
 # ----------------------------------------------------------------------
@@ -1018,3 +1026,4 @@ select:
     address: 8029
     value_type: U_WORD
     optionsmap: {"Off": 0, "On": 1}
+    optimistic: false
