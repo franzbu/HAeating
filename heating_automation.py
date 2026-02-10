@@ -51,7 +51,7 @@ from datetime import datetime, timedelta, time
 # ==================================================================================================
 # HEATING AUTOMATION (Per Room Demand Calculator)
 # ==================================================================================================
-class HeatingAutomation(hass.Hass):     
+class RoomDemandCalculator(hass.Hass):     
     def initialize(self):
         self.gl = self.get_app("global_config")
         # Extract location from app name to allow code reuse across multiple rooms
@@ -396,7 +396,7 @@ class HeatingAutomation(hass.Hass):
 # ==================================================================================================
 # HEATING PUMP CONTROL (Central Boiler Logic)
 # ==================================================================================================
-class HeatingPumpControl(hass.Hass):
+class HeatSupplyManager(hass.Hass):
     def initialize(self):
         # PHASE 1: Static Initialization (Runs ONCE)
         self.gl = self.get_app("global_config")
