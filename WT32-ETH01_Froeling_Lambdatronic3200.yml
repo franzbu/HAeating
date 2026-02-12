@@ -1,16 +1,8 @@
 esphome:
   name: heating-central-wt32
-  friendly_name: "Fröling Central Gateway"
-  platformio_options:
-    board_build.flash_mode: qio
+  friendly_name: "Froeling Central Gateway"
 
   on_boot:
-    #- priority: 250
-    #  then:
-    #    - select.set:
-    #        id: hk2_clearance_template
-    #        option: "On"
-
     - priority: -10 
       then:
         - component.update: lambdatronic 
@@ -20,52 +12,31 @@ esphome:
             id: froeling_modbus_status
             state: !lambda 'return !std::isnan(id(boiler_temp_actual).state);'
 
+# ----------------------------------------------------------------------
+# HARDWARE SPECIFIC: WT32-ETH01
+# ----------------------------------------------------------------------
 esp32:
   board: wt32-eth01
   framework:
     type: esp-idf
 
-# ----------------------------------------------------------------------
-# 1. CONNECTIVITY (WT32-ETH01 HARDWARE)
-# ----------------------------------------------------------------------
+# Ethernet Configuration for WT32-ETH01
 ethernet:
   type: LAN8720
+  phy_addr: 1
   mdc_pin: GPIO23
   mdio_pin: GPIO18
-  clk:
-    pin: 17
-    mode: CLK_OUT
-  phy_addr: 1
+  clk_mode: GPIO0_IN
   power_pin: GPIO16
-
-uart:
-  id: froeling_uart
-  tx_pin: GPIO14  # Safe pin for TX
-  rx_pin: GPIO4   # Safe pin for RX
-  baud_rate: 57600
-  stop_bits: 1
-  data_bits: 8
-  parity: NONE
 
 one_wire:
   - platform: gpio
-    pin: 32
-
-modbus:
-  id: modbus_hub
-  uart_id: froeling_uart
-  send_wait_time: 250ms 
-
-modbus_controller:
-  - id: lambdatronic
-    address: 2
-    modbus_id: modbus_hub
-    setup_priority: -10
-    command_throttle: 50ms 
-    update_interval: 30s
+    pin: 
+      number: 14
+      ignore_pin_validation_error: true
 
 logger:
-  level: DEBUG 
+  level: INFO
   baud_rate: 0 
 
 ota:
@@ -81,29 +52,10 @@ time:
     timezone: "CET-1CEST,M3.5.0,M10.5.0/3"
 
 # ----------------------------------------------------------------------
-# 2. WATCHDOG & FAIL-SAFE LOGIC
-# ----------------------------------------------------------------------
-api:
-  reboot_timeout: 0s
-  on_client_disconnected:
-    - logger.log: "API Disconnected! Forcing Fail-Safe."
-    - lambda: |-
-        if (id(boiler_being_poked).state) {
-          id(heating_countdown_seconds) = id(safety_countdown_start_val);
-          id(esp_status).update(); 
-          ESP_LOGW("custom", "API Connection lost while heating. Entering Countdown mode.");
-        }
-
-# ----------------------------------------------------------------------
 # GLOBAL CONSTANTS & VARIABLES
 # ----------------------------------------------------------------------
 globals:
-  # -- Existing WT32 Global --
-  - id: is_syncing
-    type: bool
-    initial_value: 'false'
-
-  # -- Logic Constants (Config) --
+  # -- Constants (Config) --
   - id: safety_countdown_start_val
     type: int
     initial_value: '1200'  # 20 Minutes
@@ -126,7 +78,46 @@ globals:
     initial_value: '0.0'   # Holds the result of the complex parsing script
 
 # ----------------------------------------------------------------------
-# 3. SCRIPTS (Separation of Concerns)
+# 1. CONNECTIVITY
+# ----------------------------------------------------------------------
+uart:
+  id: froeling_uart
+  tx_pin: GPIO32
+  rx_pin: GPIO4
+  baud_rate: 57600
+  stop_bits: 1
+  data_bits: 8
+  parity: NONE
+
+modbus:
+  id: modbus_hub
+  uart_id: froeling_uart
+  send_wait_time: 250ms 
+
+modbus_controller:
+  - id: lambdatronic
+    address: 2
+    modbus_id: modbus_hub
+    setup_priority: -10
+    command_throttle: 50ms 
+    update_interval: 30s
+
+# ----------------------------------------------------------------------
+# 2. WATCHDOG & FAIL-SAFE LOGIC
+# ----------------------------------------------------------------------
+api:
+  reboot_timeout: 0s
+  on_client_disconnected:
+    - logger.log: "API Disconnected! Forcing Fail-Safe."
+    - lambda: |-
+        if (id(boiler_being_poked).state) {
+          id(heating_countdown_seconds) = id(safety_countdown_start_val);
+          id(esp_status).update(); 
+          ESP_LOGW("custom", "API Connection lost while heating. Entering Countdown mode.");
+        }
+
+# ----------------------------------------------------------------------
+# 3. SCRIPTS
 # ----------------------------------------------------------------------
 script:
   - id: ha_offline_shutdown_sequence
@@ -134,9 +125,6 @@ script:
     then:
       - logger.log: "Logic Lost. ESP Reverting to Master Schedule."
 
-  # -------------------------------------------------------
-  # SCRIPT 1: Complex Math & Parsing (Runs independently)
-  # -------------------------------------------------------
   - id: calculate_internal_schedule
     mode: restart
     then:
@@ -148,9 +136,6 @@ script:
             int day = now.day_of_week;
             std::string sch_str = "";
             
-            // ---------------------------------------------------------
-            // DAY MAPPING
-            // ---------------------------------------------------------
             if      (day == 2) sch_str = id(sch_1).state; // Mon
             else if (day == 3) sch_str = id(sch_2).state; // Tue
             else if (day == 4) sch_str = id(sch_3).state; // Wed
@@ -197,9 +182,21 @@ script:
 
             // 3. Apply Heating Curve if active (Using Globals)
             if (schedule_active) {
-              float outside = id(outside_temp_sensor).state;
-              if (std::isnan(outside)) outside = 0.0f;
-              
+              float outside;
+
+              // Check if Dallas sensor is valid (not NaN)
+              if (!std::isnan(id(dallas_outside_temp).state)) {
+                outside = id(dallas_outside_temp).state;
+              } 
+              // Fallback to Modbus if Dallas is unavailable
+              else if (!std::isnan(id(outside_temp_sensor).state)) {
+                outside = id(outside_temp_sensor).state;
+              } 
+              // Last resort: safety default
+              else {
+                outside = 0.0f;
+              }
+                          
               float y1 = id(curve_minus_10).state;
               float y2 = id(curve_plus_10).state;
               float x1 = id(curve_out_low);  // Global: -10.0
@@ -212,9 +209,6 @@ script:
           // Update the global variable for the main loop to use
           id(internal_schedule_target) = calculated_target;
 
-  # -------------------------------------------------------
-  # SCRIPT 2: Modbus Action (Isolates Side-Effects)
-  # -------------------------------------------------------
   - id: write_modbus_target
     mode: restart
     parameters:
@@ -259,43 +253,43 @@ text:
             }
 
   - platform: template
-    name: "1 Mo"
+    name: "1: Mo"
     id: sch_1
     mode: text
     optimistic: true
     restore_value: true
   - platform: template
-    name: "2 Tu"
+    name: "2: Tu"
     id: sch_2
     mode: text
     optimistic: true
     restore_value: true
   - platform: template
-    name: "3 We"
+    name: "3: We"
     id: sch_3
     mode: text
     optimistic: true
     restore_value: true
   - platform: template
-    name: "4 Th"
+    name: "4: Th"
     id: sch_4
     mode: text
     optimistic: true
     restore_value: true
   - platform: template
-    name: "5 Fr"
+    name: "5: Fr"
     id: sch_5
     mode: text
     optimistic: true
     restore_value: true
   - platform: template
-    name: "6 Sa"
+    name: "6: Sa"
     id: sch_6
     mode: text
     optimistic: true
     restore_value: true
   - platform: template
-    name: "7 Su"
+    name: "7: Su"
     id: sch_7
     mode: text
     optimistic: true
@@ -303,7 +297,7 @@ text:
 
 number:
   - platform: template
-    name: "HK2 Flow Target Temp (Holding)"
+    name: "HK2 Flow Target Temp"
     id: heating_setpoint_holding
     unit_of_measurement: "°C"
     min_value: 0
@@ -360,27 +354,23 @@ number:
     internal: true
 
 # ----------------------------------------------------------------------
-# 5. DECISION ENGINE (The Clean Loop)
+# 5. DECISION ENGINE
 # ----------------------------------------------------------------------
 interval:
-  # Task A: Calculate Schedule (Runs independently)
   - interval: 60s
     then:
       - script.execute: calculate_internal_schedule
 
-  # Task B: Arbitrate and Act (Runs every 59s)
   - interval: 59s
     then:
       - lambda: |-
           static bool startup_lock_released = false; 
           float final_target = 0.0;
 
-          // --- PRIORITY 1: Home Assistant Control ---
           if (id(esp_api_status).state && id(ad_heartbeat_status).state) {
             id(heating_countdown_seconds) = 0; 
             float ha_val = id(ha_target_flow_helper).state;
             
-            // Startup Safety: Don't act until we get valid data
             if (!startup_lock_released) {
               if (!std::isnan(ha_val) && ha_val > 0.1f) startup_lock_released = true;
               else return; 
@@ -390,43 +380,36 @@ interval:
               final_target = ha_val;
             }
           } 
-          // --- PRIORITY 2: Safety Countdown (HA Lost) ---
           else if (id(heating_countdown_seconds) > 0) {
             final_target = id(heating_setpoint_holding).state; 
           }
-          // --- PRIORITY 3: Internal Schedule (Last Resort) ---
           else {
-            // This global is updated by the background script
             final_target = id(internal_schedule_target);
           }
 
-          // Execute Action Script
           id(write_modbus_target).execute(final_target);
 
-  # Task C: Fast Maintenance
   - interval: 1s
     then:
       - lambda: |-
           if (id(heating_countdown_seconds) > 0) id(heating_countdown_seconds)--;
           id(esp_status).update(); 
 
-  # Task D: Clock UI
-  - interval: 10s
+  - interval: 60s
     then:
       - lambda: |-
           auto now = id(sntp_time).now();
           if (now.is_valid()) id(manual_time_input).publish_state(now.strftime("%Y-%m-%d %H:%M"));
           else if (id(manual_time_input).state.find(':') == std::string::npos) id(manual_time_input).publish_state("YYYY-MM-DD HH:MM");
 
-  # FIX: Modbus Status Update (Passive Polling)
   - interval: 30s
     then:
       - binary_sensor.template.publish:
-          id: froeling_modbus_status
+          id: modbus_status
           state: !lambda 'return !std::isnan(id(boiler_temp_actual).state);'
 
 # ----------------------------------------------------------------------
-# 6. SENSORS AND LOGIC
+# 6. SENSORS
 # ----------------------------------------------------------------------
 sensor:
   - platform: homeassistant
@@ -447,7 +430,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Remaining Heating Hours Until Ash Emptying Warning"
+    name: "Boiler Ash Emptying"
     register_type: read
     address: 86
     unit_of_measurement: "h"
@@ -456,7 +439,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Hours In Log Wood Mode"
+    name: "Boiler Log Wood Mode"
     address: 76
     register_type: read
     value_type: U_WORD
@@ -474,7 +457,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Operating Hours Since Maintenance"
+    name: "Boiler Since Maintenance"
     address: 55
     register_type: read
     value_type: U_WORD
@@ -483,7 +466,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Collector Pump Running Time"
+    name: "Collector Pump Running"
     address: 2602
     register_type: read
     value_type: U_WORD
@@ -493,7 +476,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Temperature"
+    name: "Boiler Temp"
     id: boiler_temp_actual
     address: 0
     register_type: read
@@ -506,7 +489,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Flue Gas Temperature"
+    name: "Boiler Flue Gas Temp"
     address: 1
     register_type: read
     value_type: U_WORD
@@ -527,7 +510,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Residual Oxygen Content"
+    name: "Boiler Residual Oxygen"
     address: 3
     register_type: read
     value_type: U_WORD
@@ -584,7 +567,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Operating Hours In Fire Maintenance"
+    name: "Boiler Fire Maintenance"
     address: 24
     register_type: read
     value_type: U_WORD
@@ -593,7 +576,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler Outside Temperature"
+    name: "Boiler Outside Temp"
     id: outside_temp_sensor
     address: 1000
     register_type: read
@@ -606,7 +589,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler 1 Pump Control"
+    name: "Boiler Pump Control"
     id: boiler_1_pump_ctrl
     address: 1632
     register_type: read
@@ -616,7 +599,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Temperature Sensor 1"
+    name: "Buffer Temp Sensor 1"
     address: 2000
     register_type: read
     value_type: U_WORD
@@ -628,7 +611,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Temperature Sensor 2"
+    name: "Buffer Temp Sensor 2"
     address: 2004
     register_type: read
     value_type: U_WORD
@@ -640,7 +623,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Temperature Sensor 3"
+    name: "Buffer Temp Sensor 3"
     address: 2005
     register_type: read
     value_type: U_WORD
@@ -652,7 +635,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Temperature Sensor 4"
+    name: "Buffer Temp Sensor 4"
     address: 2002
     register_type: read
     value_type: U_WORD
@@ -664,7 +647,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Charge State"
+    name: "Buffer Charge State"
     address: 2006
     register_type: read
     value_type: U_WORD
@@ -673,7 +656,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Pump Control"
+    name: "Buffer Pump Control"
     id: buffer_1_pump_ctrl
     address: 2003
     register_type: read
@@ -683,7 +666,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "HK2 Flow Actual Temperature"
+    name: "HK2 Flow Actual Temp"
     id: hk02_flow_temperature_actual
     address: 1060
     register_type: read
@@ -695,7 +678,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "HK2 Flow Target Temperature"
+    name: "HK2 Flow Target Temp"
     id: hk02_flow_temperature_target
     address: 1061
     register_type: read
@@ -707,7 +690,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Collector Temperature"
+    name: "Collector Temp"
     id: collector_temp_sensor
     address: 2601
     register_type: read
@@ -720,7 +703,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Collector Return Temperature"
+    name: "Collector Return Temp"
     id: coll_ret_temp_master
     address: 2611
     register_type: read
@@ -733,7 +716,7 @@ sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Collector Flow Temperature"
+    name: "Collector Flow Temp"
     address: 2612
     register_type: read
     value_type: S_WORD 
@@ -746,7 +729,6 @@ sensor:
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     name: "Collector Pump Control"
-    id: coll_pump_raw
     address: 2600
     register_type: read
     value_type: U_WORD
@@ -762,8 +744,7 @@ sensor:
     value_type: U_WORD
     unit_of_measurement: "%"
     entity_category: diagnostic
-
-  # NEW: Numerical sensors for status to avoid HEX conflicts
+  
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     id: boiler_state_raw
@@ -782,6 +763,7 @@ sensor:
 
   - platform: dallas_temp
     name: "Outside Temp"
+    id: dallas_outside_temp
     address: 0xa6000000b3211a28 
     update_interval: 60s
 
@@ -796,7 +778,7 @@ sensor:
 binary_sensor:
   - platform: template
     name: "AppDaemon Status" 
-    lambda: 'return id(ad_heartbeat_status).state;'
+    lambda: 'return id(esp_api_status).state && id(ad_heartbeat_status).state;'
     device_class: connectivity
     entity_category: ""
 
@@ -807,7 +789,7 @@ binary_sensor:
 
   - platform: template
     name: "ESP Modbus Status"
-    id: froeling_modbus_status
+    id: modbus_status
     device_class: connectivity
     entity_category: ""
 
@@ -830,13 +812,11 @@ binary_sensor:
             if(!std::isnan(current_actual) && current_actual > 0) id(heating_setpoint_holding).publish_state(current_actual);
 
   - platform: template
-    name: "Heating On (Boiler Being Poked)"
+    name: "Heating On"
     id: boiler_being_poked
     lambda: |-
       if (id(esp_api_status).state && id(ad_heartbeat_status).state) {
-        if (id(ha_heating_mode_raw).state.length() == 0) return false;
-        std::string mode = id(ha_heating_mode_raw).state;
-        return (mode == "Heating" || mode == "Party");
+        return (id(ha_target_flow_helper).state >= id(min_flow_threshold));
       }
       return (id(heating_countdown_seconds) > 0) || (id(esp_hk2_flow_target_temp).state > id(min_flow_threshold));
 
@@ -851,7 +831,7 @@ binary_sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Boiler 1 Pump Status"
+    name: "Boiler Pump Status"
     id: boiler_1_pump_status
     address: 1632
     register_type: read
@@ -861,7 +841,7 @@ binary_sensor:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    name: "Buffer 1 Pump Status"
+    name: "Buffer Pump Status"
     id: buffer_1_pump_status
     address: 2003
     register_type: read
@@ -869,10 +849,15 @@ binary_sensor:
     entity_category: diagnostic
     device_class: running
 
-  - platform: template
+  - platform: modbus_controller
+    modbus_controller_id: lambdatronic
     name: "Collector Pump Status"
+    id: solar_pump_status
+    address: 2600
+    register_type: read
+    lambda: "return x > 0;" 
+    entity_category: diagnostic
     device_class: running
-    lambda: 'return id(coll_pump_raw).state > 0;'
 
   - platform: template
     name: "Collector Boiler Pump Status"
@@ -884,11 +869,6 @@ binary_sensor:
 # 8. TEXT SENSORS
 # ----------------------------------------------------------------------
 text_sensor:
-  - platform: homeassistant
-    id: ha_heating_mode_raw
-    entity_id: input_select.heating_mode
-    internal: true
-
   - platform: template
     name: "ESP Status"
     id: esp_status
@@ -901,7 +881,7 @@ text_sensor:
         int s = id(heating_countdown_seconds) % 60;
         char buf[32];
         sprintf(buf, "Heating Countdown: %02d:%02d", m, s);
-        return std::string(buf); 
+        return {buf};
       }
       return {"Master"};
 
@@ -996,7 +976,7 @@ text_sensor:
         case 80: return std::string("SH Ignite");
         case 81: return std::string("SH Malfunction");
         case 82: return std::string("Sensor check");
-        default: return "State " + to_string(value);
+        default: return "Unknown (" + to_string(value) + ")";
       }
 
   - platform: template
@@ -1012,7 +992,7 @@ text_sensor:
         case 3: return std::string("Frost protection");
         case 4: return std::string("Service mode");
         case 5: return std::string("Switched Off");
-        default: return "System " + to_string(value);
+        default: return "Unknown (" + to_string(value) + ")";
       }
 
 # ----------------------------------------------------------------------
