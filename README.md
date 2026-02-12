@@ -5,9 +5,9 @@ The code in this repository is production-ready; however, the documentation belo
 
 This repository contains a demand-driven heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
 
-Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances of a class. This feature allows creating instances of HeatingAutomation for each room of the house, allowing for efficient and straightforward coding. 
+Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances of a class. This feature allows creating instances of RoomDemandCalculator for each room of the house, allowing for efficient and straightforward coding. 
 
-The class HeatingPumpControl acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatingPumpControl), which in turn can be picked up by the actual code controlling the heating (pump), in this case by the ESP WT32-ETH01. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
+The class HeatSupplyManager acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatSupplyManager), which in turn can be picked up by the actual code controlling the heating (pump), in this case by the ESP WT32-ETH01. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
 
 In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the correct flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
 
@@ -38,15 +38,15 @@ Other than that, the ESP makes the boiler smart also in the sense that it can be
 ## 🛠 System Architecture
 The automation is split into two specialized layers to separate room logic from boiler hardware control:
 
-1.  **`HeatingAutomation` (The Brain):** An instance runs for every room. It handles schedules, hysteresis, solar gain compensation, and calculates the "claim" for heat.
-2.  **`HeatingPumpControl` (The Muscle):** A single central instance that monitors <img width="689" height="477" alt="Screenshot 2026-02-07 at 10 57 02 AM" src="https://github.com/user-attachments/assets/e729f57b-0ec8-4a12-9ebd-47893470d129" />
+1.  **`RoomDemandCalculator` (The Brain):** An instance runs for every room. It handles schedules, hysteresis, solar gain compensation, and calculates the "claim" for heat.
+2.  **`HeatSupplyManager` (The Muscle):** A single central instance that monitors 
 all room claims, calculates the optimal flow temperature, and interfaces with the boiler via Modbus.
 
 
 
 ---
 
-## 🏠 Room-Level Logic (`HeatingAutomation`)
+## 🏠 Room-Level Logic (`RoomDemandCalculator`)
 
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
@@ -72,7 +72,7 @@ If a room temperature is significantly below the target (e.g., after a window wa
 
 ---
 
-## 🚂 Central Control (`HeatingPumpControl`)
+## 🚂 Central Control (`HeatSupplyManager`)
 
 The central controller monitors all `heating_claim_...` entities. If at least one room is claiming heat for longer than the `heating_claim_duration`, the boiler fires up.
 
@@ -119,13 +119,13 @@ For the code to function, your Home Assistant instance must have the following e
 ```yaml
 heating_livingroom:
   module: heating_automation
-  class: HeatingAutomation
+  class: RoomDemandCalculator
   solar_activation_temp: 15
   solar_peak_temp: 25
 
 heating_pump_control:
   module: heating_pump_control
-  class: HeatingPumpControl
+  class: HeatSupplyManager
   dependencies:
     - global_config
     - heating_livingroom
