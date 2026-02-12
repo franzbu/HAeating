@@ -1,4 +1,4 @@
-The code in this repository is production-ready; however, the documentation below just covers some basics. I might improve it at a later stage should there be sufficient user interest.
+The code in this repository is production-ready; however, the documentation below just covers the basics. I might improve it at a later stage should there be sufficient user interest.
 
 
 # 🌡️ Home Assistant Heating
@@ -7,33 +7,8 @@ This repository contains a demand-driven heating control system built for **Home
 
 Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances of a class. This feature allows creating instances of RoomDemandCalculator for each room of the house, allowing for efficient and straightforward coding. 
 
-The class HeatSupplyManager acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatSupplyManager), which in turn can be picked up by the actual code controlling the heating (pump), in this case by the ESP WT32-ETH01. Heating is stopped by writing "0" to the HA Helper input_number.target_flow_temp.
+The class HeatSupplyManager acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatSupplyManager), which in turn can be picked up by the actual code controlling the heating (pump); this can be another AppDeamaon class controlling the actual hardware or, as in my case, an ESP32 that has been programmed as controller for a Froeling SP Dual (see below).
 
-In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the correct flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
-
-<img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
-
-The firmware for the ESP can be found in this repo and can easily be adjusted to quite any ESP; however, for reliability reasons it is recommended to use one with ethernet.
-
-To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is needed; in my setup the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter does the job.
-
-<img width="698" height="491" alt="Screenshot 2026-02-07 at 10 56 14 AM" src="https://github.com/user-attachments/assets/7e730be2-fc2a-40d4-a25d-f43063d35c0e" />
-
-The web interface for the ESP has the additional ability to work independently from HA in a so called Master mode, to which it switches if the connection to HA breaks down (due to software or hardware failure). It then calculates the heating flow temperature according to the settings in the web interface and starts and stops the heating according to the schedule in the web interface ('#' ignores anything afterwards; '8-10' determines the heating perdiod, and '@', if present, stands for the increased (or decreased) flow temp - for example, this can be interesting in the morning when the delta between room temp and target temp is bigger)
-
-<img width="655" height="767" alt="Screenshot 2026-02-07 at 10 58 51 AM" src="https://github.com/user-attachments/assets/d30b8541-bf4e-4889-8b2a-6131879ad96d" />
-
-The ESP gets its time from a time server; in case of offline mode it can also be entered manually (will be overriden when the NTP server becomes available) for scheduled heating to work.
-
-As will be discussed below, special strengths of this heating automation are the ability to adjust the flow temperature according to the amount of rooms currently heating, and the already mentioned delta temperature between current and target temperature)
-
-Additionally, optional sun compensation is available, which can be set up with a brightness sensor (code has to be adjusted for that) or, in my case, by utilizing the current temperature of a close-by greenhouse.
-
-The main reason for this whole undertaking is Froeling Lambdatronic's ability to write the target flow temp into the RAM of the boiler, avoiding having to change EEPROM registers, the lifetime of which is limited. The catch is that this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated once every other minute. A restart of Home Assistant might thus result in a disruption of heating. The ESP resolves this and offers additional benefits, some of which have already been discussed.
-
-Other than that, the ESP makes the boiler smart also in the sense that it can be directly integrated into Home Assistant via ESPHome (already integrated into HA, so all entities the ESP is set up for are instantaneously writable and/or readable in HA). However, if that is the only thing one wants, then [GyroGearl00se's HA integration](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) might be the preferrable option.
-
----
 
 ## 🛠 System Architecture
 The automation is split into two specialized layers to separate room logic from boiler hardware control:
@@ -237,3 +212,36 @@ The dashboard uses color-coding to signal the current state of the heating deman
 | **Yellow** | Current Temp > Target - 0.5 | Room is warm (Target > 5) |
 | **Gray** | "No" in `next_event` text | No future heating planned (Schedule **Off**) |
 | **Light Blue** | Else | Standby / Neutral |
+
+
+
+
+## Controlling Actual Heating Device
+
+This will have to be done individually differently, depending on the heating hardware in use.
+
+In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the correct flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
+
+<img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
+
+The firmware for the ESP can be found in this repo and can easily be adjusted to quite any ESP; however, for reliability reasons it is recommended to use one with ethernet.
+
+To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is needed; in my setup the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter does the job.
+
+<img width="698" height="491" alt="Screenshot 2026-02-07 at 10 56 14 AM" src="https://github.com/user-attachments/assets/7e730be2-fc2a-40d4-a25d-f43063d35c0e" />
+
+The web interface for the ESP has the additional ability to work independently from HA in a so called Master mode, to which it switches if the connection to HA breaks down (due to software or hardware failure). It then calculates the heating flow temperature according to the settings in the web interface and starts and stops the heating according to the schedule in the web interface ('#' ignores anything afterwards; '8-10' determines the heating perdiod, and '@', if present, stands for the increased (or decreased) flow temp - for example, this can be interesting in the morning when the delta between room temp and target temp is bigger)
+
+<img width="655" height="767" alt="Screenshot 2026-02-07 at 10 58 51 AM" src="https://github.com/user-attachments/assets/d30b8541-bf4e-4889-8b2a-6131879ad96d" />
+
+The ESP gets its time from a time server; in case of offline mode it can also be entered manually (will be overriden when the NTP server becomes available) for scheduled heating to work.
+
+As will be discussed below, special strengths of this heating automation are the ability to adjust the flow temperature according to the amount of rooms currently heating, and the already mentioned delta temperature between current and target temperature)
+
+Additionally, optional sun compensation is available, which can be set up with a brightness sensor (code has to be adjusted for that) or, in my case, by utilizing the current temperature of a close-by greenhouse.
+
+The main reason for this whole undertaking is Froeling Lambdatronic's ability to write the target flow temp into the RAM of the boiler, avoiding having to change EEPROM registers, the lifetime of which is limited. The catch is that this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated once every other minute. A restart of Home Assistant might thus result in a disruption of heating. The ESP resolves this and offers additional benefits, some of which have already been discussed.
+
+Other than that, the ESP makes the boiler smart also in the sense that it can be directly integrated into Home Assistant via ESPHome (already integrated into HA, so all entities the ESP is set up for are instantaneously writable and/or readable in HA). However, if that is the only thing one wants, then [GyroGearl00se's HA integration](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) might be the preferrable option.
+
+---
