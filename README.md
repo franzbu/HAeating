@@ -220,7 +220,7 @@ The dashboard uses color-coding to signal the current state of the heating deman
 
 This will have to be done individually differently, depending on the heating hardware in use.
 
-In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the correct flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
+In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp and starts/stops heating accordingly, alongside setting the requested flow temp. This is done via Modbus connection to a dual firewood and wood pellets boiler (Froeling SP Dual), but the firmware should work with some adjustments with a range of heating devices with serial interface and potentially others. 
 
 <img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
