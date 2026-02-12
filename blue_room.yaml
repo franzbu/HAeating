@@ -1,7 +1,7 @@
 type: grid
 cards:
   - type: heading
-    heading: Blue Room
+    heading: Stubbe
     heading_style: title
   - type: custom:simple-swipe-card
     show_pagination: false
@@ -15,139 +15,141 @@ cards:
         show_state: true
         type: glance
         entities:
-          - entity: sensor.temperature_and_humidity_sensor_blue_room_temperature
+          - entity: >-
+              sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature
             hold_action:
               action: perform-action
               perform_action: input_select.select_option
               target:
-                entity_id: input_select.heating_schedule_blueroom
+                entity_id: input_select.heating_schedule_stubbe
               data:
                 option: Holiday
             icon_hold_action:
               action: perform-action
               perform_action: input_select.select_option
               target:
-                entity_id: input_select.heating_schedule_blueroom
+                entity_id: input_select.heating_schedule_stubbe
               data:
                 option: Holiday
             card_mod:
               style: |
                 :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                           color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     color: yellow; 
                   {% else %}
                     color: #90D5FF; 
                   {% endif %}
                 }
-          - entity: sensor.heating_circuit_11_blueroom_valve_position
+          - entity: sensor.heating_circuit_5_stubbe_valve_position
             hold_action:
               action: perform-action
               perform_action: input_select.select_option
               target:
-                entity_id: input_select.heating_schedule_blueroom
+                entity_id: input_select.heating_schedule_stubbe
               data:
                 option: Party
             icon_hold_action:
               action: perform-action
               perform_action: input_select.select_option
               target:
-                entity_id: input_select.heating_schedule_blueroom
+                entity_id: input_select.heating_schedule_stubbe
               data:
                 option: Party
             card_mod:
               style: |
                 :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                           color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     color: yellow; 
                   {% else %}
                     color: #90D5FF; 
                   {% endif %}
                 }
-          - entity: sensor.temperature_and_humidity_sensor_blue_room_humidity
+          - entity: >-
+              sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_humidity
             hold_action:
               action: perform-action
               perform_action: input_select.select_option
               target:
-                entity_id: input_select.heating_schedule_blueroom
+                entity_id: input_select.heating_schedule_stubbe
               data:
                 option: Temporary
             icon_hold_action:
               action: perform-action
               perform_action: input_select.select_option
               target:
-                entity_id: input_select.heating_schedule_blueroom
+                entity_id: input_select.heating_schedule_stubbe
               data:
                 option: Temporary
             card_mod:
               style: |
                 :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                           color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     color: yellow; 
                   {% else %}
                     color: #90D5FF; 
@@ -162,17 +164,17 @@ cards:
         show_state: true
         type: glance
         entities:
-          - entity: input_text.next_event_blueroom
+          - entity: input_text.next_event_stubbe
             card_mod:
               style: |
                 :host {
-                  {% if 'Heating stops' in states('input_text.next_event_blueroom') %}
+                  {% if 'Heating stops' in states('input_text.next_event_stubbe') %}
                     color: #FF4500; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %}
+                  {% elif 'No' in states('input_text.next_event_stubbe') %}
                     color: gray; 
-                  {% elif 'Calculating' in states('input_text.next_event_blueroom') %}
+                  {% elif 'Calculating' in states('input_text.next_event_stubbe') %}
                     color: ; 
-                  {% elif 'Heating starts' in states('input_text.next_event_blueroom') %}
+                  {% elif 'Heating starts' in states('input_text.next_event_stubbe') %}
                     color: lightgreen;
                   {% else %}
                     color: #90D5FF;
@@ -181,34 +183,34 @@ cards:
       - type: horizontal-stack
         cards:
           - type: custom:mushroom-entity-card
-            entity: input_boolean.boost_enabled_blueroom
+            entity: input_boolean.boost_enabled_stubbe
             name: Boost
             card_mod:
               style: |
                 :host {
-                      {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                      {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                             states('input_select.heating_mode') == 'aus' %}
                         --card-mod-icon-color: #4169E1; 
-                      {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                      {% elif 'No' in states('input_text.next_event_stubbe') %} 
                         --card-mod-icon-color: gray; 
-                      {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                              states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                               (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                         --card-mod-icon-color: #FF4500;
-                      {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                              states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                               states('input_select.heating_mode') == 'aus' %}
                         --card-mod-icon-color: violet; 
-                      {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                              states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                               (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                         --card-mod-icon-color: orange; 
-                      {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                              states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                               states('input_select.heating_mode') == 'automatik' %}
                         --card-mod-icon-color: lightgreen; 
-                      {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                              states('input_number.target_temp_blueroom') | float > 18 %}
+                      {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                              states('input_number.target_temp_stubbe') | float > 18 %}
                         --card-mod-icon-color: yellow; 
                       {% else %}
                         --card-mod-icon-color: #90D5FF; 
@@ -219,10 +221,9 @@ cards:
           - type: markdown
             content: >
 
-              {% set boost_val =
-              state_attr('binary_sensor.boost_status_blueroom', 'boost') |
-              float(0) %} {% if is_state('binary_sensor.boost_status_blueroom',
-              'on') %}
+              {% set boost_val = state_attr('binary_sensor.boost_status_stubbe',
+              'boost') | float(0) %} {% if
+              is_state('binary_sensor.boost_status_stubbe', 'on') %}
                 <center>{{ boost_val }} °C</center>
               {% else %}
                <center> 0 °C</center>
@@ -230,29 +231,116 @@ cards:
             card_mod:
               style: |
                 ha-card {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                           color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
+                    color: yellow; 
+                  {% else %}
+                    color: #90D5FF; 
+                  {% endif %}
+                } 
+      - type: horizontal-stack
+        cards:
+          - type: tile
+            entity: input_number.sun_compensation_stubbe
+            name: Sun compensation
+            tap_action:
+              action: perform-action
+              perform_action: input_number.increment
+              target:
+                entity_id: input_number.sun_compensation_stubbe
+            icon_tap_action:
+              action: perform-action
+              perform_action: input_number.decrement
+              target:
+                entity_id: input_number.sun_compensation_stubbe
+            card_mod:
+              style: |
+                :host {
+                      {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
+                            states('input_select.heating_mode') == 'aus' %}
+                        --card-mod-icon-color: #4169E1; 
+                      {% elif 'No' in states('input_text.next_event_stubbe') %} 
+                        --card-mod-icon-color: gray; 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                              (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
+                        --card-mod-icon-color: #FF4500;
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                              states('input_select.heating_mode') == 'aus' %}
+                        --card-mod-icon-color: violet; 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                              (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
+                        --card-mod-icon-color: orange; 
+                      {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                              states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                              states('input_select.heating_mode') == 'automatik' %}
+                        --card-mod-icon-color: lightgreen; 
+                      {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                              states('input_number.target_temp_stubbe') | float > 18 %}
+                        --card-mod-icon-color: yellow; 
+                      {% else %}
+                        --card-mod-icon-color: #90D5FF; 
+                      {% endif %}
+                    }
+          - type: markdown
+            content: >
+              {% set comp_val =
+              state_attr('binary_sensor.sun_compensation_stubbe',
+              'compensation') | float(0) %} {% if
+              is_state('binary_sensor.sun_compensation_stubbe', 'on') %}
+                <center>{{ comp_val }} °C</center>
+              {% else %}
+                <center>0 °C</center>
+              {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
+                        states('input_select.heating_mode') == 'aus' %}
+                    color: #4169E1; 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
+                    color: gray; 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                          (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
+                    color: #FF4500;
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                          states('input_select.heating_mode') == 'aus' %}
+                    color: violet; 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                          (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
+                    color: orange; 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
+                          states('input_select.heating_mode') == 'automatik' %}
+                          color: lightgreen; 
+                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     color: yellow; 
                   {% else %}
                     color: #90D5FF; 
@@ -267,56 +355,56 @@ cards:
     cards:
       - type: tile
         name: Target temp
-        entity: input_number.target_temp_blueroom
+        entity: input_number.target_temp_stubbe
         vertical: false
         hold_action:
           action: perform-action
           perform_action: script.heating_plus_input_number
           data:
-            entity: input_number.target_temp_blueroom
+            entity: input_number.target_temp_stubbe
         icon_hold_action:
           action: perform-action
           perform_action: script.heating_minus_input_number
           data:
-            entity: input_number.target_temp_blueroom
+            entity: input_number.target_temp_stubbe
         tap_action:
           action: perform-action
           perform_action: input_number.increment
           target:
-            entity_id: input_number.target_temp_blueroom
+            entity_id: input_number.target_temp_stubbe
         icon_tap_action:
           action: perform-action
           perform_action: input_number.decrement
           target:
-            entity_id: input_number.target_temp_blueroom
+            entity_id: input_number.target_temp_stubbe
           data: {}
         features_position: bottom
         card_mod:
           style: |
             :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     --card-mod-icon-color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                     --card-mod-icon-color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     --card-mod-icon-color: yellow; 
                   {% else %}
                     --card-mod-icon-color: #90D5FF; 
@@ -324,56 +412,56 @@ cards:
                 }
       - type: tile
         name: Δ heating
-        entity: input_number.delta_temp_blueroom
+        entity: input_number.delta_temp_stubbe
         vertical: false
         hold_action:
           action: perform-action
           perform_action: script.heating_delta_plus_input_number
           data:
-            entity: input_number.delta_temp_blueroom
+            entity: input_number.delta_temp_stubbe
         icon_hold_action:
           action: perform-action
           perform_action: script.heating_delta_minus_input_number
           data:
-            entity: input_number.delta_temp_blueroom
+            entity: input_number.delta_temp_stubbe
         tap_action:
           action: perform-action
           perform_action: input_number.increment
           target:
-            entity_id: input_number.delta_temp_blueroom
+            entity_id: input_number.delta_temp_stubbe
         icon_tap_action:
           action: perform-action
           perform_action: input_number.decrement
           target:
-            entity_id: input_number.delta_temp_blueroom
+            entity_id: input_number.delta_temp_stubbe
           data: {}
         features_position: bottom
         card_mod:
           style: |
             :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     --card-mod-icon-color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                     --card-mod-icon-color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     --card-mod-icon-color: yellow; 
                   {% else %}
                     --card-mod-icon-color: #90D5FF; 
@@ -381,56 +469,56 @@ cards:
                 }
       - type: tile
         name: Base temp
-        entity: input_number.base_temp_blueroom
+        entity: input_number.base_temp_stubbe
         vertical: false
         hold_action:
           action: perform-action
           perform_action: script.heating_plus_input_number
           data:
-            entity: input_number.base_temp_blueroom
+            entity: input_number.base_temp_stubbe
         icon_hold_action:
           action: perform-action
           perform_action: script.heating_minus_input_number
           data:
-            entity: input_number.base_temp_blueroom
+            entity: input_number.base_temp_stubbe
         tap_action:
           action: perform-action
           perform_action: input_number.increment
           target:
-            entity_id: input_number.base_temp_blueroom
+            entity_id: input_number.base_temp_stubbe
         icon_tap_action:
           action: perform-action
           perform_action: input_number.decrement
           target:
-            entity_id: input_number.base_temp_blueroom
+            entity_id: input_number.base_temp_stubbe
           data: {}
         features_position: bottom
         card_mod:
           style: |
             :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     --card-mod-icon-color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                     --card-mod-icon-color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     --card-mod-icon-color: yellow; 
                   {% else %}
                     --card-mod-icon-color: #90D5FF; 
@@ -438,56 +526,56 @@ cards:
                 }
       - type: tile
         name: Heat temp
-        entity: input_number.heat_temp_blueroom
+        entity: input_number.heat_temp_stubbe
         vertical: false
         hold_action:
           action: perform-action
           perform_action: script.heating_plus_input_number
           data:
-            entity: input_number.heat_temp_blueroom
+            entity: input_number.heat_temp_stubbe
         icon_hold_action:
           action: perform-action
           perform_action: script.heating_minus_input_number
           data:
-            entity: input_number.heat_temp_blueroom
+            entity: input_number.heat_temp_stubbe
         tap_action:
           action: perform-action
           perform_action: input_number.increment
           target:
-            entity_id: input_number.heat_temp_blueroom
+            entity_id: input_number.heat_temp_stubbe
         icon_tap_action:
           action: perform-action
           perform_action: input_number.decrement
           target:
-            entity_id: input_number.heat_temp_blueroom
+            entity_id: input_number.heat_temp_stubbe
           data: {}
         features_position: bottom
         card_mod:
           style: |
             :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     --card-mod-icon-color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                     --card-mod-icon-color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     --card-mod-icon-color: yellow; 
                   {% else %}
                     --card-mod-icon-color: #90D5FF; 
@@ -507,67 +595,67 @@ cards:
     cards:
       - type: tile
         name: Schedule
-        entity: input_select.heating_schedule_blueroom
+        entity: input_select.heating_schedule_stubbe
         vertical: false
         hold_action:
           action: perform-action
           perform_action: script.heating_switch_schedules
           data:
-            room: blueroom
+            room: stubbe
         icon_hold_action:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Standard
         tap_action:
           action: perform-action
           perform_action: input_select.select_next
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             cycle: true
         icon_tap_action:
           action: perform-action
           perform_action: input_select.select_previous
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data: {}
         features_position: bottom
         card_mod:
           style: |
             :host {
-                  {% if states('input_boolean.heating_claim_blueroom') == 'off' and 
+                  {% if states('input_boolean.heating_claim_stubbe') == 'off' and 
                         states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: #4169E1; 
-                  {% elif 'No' in states('input_text.next_event_blueroom') %} 
+                  {% elif 'No' in states('input_text.next_event_stubbe') %} 
                     --card-mod-icon-color: gray; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: #FF4500;
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'on' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'on' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'aus' %}
                     --card-mod-icon-color: violet; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           (states('input_select.heating_mode') == 'Heating' or states('input_select.heating_mode') == 'Party') %}
                     --card-mod-icon-color: orange; 
-                  {% elif states('input_boolean.heating_claim_blueroom') == 'off' and 
-                          states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float < states('input_number.target_temp_blueroom') | float - 0.5 and 
+                  {% elif states('input_boolean.heating_claim_stubbe') == 'off' and 
+                          states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float < states('input_number.target_temp_stubbe') | float - 0.5 and 
                           states('input_select.heating_mode') == 'automatik' %}
                     --card-mod-icon-color: lightgreen; 
-                  {% elif states('sensor.temperature_and_humidity_sensor_blue_room_temperature') | float >= states('input_number.target_temp_blueroom') | float - 0.5 and
-                          states('input_number.target_temp_blueroom') | float > 18 %}
+                  {% elif states('sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature') | float >= states('input_number.target_temp_stubbe') | float - 0.5 and
+                          states('input_number.target_temp_stubbe') | float > 18 %}
                     --card-mod-icon-color: yellow; 
                   {% else %}
                     --card-mod-icon-color: #90D5FF; 
                   {% endif %}
                 }
       - type: tile
-        entity: schedule.standard_blueroom
+        entity: schedule.standard_stubbe
         name: Standard
         show_entity_picture: true
         hide_state: true
@@ -576,21 +664,21 @@ cards:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Standard
         icon_hold_action:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Standard
         features_position: bottom
         card_mod:
           style: |
             :host {
-              {% if states('input_select.heating_schedule_blueroom') == 'Standard' %}
+              {% if states('input_select.heating_schedule_stubbe') == 'Standard' %}
                 --card-mod-icon-color: lightgreen;
                 font-size: 100px;
               {% else %}
@@ -599,7 +687,7 @@ cards:
               {% endif %}
             }
       - type: tile
-        entity: schedule.holiday_blueroom
+        entity: schedule.holiday_stubbe
         name: Holiday
         show_entity_picture: true
         hide_state: true
@@ -608,21 +696,21 @@ cards:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Holiday
         icon_hold_action:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Holiday
         features_position: bottom
         card_mod:
           style: |
             :host {
-              {% if states('input_select.heating_schedule_blueroom') == 'Holiday' %}
+              {% if states('input_select.heating_schedule_stubbe') == 'Holiday' %}
                 --card-mod-icon-color: lightgreen;
                 font-size: 100px;
               {% else %}
@@ -631,7 +719,7 @@ cards:
               {% endif %}
             }
       - type: tile
-        entity: schedule.party_blueroom
+        entity: schedule.party_stubbe
         name: Party
         show_entity_picture: true
         hide_state: true
@@ -640,21 +728,21 @@ cards:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Party
         icon_hold_action:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Party
         features_position: bottom
         card_mod:
           style: |
             :host {
-              {% if states('input_select.heating_schedule_blueroom') == 'Party' %}
+              {% if states('input_select.heating_schedule_stubbe') == 'Party' %}
                 --card-mod-icon-color: lightgreen;
                 font-size: 100px;
               {% else %}
@@ -663,7 +751,7 @@ cards:
               {% endif %}
             }
       - type: tile
-        entity: schedule.temp_blueroom
+        entity: schedule.temp_stubbe
         name: Temporary
         show_entity_picture: true
         hide_state: true
@@ -672,21 +760,21 @@ cards:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Temporary
         icon_hold_action:
           action: perform-action
           perform_action: input_select.select_option
           target:
-            entity_id: input_select.heating_schedule_blueroom
+            entity_id: input_select.heating_schedule_stubbe
           data:
             option: Temporary
         features_position: bottom
         card_mod:
           style: |
             :host {
-              {% if states('input_select.heating_schedule_blueroom') == 'Temporary' %}
+              {% if states('input_select.heating_schedule_stubbe') == 'Temporary' %}
                 --card-mod-icon-color: lightgreen;
                 font-size: 100px;
               {% else %}
