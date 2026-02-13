@@ -244,4 +244,18 @@ The main reason for this whole undertaking is Froeling Lambdatronic's ability to
 
 Other than that, the ESP makes the boiler smart also in the sense that it can be directly integrated into Home Assistant via ESPHome (already integrated into HA, so all entities the ESP is set up for are instantaneously writable and/or readable in HA). However, if that is the only thing one wants, then [GyroGearl00se's HA integration](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) might be the preferrable option.
 
+In this repo there is also a firmware file for the Waveshare ESP32-P4-NANO; compiling requires ESPHome 2026.2.0 or newer.
+
+<img width="319" height="329" alt="Screenshot 2026-02-13 at 8 20 30 AM" src="https://github.com/user-attachments/assets/29b461ea-b1f1-4f5a-834e-1a129d0c9ae3" />
+
+
+<img width="509" height="409" alt="Screenshot 2026-02-13 at 8 23 19 AM" src="https://github.com/user-attachments/assets/b3757574-4caf-4d44-88d6-aee97cdbc305" />
+
+
+Below you can see a comparison between the two boards:
+
+<img width="601" height="370" alt="Screenshot 2026-02-13 at 8 22 33 AM" src="https://github.com/user-attachments/assets/f2ddd4d1-315d-4c23-8830-8878a39c7a49" />
+
+
+
 ---
