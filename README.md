@@ -26,18 +26,6 @@ Home Assistant is split into three specialized layers:
 
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
-### The "Heating Claim" (Hysteresis)
-To prevent the boiler from cycling on and off too rapidly (which reduces hardware lifespan), the system uses a dual-threshold logic:
-
-* **Upper Bound:** $Target - Margin$ (Default margin: $0.5^\circ C$)
-* **Lower Bound:** $Target - \Delta$ (User-defined hysteresis)
-
-| State | Condition | Result |
-| :--- | :--- | :--- |
-| **Heating Start** | `Current Temp < Lower Bound` | Claim → **ON** |
-| **Maintaining** | `Lower Bound < Current Temp < Upper Bound` | State Persistent |
-| **Heating Stop** | `Current Temp >= Upper Bound` | Claim → **OFF** |
-
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside.
 * **Activation:** Triggers when outdoor temperature exceeds a defined threshold.
@@ -46,26 +34,8 @@ If a room has high solar gain (e.g., south-facing windows), the automation proac
 ### 🔥 Boost Mode
 If a room temperature is significantly below the target (e.g., after a window was left open), the room calculates a **Boost Factor**. This tells the boiler to provide much hotter water temporarily to recover the room temperature as fast as possible.
 
----
-
-## 2. 🚂 Central Control (`HeatSupplyManager`)
-
-The central controller monitors all `heating_claim_...` entities. If at least one room is claiming heat for longer than the `heating_claim_duration`, the boiler fires up.
-
-### Dynamic Flow Temperature (Heating Curve)
-The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
-
-$$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{max} + Offset_{multi}$$
-
-* **Baseline:** The required flow temperature when it is $0^\circ C$ outside.
-* **Adjustment:** The "slope" of the curve.
-* **Multi-room Offset:** For every additional room asking for heat, the flow temperature is nudged higher to account for increased thermal load.
-
-
 
 ---
-
-## 📊 Monitoring & User Feedback
 
 ### Dashboard Intelligence
 The system dynamically generates status messages for your Home Assistant UI:
@@ -78,8 +48,6 @@ The system dynamically generates status messages for your Home Assistant UI:
 * **Auto-Revert:** If **Party Mode** is active but all radiator valves have closed (meaning the house is warm), the system automatically reverts to **Auto** to save fuel.
 
 ---
-
-## 🚀 Setup & Configuration
 
 ### Required Home Assistant Entities
 For the code to function, your Home Assistant instance must have the following entities configured per room:
@@ -106,20 +74,15 @@ heating_pump_control:
     - global_config
     - heating_livingroom
     - heating_bedroom
-  telegram_id: "-100123456789"
+  telegram_id: "-100123456788"
 ```
-
-
-# 🌡️ Heating Automation: User Manual
-
-This guide covers the configuration and operation of the Smart Heating System, from global boiler settings to individual room controls.
 
 ---
 
 <img width="369" height="274" alt="Screenshot 2026-02-07 at 10 32 44 AM" src="https://github.com/user-attachments/assets/7badd294-1c8c-4a2e-b169-c7a4e3e969bf" />
 
 
-## ⚙️ Main Heating Settings (Global)
+### ⚙️ Main Heating Settings (Global)
 
 These settings control the overall behavior of the central heating pump and flow temperature calculations.
 
@@ -136,11 +99,11 @@ These settings control the overall behavior of the central heating pump and flow
 
 ---
 
-## 🏠 Individual Room Settings
+### 🏠 Individual Room Settings
 
 Each room is managed via a dedicated dashboard view containing the following data points:
 
-### Standard View
+#### Standard View
 
 <img width="385" height="112" alt="Screenshot 2026-02-07 at 10 35 32 AM" src="https://github.com/user-attachments/assets/0c0b9c39-e116-45f0-83b4-16c06f6ccf9b" />
 
@@ -151,7 +114,7 @@ Each room is managed via a dedicated dashboard view containing the following dat
 
 
 
-### Advanced Room Parameters
+#### Advanced Room Parameters
 
 * **Boost Status:** Displays if boost is active and how many degrees the flow temperature is being increased by this specific room.
 <img width="394" height="112" alt="Screenshot 2026-02-07 at 10 36 30 AM" src="https://github.com/user-attachments/assets/2b0aed9d-7890-4431-b1e4-91fc5476c28a" />
@@ -171,11 +134,11 @@ Each room is managed via a dedicated dashboard view containing the following dat
 <img width="377" height="97" alt="Screenshot 2026-02-07 at 10 37 49 AM" src="https://github.com/user-attachments/assets/f8f194f5-165b-42b0-a338-0a6951cd8fb9" /> 
 ---
 
-## 📅 Scheduling System
+### 📅 Scheduling System
 
 The schedules are the heart of the automation. The system follows the logic of the currently selected schedule to determine if heating is allowed.
 
-### Schedule Types
+#### Schedule Types
 1.  **Standard:** Your everyday routine.
 <img width="380" height="102" alt="Screenshot 2026-02-07 at 10 40 48 AM" src="https://github.com/user-attachments/assets/ca37c6a0-a288-449f-bbbb-2a8408b2c05c" />
 
@@ -189,7 +152,7 @@ The schedules are the heart of the automation. The system follows the logic of t
 
 
 
-### Interaction & Controls
+#### Interaction & Controls
 * **Cycle Schedules:** Tap the main schedule card to cycle forward; tap the icon to cycle backward.
 * **Activation:** Swipe to a schedule and **long-tap** to make it active.
 * **Quick Toggle:** * Long-tap the main card to switch to **Off**. 
@@ -199,7 +162,7 @@ The schedules are the heart of the automation. The system follows the logic of t
 
 ---
 
-## 🎨 Status Color Guide
+### 🎨 Status Color Guide
 
 The dashboard uses color-coding to signal the current state of the heating demand and the central pump (HK2) status.
 
@@ -213,6 +176,24 @@ The dashboard uses color-coding to signal the current state of the heating deman
 | **Yellow** | Current Temp > Target - 0.5 | Room is warm (Target > 5) |
 | **Gray** | "No" in `next_event` text | No future heating planned (Schedule **Off**) |
 | **Light Blue** | Else | Standby / Neutral |
+
+
+
+
+---
+
+## 2. 🚂 Central Control (`HeatSupplyManager`)
+
+The central controller monitors all `heating_claim_...` entities. If at least one room is claiming heat for longer than the `heating_claim_duration`, the boiler fires up.
+
+### Dynamic Flow Temperature (Heating Curve)
+The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
+
+$$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{max} + Offset_{multi}$$
+
+* **Baseline:** The required flow temperature when it is $0^\circ C$ outside.
+* **Adjustment:** The "slope" of the curve.
+* **Multi-room Offset:** For every additional room asking for heat, the flow temperature is nudged higher to account for increased thermal load.
 
 
 ---
