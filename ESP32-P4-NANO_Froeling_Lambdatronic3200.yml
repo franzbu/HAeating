@@ -1,19 +1,15 @@
+# ----------------------------------------------------------------------
+# !!! IMPORTANT REQUIREMENT !!!
+# This firmware requires ESPHome 2026.2.0 or newer.
+# Native support for the ESP32-P4 was introduced in this version.
+# Older versions will fail to compile the board definition.
+# ----------------------------------------------------------------------
+
 esphome:
   name: froeling
   friendly_name: "Froeling"
-  platformio_options:
-    platform: https://github.com/pioarduino/platform-espressif32/archive/refs/heads/develop.zip
-    board_build.mcu: esp32p4
-    board_build.f_cpu: 400000000L
-    board_build.variant: esp32p4
   
   on_boot:
-    #- priority: 250
-    #  then:
-        # - select.set:
-        #    id: hk2_clearance_template
-        #    option: "On"
-
     - priority: -10 
       then:
         - component.update: lambdatronic 
@@ -26,12 +22,11 @@ esphome:
 # dallas: DS18B20 on GPIO54 (Right Header)
 one_wire:
   - platform: gpio
-    pin: 
-      number: 54
-      ignore_pin_validation_error: true
+    pin: 54  # "ignore_pin_validation_error" removed
 
 esp32:
-  board: esp32dev
+  board: esp32-p4-evboard
+  variant: esp32p4 #Since P4 is brand new, it's not on the list. variant: esp32p4 tells ESPHome "Ignore the name, just trust me it's a P4."
   framework:
     type: esp-idf
 
@@ -75,7 +70,7 @@ globals:
     initial_value: '0'
   - id: internal_schedule_target
     type: float
-    initial_value: '0.0'   # Holds the result of the complex parsing script
+    initial_value: '0.0'
 
 # ----------------------------------------------------------------------
 # 1. CONNECTIVITY (ESP32-P4 IP101 HARDWARE)
@@ -83,12 +78,13 @@ globals:
 ethernet:
   type: IP101
   phy_addr: 1
-  mdc_pin: {number: 31, ignore_pin_validation_error: true}
-  mdio_pin: {number: 52, ignore_pin_validation_error: true}
+  # Validation errors removed; P4 knows these pins exist
+  mdc_pin: 31
+  mdio_pin: 52
   clk:
-    pin: {number: 50, ignore_pin_validation_error: true}
+    pin: 50
     mode: CLK_EXT_IN
-  power_pin: {number: 51, ignore_pin_validation_error: true}
+  power_pin: 51
 
 uart:
   id: froeling_uart
@@ -102,7 +98,6 @@ uart:
 modbus:
   id: modbus_hub
   uart_id: froeling_uart
-  # IMPROVEMENT: Increased to 250ms for better stability
   send_wait_time: 250ms 
 
 modbus_controller:
@@ -128,7 +123,7 @@ api:
         }
 
 # ----------------------------------------------------------------------
-# 3. SCRIPTS (Separation of Concerns)
+# 3. SCRIPTS
 # ----------------------------------------------------------------------
 script:
   - id: ha_offline_shutdown_sequence
@@ -136,9 +131,6 @@ script:
     then:
       - logger.log: "Logic Lost. ESP Reverting to Master Schedule."
 
-  # -------------------------------------------------------
-  # SCRIPT 1: Complex Math & Parsing (Runs independently)
-  # -------------------------------------------------------
   - id: calculate_internal_schedule
     mode: restart
     then:
@@ -150,11 +142,6 @@ script:
             int day = now.day_of_week;
             std::string sch_str = "";
             
-            // ---------------------------------------------------------
-            // DAY MAPPING NOTE:
-            // ESPHome: 1 = Sunday, 2 = Monday ... 7 = Saturday
-            // Config:  sch_1 = Monday, sch_2 = Tuesday ... sch_7 = Sunday
-            // ---------------------------------------------------------
             if      (day == 2) sch_str = id(sch_1).state; // Mon
             else if (day == 3) sch_str = id(sch_2).state; // Tue
             else if (day == 4) sch_str = id(sch_3).state; // Wed
@@ -163,7 +150,6 @@ script:
             else if (day == 7) sch_str = id(sch_6).state; // Sat
             else if (day == 1) sch_str = id(sch_7).state; // Sun
 
-            // 2. Parse the string (Clean & Search)
             size_t comment_pos = sch_str.find('#');
             if (comment_pos != std::string::npos) sch_str = sch_str.substr(0, comment_pos);
             sch_str.erase(std::remove_if(sch_str.begin(), sch_str.end(), ::isspace), sch_str.end());
@@ -199,38 +185,28 @@ script:
               }
             }
 
-            // 3. Apply Heating Curve if active (Using Globals)
             if (schedule_active) {
               float outside;
-
-              // Check if Dallas sensor is valid (not NaN)
               if (!std::isnan(id(dallas_outside_temp).state)) {
                 outside = id(dallas_outside_temp).state;
               } 
-              // Fallback to Modbus if Dallas is unavailable
               else if (!std::isnan(id(outside_temp_sensor).state)) {
                 outside = id(outside_temp_sensor).state;
               } 
-              // Last resort: safety default
               else {
                 outside = 0.0f;
               }
                           
               float y1 = id(curve_minus_10).state;
               float y2 = id(curve_plus_10).state;
-              float x1 = id(curve_out_low);  // Global: -10.0
-              float x2 = id(curve_out_high); // Global: 10.0
+              float x1 = id(curve_out_low);
+              float x2 = id(curve_out_high);
               
-              // Linear Interpolation: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
               calculated_target = y1 + ((outside - x1) * (y2 - y1) / (x2 - x1)) + base_offset;
             }
           }
-          // Update the global variable for the main loop to use
           id(internal_schedule_target) = calculated_target;
 
-  # -------------------------------------------------------
-  # SCRIPT 2: Modbus Action (Isolates Side-Effects)
-  # -------------------------------------------------------
   - id: write_modbus_target
     mode: restart
     parameters:
@@ -238,12 +214,9 @@ script:
     then:
       - lambda: |-
           if (target_val > id(min_flow_threshold)) {
-            // Write to Boiler
             id(hk02_flow_setpoint_external).make_call().set_value(target_val * 2.0).perform();
-            // Optimistic UI Update (No Jitter)
             id(esp_hk2_flow_target_temp).publish_state(target_val);
           } else {
-            // Readback (Passive Mode)
             id(esp_hk2_flow_target_temp).publish_state(id(hk02_flow_setpoint_external).state / 2.0);
           }
 
@@ -376,27 +349,23 @@ number:
     internal: true
 
 # ----------------------------------------------------------------------
-# 5. DECISION ENGINE (The Clean Loop)
+# 5. DECISION ENGINE
 # ----------------------------------------------------------------------
 interval:
-  # Task A: Calculate Schedule (Runs independently)
   - interval: 60s
     then:
       - script.execute: calculate_internal_schedule
 
-  # Task B: Arbitrate and Act (Runs every 59s)
   - interval: 59s
     then:
       - lambda: |-
           static bool startup_lock_released = false; 
           float final_target = 0.0;
 
-          // --- PRIORITY 1: Home Assistant Control ---
           if (id(esp_api_status).state && id(ad_heartbeat_status).state) {
             id(heating_countdown_seconds) = 0; 
             float ha_val = id(ha_target_flow_helper).state;
             
-            // Startup Safety: Don't act until we get valid data
             if (!startup_lock_released) {
               if (!std::isnan(ha_val) && ha_val > 0.1f) startup_lock_released = true;
               else return; 
@@ -406,27 +375,21 @@ interval:
               final_target = ha_val;
             }
           } 
-          // --- PRIORITY 2: Safety Countdown (HA Lost) ---
           else if (id(heating_countdown_seconds) > 0) {
             final_target = id(heating_setpoint_holding).state; 
           }
-          // --- PRIORITY 3: Internal Schedule (Last Resort) ---
           else {
-            // This global is updated by the background script
             final_target = id(internal_schedule_target);
           }
 
-          // Execute Action Script
           id(write_modbus_target).execute(final_target);
 
-  # Task C: Fast Maintenance
   - interval: 1s
     then:
       - lambda: |-
           if (id(heating_countdown_seconds) > 0) id(heating_countdown_seconds)--;
           id(esp_status).update(); 
 
-  # Task D: Clock UI
   - interval: 60s
     then:
       - lambda: |-
@@ -434,7 +397,6 @@ interval:
           if (now.is_valid()) id(manual_time_input).publish_state(now.strftime("%Y-%m-%d %H:%M"));
           else if (id(manual_time_input).state.find(':') == std::string::npos) id(manual_time_input).publish_state("YYYY-MM-DD HH:MM");
 
-  # FIX: Modbus Status Update (Passive Polling)
   - interval: 30s
     then:
       - binary_sensor.template.publish:
@@ -442,7 +404,7 @@ interval:
           state: !lambda 'return !std::isnan(id(boiler_temp_actual).state);'
 
 # ----------------------------------------------------------------------
-# 6. SENSORS AND LOGIC
+# 6. SENSORS
 # ----------------------------------------------------------------------
 sensor:
   - platform: homeassistant
@@ -778,7 +740,6 @@ sensor:
     unit_of_measurement: "%"
     entity_category: diagnostic
   
-  # IMPROVEMENT: Added internal sensors for cleaner text generation
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     id: boiler_state_raw
@@ -812,7 +773,6 @@ sensor:
 binary_sensor:
   - platform: template
     name: "AppDaemon Status" 
-    # Check both the specific boolean AND the actual API connection
     lambda: 'return id(esp_api_status).state && id(ad_heartbeat_status).state;'
     device_class: connectivity
     entity_category: ""
@@ -822,7 +782,6 @@ binary_sensor:
     id: esp_api_status
     entity_category: ""
 
-  # FIX: Passive Sensor (Logic moved to interval)
   - platform: template
     name: "ESP Modbus Status"
     id: modbus_status
@@ -851,15 +810,9 @@ binary_sensor:
     name: "Heating On"
     id: boiler_being_poked
     lambda: |-
-      // 1. HA IS CONNECTED
       if (id(esp_api_status).state && id(ad_heartbeat_status).state) {
-        // NEW LOGIC: Purely temperature driven
-        // If target > 1.0 (min_flow_threshold), we are ON.
-        // If target is 0.0, we are OFF.
         return (id(ha_target_flow_helper).state >= id(min_flow_threshold));
       }
-
-      // 2. HA IS DISCONNECTED (Fail-Safe logic remains unchanged)
       return (id(heating_countdown_seconds) > 0) || (id(esp_hk2_flow_target_temp).state > id(min_flow_threshold));
 
   - platform: modbus_controller
@@ -927,7 +880,6 @@ text_sensor:
       }
       return {"Master"};
 
-  # IMPROVEMENT: Use Template Sensor based on Native Int (Sophisticated Logic)
   - platform: template
     name: "Boiler State"
     id: boiler_state_text
@@ -1022,7 +974,6 @@ text_sensor:
         default: return "Unknown (" + to_string(value) + ")";
       }
 
-  # IMPROVEMENT: Use Template Sensor based on Native Int
   - platform: template
     name: "Boiler System State"
     id: system_state_text
@@ -1050,4 +1001,4 @@ select:
     address: 8029
     value_type: U_WORD
     optionsmap: {"Off": 0, "On": 1}
-    optimistic: false  
+    optimistic: false
