@@ -1,23 +1,17 @@
-The code in this repository is production-ready; however, the documentation below just covers the basics. I might improve it at a later stage should there be sufficient user interest.
+The code in this repository is production-ready; however, the documentation below just covers the basics. I might extend it at a later stage should there be sufficient user interest.
 
 
 # 🌡️ Home Assistant Heating
 
 This repository contains a demand-driven heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
 
-Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances of a class. This feature allows creating instances of RoomDemandCalculator for each room of the house, allowing for efficient and straightforward coding. 
-
-The class HeatSupplyManager acts as control center for determining a room's heating demands and controlling whatever means of heating a house has. Heating starts by writing the target flow temperature to the HA Helper input_number.target_flow_temp (done by HeatSupplyManager), which in turn can be picked up by the actual code controlling the heating (pump); this can be another AppDeamaon class controlling the actual hardware or, as in my case, an ESP32 that has been programmed as controller for a Froeling SP Dual (see below).
-
+Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room of the house, allowing for efficient and straightforward code. 
 
 ## 🛠 System Architecture
 The automation is split into two specialized layers to separate room logic from boiler hardware control:
 
 1.  **`RoomDemandCalculator` (The Brain):** An instance runs for every room. It handles schedules, hysteresis, solar gain compensation, and calculates the "claim" for heat.
-2.  **`HeatSupplyManager` (The Muscle):** A single central instance that monitors 
-all room claims, calculates the optimal flow temperature, and interfaces with the boiler via Modbus.
-
-
+2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the room's heating demands that can include sun compensation and delta temperature boost, calculating the flow temperature, and the heating times. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp`, which then is to be connected to whatever means of heating your house has; this can be another AppDeamaon class controlling the actual hardware or, as in my case, an ESP32 that pokes a Froeling SP Dual (see further down).
 
 ---
 
