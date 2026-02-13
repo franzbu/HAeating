@@ -5,20 +5,20 @@
 
 This repository contains a demand-driven heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
 
-Why AppDaemon? It has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including being able to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room of the house, allowing for efficient and straightforward code. 
+AppDaemon has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including its ability to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room to be heated, allowing for efficient and straightforward code. 
 
 ## 🛠 System Architecture
 Home Assistant is split into three specialized layers:  
   (1) Room Level: RoomDemandCalculator
   (2 Central Heating Control: HeatSupplyManager
-  (3) Hardware Interface: hardware dependend, for example, connection to Froeling SP Dual
+  (3) Hardware Interface: depends on hardware, for example, connection to Froeling SP Dual
 
 
-1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat "claim" for the room in charge.
+1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
    
 2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms combined. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp`. which then is to be connected to whatever means of heating your house has; this can be another AppDeamaon class controlling the actual hardware or, as in my case, an ESP32 that pokes a Froeling SP Dual (see further down).
    
-3. The hardware interface "listens" to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. When `HeatSupplyManager` writes `0` to `input_number.target_flow_temp`, the hardware interface stops heating.
+3. The hardware interface "listens" to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. When `input_number.target_flow_temp` is set to `0`, the hardware interface stops heating.
 
 ---
 
