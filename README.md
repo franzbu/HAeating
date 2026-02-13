@@ -237,8 +237,15 @@ Additionally, the ESP's firmware can be extended with the additional ability to 
 
 <img width="653" height="807" alt="Screenshot 2026-02-13 at 8 28 01 AM" src="https://github.com/user-attachments/assets/3ecd87ce-e2d9-42af-9af1-ad816feae8c1" />
 
+As can be seen in the screenshot, the first seven slots are for the heating schedules in Master mode (`ESP Status`), i.e., in case the ESP is disconnected from Home Assistant. `AppDaemon Status`, `ESP HA API Status`, and `ESP Modbus Status` show whether AppDaemon, Home Assistant, and the boiler are connected. 
 
-The ESP gets its time from an NTP; in case of missing connection the time can also be entered manually (time will be adjusted by  the NTP server the moment it becomes available) for scheduled heating to work.
+`HK2 Enabled` signalls that heating circuit 2 is potentially activated; however, a value of not 0 in `HK2 Flow Target Temp (ESP)` activates heating, which is then reflected in `Heating On`.
+
+`HK2 Flow Temp +10 (Master)` and `HK2 Flow Temp -10 (Master)` are used in `Master` mode to determine the flow temp, which is based on the boiler's outside temperature sensor, unless `Outside Temp`, which is based on a dallas temperature sensor connected to GPIO 54, is in place, then the latters's value is used. `Room Temp` is for an additional dallas temperature sensor, also connected to GPIO 54 (and distinguished through its address -> both need to be changed to the ones of the dallas sensors used).
+
+`Time (Manual Override)`, as already mentioned, allows for the manual adjustment of the time in case of missing internet connection.
+
+The ESP gets its internal time from the internet; in case of missing connection the time can also be entered manually (time will be adjusted by  the NTP server the moment it becomes available) for scheduled heating to work.
 
 One of the reasons for using an ESP is Froeling having made it possible to write the target flow temperature into the RAM of the boiler, avoiding having to write to EEPROM registers, the lifetime of which is limited. However, this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated within two minutes, otherwise heating stops, and the ESP automatically takes care of that - as long as the value in `input_number.target_flow_temp` is not 0, the ESP keeps poking the boiler.
 
