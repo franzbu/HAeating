@@ -224,6 +224,9 @@ In my setup, the ESP WT32-ETH01 listens to HA's input_number.target_flow_temp an
 
 <img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
+<img width="677" height="638" alt="Screenshot 2026-02-13 at 8 26 48 AM" src="https://github.com/user-attachments/assets/ac486b4a-d555-4df0-bb08-0d63469b16ff" />
+
+
 The firmware for the ESP can be found in this repo and can easily be adjusted to quite any ESP; however, for reliability reasons it is recommended to use one with ethernet.
 
 To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is needed; in my setup the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter does the job.
@@ -232,7 +235,8 @@ To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is n
 
 The web interface for the ESP has the additional ability to work independently from HA in a so called Master mode, to which it switches if the connection to HA breaks down (due to software or hardware failure). It then calculates the heating flow temperature according to the settings in the web interface and starts and stops the heating according to the schedule in the web interface ('#' ignores anything afterwards; '8-10' determines the heating perdiod, and '@', if present, stands for the increased (or decreased) flow temp - for example, this can be interesting in the morning when the delta between room temp and target temp is bigger)
 
-<img width="655" height="767" alt="Screenshot 2026-02-07 at 10 58 51 AM" src="https://github.com/user-attachments/assets/d30b8541-bf4e-4889-8b2a-6131879ad96d" />
+<img width="653" height="807" alt="Screenshot 2026-02-13 at 8 28 01 AM" src="https://github.com/user-attachments/assets/3ecd87ce-e2d9-42af-9af1-ad816feae8c1" />
+
 
 The ESP gets its time from a time server; in case of offline mode it can also be entered manually (will be overriden when the NTP server becomes available) for scheduled heating to work.
 
