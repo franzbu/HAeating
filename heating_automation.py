@@ -26,12 +26,12 @@ global_config:
     froeling_exhaust_temp: 'sensor.froeling_boiler_flue_gas_temp'
     froeling_hk2_flow_actual_temp: 'sensor.froeling_hk2_flow_actual_temp'
     froeling_hk2_flow_target_temp: 'sensor.froeling_hk2_flow_target_temp'
-    froeling_hk2_flow_temp_external: 'number.froeling_hk02_flow_setpoint_external'
-    froeling_hk2_flow_temp_threshold_pump_off: 'number.froeling_hk02_heating_circuit_pump_off_when_flow_target_is_less_than'
-    froeling_hk2_frost_protection_temperature: 'number.froeling_hk02_frost_protection_temp'
-    froeling_hk2_operating_mode: 'select.froeling_hk02_operating_mode'
-    froeling_hk2_pump_external: 'select.froeling_hk02_clearance_external_specification'
-    froeling_hk2_pump_on_off: 'binary_sensor.froeling_hk02_pump_status' 
+    froeling_hk2_flow_temp_external: 'number.froeling_hk2_flow_setpoint_external'
+    froeling_hk2_flow_temp_threshold_pump_off: 'number.froeling_hk2_heating_circuit_pump_off_when_flow_target_is_less_than'
+    froeling_hk2_frost_protection_temperature: 'number.froeling_hk2_frost_protection_temp'
+    froeling_hk2_operating_mode: 'select.froeling_hk2_operating_mode'
+    froeling_hk2_pump_external: 'select.froeling_hk2_clearance_external_specification'
+    froeling_hk2_pump_on_off: 'binary_sensor.froeling_hk2_pump_status' 
     froeling_induced_draft_control: 'sensor.froeling_boiler_induced_draught_control'
     froeling_induced_draft_speed: 'sensor.froeling_boiler_induced_draught_speed'
     froeling_outside_temperature: 'sensor.froeling_boiler_outside_temp'
@@ -394,7 +394,7 @@ class RoomDemandCalculator(hass.Hass):
 
         
 # ==================================================================================================
-# HEAT SUPPLY MANAGER (Central Boiler Logic)
+# HEAT SUPPLY MANAGER
 # ==================================================================================================
 class HeatSupplyManager(hass.Hass):
     def initialize(self):
