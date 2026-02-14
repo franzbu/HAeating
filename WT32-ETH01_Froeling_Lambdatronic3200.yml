@@ -1,6 +1,6 @@
 esphome:
-  name: heating-central-wt32
-  friendly_name: "Froeling Central Gateway"
+  name: froeling
+  friendly_name: "Froeling"
 
   on_boot:
     - priority: -10 
@@ -9,7 +9,7 @@ esphome:
         - delay: 2s
         # Initial check on boot
         - binary_sensor.template.publish:
-            id: froeling_modbus_status
+            id: modbus_status
             state: !lambda 'return !std::isnan(id(boiler_temp_actual).state);'
 
 # ----------------------------------------------------------------------
@@ -31,9 +31,7 @@ ethernet:
 
 one_wire:
   - platform: gpio
-    pin: 
-      number: 14
-      ignore_pin_validation_error: true
+    pin: 14
 
 logger:
   level: INFO
@@ -75,10 +73,10 @@ globals:
     initial_value: '0'
   - id: internal_schedule_target
     type: float
-    initial_value: '0.0'   # Holds the result of the complex parsing script
+    initial_value: '0.0'
 
 # ----------------------------------------------------------------------
-# 1. CONNECTIVITY
+# 1. CONNECTIVITY (UART & MODBUS)
 # ----------------------------------------------------------------------
 uart:
   id: froeling_uart
@@ -144,7 +142,6 @@ script:
             else if (day == 7) sch_str = id(sch_6).state; // Sat
             else if (day == 1) sch_str = id(sch_7).state; // Sun
 
-            // 2. Parse the string (Clean & Search)
             size_t comment_pos = sch_str.find('#');
             if (comment_pos != std::string::npos) sch_str = sch_str.substr(0, comment_pos);
             sch_str.erase(std::remove_if(sch_str.begin(), sch_str.end(), ::isspace), sch_str.end());
@@ -180,33 +177,26 @@ script:
               }
             }
 
-            // 3. Apply Heating Curve if active (Using Globals)
             if (schedule_active) {
               float outside;
-
-              // Check if Dallas sensor is valid (not NaN)
               if (!std::isnan(id(dallas_outside_temp).state)) {
                 outside = id(dallas_outside_temp).state;
               } 
-              // Fallback to Modbus if Dallas is unavailable
               else if (!std::isnan(id(outside_temp_sensor).state)) {
                 outside = id(outside_temp_sensor).state;
               } 
-              // Last resort: safety default
               else {
                 outside = 0.0f;
               }
                           
               float y1 = id(curve_minus_10).state;
               float y2 = id(curve_plus_10).state;
-              float x1 = id(curve_out_low);  // Global: -10.0
-              float x2 = id(curve_out_high); // Global: 10.0
+              float x1 = id(curve_out_low);
+              float x2 = id(curve_out_high);
               
-              // Linear Interpolation: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
               calculated_target = y1 + ((outside - x1) * (y2 - y1) / (x2 - x1)) + base_offset;
             }
           }
-          // Update the global variable for the main loop to use
           id(internal_schedule_target) = calculated_target;
 
   - id: write_modbus_target
@@ -216,13 +206,10 @@ script:
     then:
       - lambda: |-
           if (target_val > id(min_flow_threshold)) {
-            // Write to Boiler
-            id(hk02_flow_setpoint_external).make_call().set_value(target_val * 2.0).perform();
-            // Optimistic UI Update (No Jitter)
+            id(hk2_flow_setpoint_external).make_call().set_value(target_val * 2.0).perform();
             id(esp_hk2_flow_target_temp).publish_state(target_val);
           } else {
-            // Readback (Passive Mode)
-            id(esp_hk2_flow_target_temp).publish_state(id(hk02_flow_setpoint_external).state / 2.0);
+            id(esp_hk2_flow_target_temp).publish_state(id(hk2_flow_setpoint_external).state / 2.0);
           }
 
 # ----------------------------------------------------------------------
@@ -339,7 +326,7 @@ number:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    id: hk02_flow_setpoint_external
+    id: hk2_flow_setpoint_external
     address: 8001
     internal: true 
     register_type: holding
@@ -421,8 +408,9 @@ sensor:
         - lambda: 'if (id(ad_heartbeat_status).state) id(heating_setpoint_holding).publish_state(x);'
 
   - platform: template
-    name: "HK2 Flow Target Temp (ESP)"
+    name: "HK2 Flow Target Temp (Holding)"
     id: esp_hk2_flow_target_temp
+    internal: true
     unit_of_measurement: "°C"
     accuracy_decimals: 1
     icon: "mdi:math-compass"
@@ -667,26 +655,26 @@ sensor:
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     name: "HK2 Flow Actual Temp"
-    id: hk02_flow_temperature_actual
+    id: hk2_flow_temperature_actual
     address: 1060
     register_type: read
     unit_of_measurement: "°C"
     accuracy_decimals: 1
     filters:
       - multiply: 0.5
-    entity_category: diagnostic
+    entity_category: ""
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     name: "HK2 Flow Target Temp"
-    id: hk02_flow_temperature_target
+    id: hk2_flow_temperature_target
     address: 1061
     register_type: read
     unit_of_measurement: "°C"
     accuracy_decimals: 1
     filters:
       - multiply: 0.5
-    entity_category: diagnostic
+    entity_category: ""
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
@@ -808,7 +796,7 @@ binary_sensor:
                   id(esp_status).update();
                   ESP_LOGW("custom", "AppDaemon Boolean turned OFF while heating. 20m safety run.");
         - lambda: |-
-            float current_actual = id(hk02_flow_setpoint_external).state;
+            float current_actual = id(hk2_flow_setpoint_external).state;
             if(!std::isnan(current_actual) && current_actual > 0) id(heating_setpoint_holding).publish_state(current_actual);
 
   - platform: template
@@ -826,8 +814,8 @@ binary_sensor:
     id: hk2_pump_on_off
     address: 1060
     register_type: coil
-    entity_category: diagnostic
     device_class: running
+    entity_category: diagnostic
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
