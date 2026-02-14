@@ -214,10 +214,10 @@ script:
     then:
       - lambda: |-
           if (target_val > id(min_flow_threshold)) {
-            id(hk02_flow_setpoint_external).make_call().set_value(target_val * 2.0).perform();
+            id(hk2_flow_setpoint_external).make_call().set_value(target_val * 2.0).perform();
             id(esp_hk2_flow_target_temp).publish_state(target_val);
           } else {
-            id(esp_hk2_flow_target_temp).publish_state(id(hk02_flow_setpoint_external).state / 2.0);
+            id(esp_hk2_flow_target_temp).publish_state(id(hk2_flow_setpoint_external).state / 2.0);
           }
 
 # ----------------------------------------------------------------------
@@ -334,7 +334,7 @@ number:
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
-    id: hk02_flow_setpoint_external
+    id: hk2_flow_setpoint_external
     address: 8001
     internal: true 
     register_type: holding
@@ -416,8 +416,9 @@ sensor:
         - lambda: 'if (id(ad_heartbeat_status).state) id(heating_setpoint_holding).publish_state(x);'
 
   - platform: template
-    name: "HK2 Flow Target Temp (ESP)"
+    name: "HK2 Flow Target Temp (Holding)"
     id: esp_hk2_flow_target_temp
+    internal: true
     unit_of_measurement: "°C"
     accuracy_decimals: 1
     icon: "mdi:math-compass"
@@ -662,26 +663,26 @@ sensor:
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     name: "HK2 Flow Actual Temp"
-    id: hk02_flow_temperature_actual
+    id: hk2_flow_temperature_actual
     address: 1060
     register_type: read
     unit_of_measurement: "°C"
     accuracy_decimals: 1
     filters:
       - multiply: 0.5
-    entity_category: diagnostic
+    entity_category: ""
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
     name: "HK2 Flow Target Temp"
-    id: hk02_flow_temperature_target
+    id: hk2_flow_temperature_target
     address: 1061
     register_type: read
     unit_of_measurement: "°C"
     accuracy_decimals: 1
     filters:
       - multiply: 0.5
-    entity_category: diagnostic
+    entity_category: ""
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
@@ -803,7 +804,7 @@ binary_sensor:
                   id(esp_status).update();
                   ESP_LOGW("custom", "AppDaemon Boolean turned OFF while heating. 20m safety run.");
         - lambda: |-
-            float current_actual = id(hk02_flow_setpoint_external).state;
+            float current_actual = id(hk2_flow_setpoint_external).state;
             if(!std::isnan(current_actual) && current_actual > 0) id(heating_setpoint_holding).publish_state(current_actual);
 
   - platform: template
@@ -821,8 +822,8 @@ binary_sensor:
     id: hk2_pump_on_off
     address: 1060
     register_type: coil
-    entity_category: diagnostic
     device_class: running
+    entity_category: diagnostic
 
   - platform: modbus_controller
     modbus_controller_id: lambdatronic
