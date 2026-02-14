@@ -8,10 +8,10 @@ This repository contains a demand-driven heating control system built for **Home
 AppDaemon has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including its ability to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room to be heated, allowing for efficient and straightforward code. 
 
 ## 🛠 System Architecture
-Home Assistant is split into three specialized layers:  
+The heating automation is split into three specialized layers:  
   (1) Room Level: RoomDemandCalculator
   (2 Central Heating Control: HeatSupplyManager
-  (3) Hardware Interface: depends on hardware, for example, connection to Froeling SP Dual
+  (3) Hardware Interface: connects to the actual hardware, for example, a Froeling SP Dual
 
 
 1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
@@ -184,7 +184,7 @@ The dashboard uses color-coding to signal the current state of the heating deman
 
 ## 2. 🚂 Central Control (`HeatSupplyManager`)
 
-The central controller monitors all `heating_claim_...` entities. If at least one room is claiming heat for longer than the `heating_claim_duration`, the boiler fires up.
+The central controller monitors all `heating_claim_...` entities. If at least one room is claiming heat, heating starts.
 
 ### Dynamic Flow Temperature (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
@@ -197,11 +197,19 @@ $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{ma
 
 
 ---
-## 3. Hardware Interface: ESP for controlling Froeling SP Dual
+## 3. Connection to Heating Hardware
 
-This is an example of how HA's helper `input_number.target_flow_temp` can be used by an ESP to turn heating on or off while at the same time adjusting flow temperature according to HeatSupplyManager's demand.
+The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature (not 0); it signals no heating demand if it is set to 0. This respository contains two examples how this can be used. 
 
-The ESP listens to changes to HA's input_number.target_flow_temp and starts (value changes from 0 to the required flow temp) and stops (value changes to 0) heating accordingly. This is done via Modbus connection. 
+(a) Using [GyroGearl00se's HA integration for Froeling](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) `ha_froeling_lambdatronic_modbus`.
+
+An example can be seen [here]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py)).
+
+---
+
+(b) Using an ESP32
+
+The ESP is programmed to listen to changes to HA's input_number.hk2.target_flow_temp and starts (value changes from 0 to the required flow temp) and stops (value changes to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work) and to the Froeling boiler via Modbus.
 
 <img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
@@ -243,5 +251,7 @@ Below you can see a comparison between the two boards:
 <img width="601" height="370" alt="Screenshot 2026-02-13 at 8 22 33 AM" src="https://github.com/user-attachments/assets/f2ddd4d1-315d-4c23-8830-8878a39c7a49" />
 
 The firmware in the two examples forwards a range of entities from Froeling to HA; they can easily be changed or extended by consulting [Froeling's Modbus documentation]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf))
+
+[This]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py)) is the AppDaemon code that connects the heating automation to the ESP, i.e., listens to changes to `input_number.target_flow_temp` and writes `input_number.hk2_target_flow_temp` that in turn triggers the ESP to start and stop heating.
 
 ---
