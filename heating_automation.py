@@ -1,49 +1,49 @@
-
 ''' apps.yaml
 global_config:
   heating_map:
-    froeling_boiler_1_desired_temperature: 'number.froeling_boiler_target_temp'
-    froeling_boiler_1_pump_control: 'sensor.froeling_boiler_pump_control'
-    froeling_boiler_1_pump_on_off: 'binary_sensor.froeling_boiler_pump_status' 
-    froeling_boiler_1_top_temp: 'sensor.froeling_boiler_temp_top'
-    froeling_boiler_state: 'sensor.froeling_boiler_state'
-    froeling_boiler_target_temperature: 'number.froeling_boiler_target_temp'
-    froeling_boiler_temp: 'sensor.froeling_boiler_temp'
-    froeling_buffer_1_charge_state: 'sensor.froeling_buffer_charge_state'
-    froeling_buffer_1_pump_control: 'sensor.froeling_buffer_pump_control'
-    froeling_buffer_1_pump_on_off: 'binary_sensor.froeling_buffer_pump_on_off' 
-    froeling_buffer_temp_1: 'sensor.froeling_buffer_temp_sensor_1'
-    froeling_buffer_temp_2: 'sensor.froeling_buffer_temp_sensor_2'
-    froeling_buffer_temp_3: 'sensor.froeling_buffer_temp_sensor_3'
-    froeling_buffer_temp_4: 'sensor.froeling_buffer_temp_sensor_4'
-    froeling_collector_flow_temp: 'sensor.froeling_collector_flow_temp'
-    froeling_collector_pump_control: 'sensor.froeling_collector_pump_control'
-    froeling_collector_return_temp: 'sensor.froeling_collector_return_temp'
-    froeling_collector_shutdown_delta: 'number.froeling_collector_shutdown_difference'
-    froeling_collector_startup_delta: 'number.froeling_collector_startup_difference'
-    froeling_collector_temp: 'sensor.froeling_collector_temp'
-    froeling_current_control_of_the_collector_boiler_pump: 'sensor.froeling_collector_boiler_pump_control'
-    froeling_exhaust_temp: 'sensor.froeling_boiler_flue_gas_temp'
-    froeling_hk2_flow_actual_temp: 'sensor.froeling_hk2_flow_actual_temp'
-    froeling_hk2_flow_target_temp: 'sensor.froeling_hk2_flow_target_temp'
-    froeling_hk2_flow_temp_external: 'number.froeling_hk2_flow_setpoint_external'
-    froeling_hk2_flow_temp_threshold_pump_off: 'number.froeling_hk2_heating_circuit_pump_off_when_flow_target_is_less_than'
-    froeling_hk2_frost_protection_temperature: 'number.froeling_hk2_frost_protection_temp'
-    froeling_hk2_operating_mode: 'select.froeling_hk2_operating_mode'
-    froeling_hk2_pump_external: 'select.froeling_hk2_clearance_external_specification'
-    froeling_hk2_pump_on_off: 'binary_sensor.froeling_hk2_pump_status' 
-    froeling_induced_draft_control: 'sensor.froeling_boiler_induced_draught_control'
-    froeling_induced_draft_speed: 'sensor.froeling_boiler_induced_draught_speed'
-    froeling_outside_temperature: 'sensor.froeling_boiler_outside_temp'
-    froeling_oxygen_controller: 'sensor.froeling_boiler_oxygen_controller'
-    froeling_primary_air: 'sensor.froeling_boiler_primary_air'
-    froeling_remaining_heating_hours_until_ash_emptying_warning: 'sensor.froeling_boiler_remaining_heating_hours_until_ash_emptying_warning'
-    froeling_residual_oxygen_content: 'sensor.froeling_boiler_residual_oxygen_content'
-    froeling_return_sensor: 'sensor.froeling_boiler_return_sensor'
-    froeling_system_state: 'sensor.froeling_boiler_system_state'
-    froeling_hk2_flow_targt_temp_external: 'number.froeling_hk2_flow_target_temp'
+    froeling_boiler_1_desired_temperature: 'number.froeling_central_gateway_boiler_1_target_temperature'
+    froeling_boiler_1_pump_control: 'sensor.froeling_central_gateway_boiler_1_pump_control'
+    froeling_boiler_1_pump_on_off: 'binary_sensor.froeling_central_gateway_boiler_1_pump_status' 
+    froeling_boiler_1_top_temp: 'sensor.froeling_central_gateway_boiler_1_temperature_top'
+    froeling_boiler_state: 'sensor.froeling_central_gateway_boiler_state'
+    froeling_boiler_target_temperature: 'number.froeling_central_gateway_boiler_target_temperature'
+    froeling_boiler_temp: 'sensor.froeling_central_gateway_boiler_temperature'
+    froeling_buffer_1_charge_state: 'sensor.froeling_central_gateway_buffer_1_charge_state'
+    froeling_buffer_1_pump_control: 'sensor.froeling_central_gateway_buffer_1_pump_control'
+    froeling_buffer_1_pump_on_off: 'binary_sensor.froeling_central_gateway_buffer_1_pump_on_off' 
+    froeling_buffer_temp_1: 'sensor.froeling_central_gateway_buffer_1_temperature_sensor_1'
+    froeling_buffer_temp_2: 'sensor.froeling_central_gateway_buffer_1_temperature_sensor_2'
+    froeling_buffer_temp_3: 'sensor.froeling_central_gateway_buffer_1_temperature_sensor_3'
+    froeling_buffer_temp_4: 'sensor.froeling_central_gateway_buffer_1_temperature_sensor_4'
+    froeling_collector_flow_temp: 'sensor.froeling_central_gateway_collector_flow_temperature'
+    froeling_collector_pump_control: 'sensor.froeling_central_gateway_collector_pump_control'
+    froeling_collector_return_temp: 'sensor.froeling_central_gateway_collector_return_temperature'
+    froeling_collector_shutdown_delta: 'number.froeling_central_gateway_collector_shutdown_difference'
+    froeling_collector_startup_delta: 'number.froeling_central_gateway_collector_startup_difference'
+    froeling_collector_temp: 'sensor.froeling_central_gateway_collector_temperature'
+    froeling_current_control_of_the_collector_boiler_pump: 'sensor.froeling_central_gateway_collector_boiler_pump_control'
+    froeling_exhaust_temp: 'sensor.froeling_central_gateway_boiler_flue_gas_temperature'
+    froeling_hk2_flow_actual_temp: 'sensor.froeling_central_gateway_hk2_flow_actual_temperature'
+    froeling_hk2_flow_target_temp: 'sensor.froeling_central_gateway_hk2_flow_target_temperature'
+    froeling_hk2_flow_temp_external: 'number.froeling_central_gateway_hk02_flow_setpoint_external'
+    froeling_hk2_flow_temp_threshold_pump_off: 'number.froeling_central_gateway_hk02_heating_circuit_pump_off_when_flow_target_is_less_than'
+    froeling_hk2_frost_protection_temperature: 'number.froeling_central_gateway_hk02_frost_protection_temperature'
+    froeling_hk2_operating_mode: 'select.froeling_central_gateway_hk02_operating_mode'
+    froeling_hk2_pump_external: 'select.froeling_central_gateway_hk02_clearance_external_specification'
+    froeling_hk2_pump_on_off: 'binary_sensor.froeling_central_gateway_hk02_pump_status' 
+    froeling_induced_draft_control: 'sensor.froeling_central_gateway_boiler_induced_draught_control'
+    froeling_induced_draft_speed: 'sensor.froeling_central_gateway_boiler_induced_draught_speed'
+    froeling_outside_temperature: 'sensor.froeling_central_gateway_boiler_outside_temperature'
+    froeling_oxygen_controller: 'sensor.froeling_central_gateway_boiler_oxygen_controller'
+    froeling_primary_air: 'sensor.froeling_central_gateway_boiler_primary_air'
+    froeling_remaining_heating_hours_until_ash_emptying_warning: 'sensor.froeling_central_gateway_boiler_remaining_heating_hours_until_ash_emptying_warning'
+    froeling_residual_oxygen_content: 'sensor.froeling_central_gateway_boiler_residual_oxygen_content'
+    froeling_return_sensor: 'sensor.froeling_central_gateway_boiler_return_sensor'
+    froeling_system_state: 'sensor.froeling_central_gateway_boiler_system_state'
+    froeling_hk2_flow_targt_temp_external: 'number.froeling_central_gateway_hk2_flow_target_temp'
 
 '''
+
 
 import hassapi as hass  # type: ignore
 from datetime import datetime, timedelta, time
@@ -404,9 +404,8 @@ class HeatSupplyManager(hass.Hass):
         self.managed_locations = [d.replace("heating_", "") for d in raw_deps if d not in ["global_config", "heating_pump_control"]]
         
         self.valve_map = self.gl.args.get("valve_map", {})
-        self.flow_target_helper = "input_number.hk2_target_flow_temp"     
+        self.flow_target_helper = "input_number.target_flow_temp"     
         self.mode_select = "input_select.heating_mode"
-        self.modbus_status_sensor = "binary_sensor.froeling_modbus_status"
 
         self.ext_temp_sensor = self.gl.get_outdoor_temp()
         self.telegram_target = self.args.get('telegram_id') 
@@ -431,8 +430,7 @@ class HeatSupplyManager(hass.Hass):
         critical_entities = [
             self.flow_target_helper,
             self.ext_temp_sensor,
-            self.mode_select,
-            self.modbus_status_sensor
+            self.mode_select
         ]
         
         missing = []
@@ -467,7 +465,6 @@ class HeatSupplyManager(hass.Hass):
             
         self.listen_state(self.callback_debounced_eval, self.ext_temp_sensor)
         self.listen_state(self.on_mode_change, self.mode_select)
-        self.listen_state(self.on_modbus_failure, self.modbus_status_sensor)
         
         config_entities = [
             "input_number.heating_baseline_0_deg",
@@ -482,18 +479,6 @@ class HeatSupplyManager(hass.Hass):
             self.listen_state(self.callback_debounced_eval, e)
                 
         self.evaluate_heating_pump()
-
-    def on_modbus_failure(self, entity, attribute, old, new, args):
-        if new == "off":
-            self.log("MODBUS DISCONNECTED!", level="ERROR")
-            if self.telegram_target:
-                self.notify(self.telegram_target, "🚨 Boiler Modbus Down", 
-                            "ESP32 lost link to boiler.", True)
-        elif new == "on" and old == "off":
-            self.log("MODBUS RESTORED", level="INFO")
-            if self.telegram_target:
-                self.notify(self.telegram_target, "✅ Boiler Modbus Restored", 
-                            "Modbus connection established.", True)
     
     def on_mode_change(self, entity, attribute, old, new, args):
         if new == "Off":
@@ -588,6 +573,78 @@ class HeatSupplyManager(hass.Hass):
             self.call_service("input_number/set_value", entity_id=self.flow_target_helper, value=calc_target)
             if mode != "Heating" and mode != "Party":
                 self.call_service("input_select/select_option", entity_id=self.mode_select, option="Heating")
+
+    def notify(self, target, title, message, disable_notification=True):
+        self.gl.send_telegram(target, title, message, disable_notification)
+
+
+# ==================================================================================================
+# FROELING HEATING ESP INTERFACE
+# ==================================================================================================
+class FroelingHeatingESP(hass.Hass):
+    def initialize(self):
+        self.gl = self.get_app("global_config")
+        self.telegram_target = self.args.get('telegram_id')
+        self.target_temp_helper = "input_number.target_flow_temp"
+        self.boiler_target_helper = "input_number.hk2_target_flow_temp"
+        self.modbus_sensor = "binary_sensor.froeling_modbus_status"
+        
+        self.startup_timer = None
+        self.try_startup()
+
+    def try_startup(self, kwargs=None):
+        if not self.check_system_health():
+            self.startup_timer = self.run_in(self.try_startup, 30)
+            return
+        self.boot_up()
+
+    def check_system_health(self):
+        # We only block on the presence of the Helpers now.
+        # We don't block on the Modbus Status being 'on' anymore.
+        critical_entities = [self.target_temp_helper, self.boiler_target_helper]
+        
+        for entity in critical_entities:
+            if not self.entity_exists(entity) or self.get_state(entity) in ["unavailable", "unknown", None]:
+                self.log(f"Waiting for {entity}...", level="WARNING")
+                return False
+        return True
+
+    def boot_up(self):
+        self.log("Froeling ESP Interface Booted.")
+        
+        # Listen for internal target changes
+        self.listen_state(self.on_target_flow_temp_change, self.target_temp_helper)
+        
+        # Monitor Modbus health (now always active regardless of initial state)
+        self.listen_state(self.on_modbus_status_change, self.modbus_sensor)
+        
+        # Initial check in case it's already down at boot
+        if self.get_state(self.modbus_sensor) == "off":
+            self.on_modbus_status_change(self.modbus_sensor, None, None, "off", None)
+
+    def on_target_flow_temp_change(self, entity, attribute, old, new, args):
+        if new in [None, "unavailable", "unknown"]:
+            return
+            
+        # Optional: Only forward if Modbus is actually healthy
+        if self.get_state(self.modbus_sensor) == "on":
+            self.call_service("input_number/set_value", 
+                              entity_id=self.boiler_target_helper, 
+                              value=new)
+        else:
+            self.log(f"Suppressed target update to {new}°C - Modbus is Down", level="WARNING")
+
+    def on_modbus_status_change(self, entity, attribute, old, new, args):
+        if new == "off":
+            self.log("MODBUS DISCONNECTED!", level="ERROR")
+            if self.telegram_target:
+                self.notify(self.telegram_target, "🚨 Boiler Modbus Down", 
+                            "ESP32 lost link to boiler.", True)
+        elif new == "on" and old == "off":
+            self.log("MODBUS RESTORED", level="INFO")
+            if self.telegram_target:
+                self.notify(self.telegram_target, "✅ Boiler Modbus Restored", 
+                            "Modbus connection established.", True)
 
     def notify(self, target, title, message, disable_notification=True):
         self.gl.send_telegram(target, title, message, disable_notification)
