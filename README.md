@@ -203,7 +203,7 @@ The principle is simple: HA's helper `input_number.target_flow_temp` signals hea
 
 (a) Using [GyroGearl00se's HA integration for Froeling](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) `ha_froeling_lambdatronic_modbus`.
 
-An example can be seen [here]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py)).
+An example can be seen [here]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
