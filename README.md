@@ -3,9 +3,9 @@
 
 # 🌡️ Home Assistant Heating
 
-This repository contains a demand-driven heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
+This repository contains a heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
 
-AppDaemon has been chosen for its advanced possibilities of using Python virtually without restrictions (other than PyScript), including its ability to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room to be heated, allowing for efficient and straightforward code. 
+Why AppDaemon? Well, AppDaemon has been chosen for its ability for using Python virtually without restrictions (other than PyScript), including its ability to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room to be heated, allowing for efficient and straightforward code. 
 
 ## 🛠 System Architecture
 The heating automation is split into three specialized layers:  
