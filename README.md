@@ -262,8 +262,7 @@ In this repo there is also a firmware file for the Waveshare ESP32-P4-NANO; comp
 
 Below you find a comparison of core aspects of the two boards:
 
-<img width="603" height="355" alt="Screenshot 2026-02-15 at 8 35 09 PM" src="https://github.com/user-attachments/assets/e7a956c5-2ee4-4532-b196-b7a45308ac78" />
-
+<img width="608" height="353" alt="Screenshot 2026-02-15 at 8 36 18 PM" src="https://github.com/user-attachments/assets/584a1a14-6594-4bf9-99e3-1ba10ff71ccb" />
 
 The firmware in the two examples forwards select entities from Froeling to HA; they can easily be changed or extended [see Froeling's Modbus documentation]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf)).
 
