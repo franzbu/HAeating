@@ -1,119 +1,3 @@
-''' Changelog:
-    - rc6: 20260105 
-      'def prepare_dashboard_next_event' has been fixed that it does not stop looping after 20 hops, but after 7 days.
-      Before, it (theoretically) would have shown the wrong end time if a 'party'- schedule consisted of more than 20 blocks (practically never going to happen).
-    - rc7: (20260105) -> HK2 flow temp regulation added, reacts to (1) outside temp and (2) room temp 
-      Key Features of this implementation:
-      (1) Curve Calculation: It uses a standard low-temp slope designed for walls.
-      (1) Load Compensation: It looks at the room with the biggest temperature "gap" and increases the flow temperature to recover faster.
-      (1) The "Flatten" Trick: It writes the same value to both -10 and +10 Fröling registers, ensuring the boiler outputs exactly what AppDaemon calculated.
-      (4) Plaster Safety: The max_flow_limit ensures you never accidentally cook your walls, even if a window is left open in a blizzard.
-    - rc28:
-        - icons 'mdi:fire-alert' and 'mdi:fire' are used for the input_boolean.boost_enabled_<location> in the on state, 
-          depending on whether boost is on or not. If input_boolean.boost_enabled_<location> is off, 
-          'mdi:fire-off' should be used. 
-    - rc30: 
-        - Telegram messages outsourced to globals
-    - rc32: 20260110
-        - baseline_adjustment (flow temp) moved from fixed 0.5 change per degree of outside temp, but variable via input_number.baseline_adjustment
-    - rc34: HeatSupplyManager is only responsible for switching on and off the heat pump and listen to the heating claims. 
-            RoomDemandCalculator, on the other hand, is exclusively responsible for determining the heating claims.
-    - rc36: 
-        - helper schedule apparently changed with HA 2026.01; implemented new way of handling consecutive events
-    - rc37: 20260111
-        - Fröling Außenfühler has been detached, which makes the boiler default to 0 degrees as outside temp.
-          Consequently, setting the flow temp needs only changing one of these values: vorlauftemp at -10, vorlauftemp at 10 degrees:
-          Finalized interpolation logic in HeatSupplyManager. $T_{neg10}$ fixed at 45.0. Added safety clamp for $T_{pos10}$ at 10.0 (boiler minimum). 
-          Flow control achieved via $T_{pos10} = (2 \times Target) - 45$
-    - rc38:
-        - flow temp: Even Years (e.g., 2026): Starts Aug 1. Neg10 is fixed at 45.0; Pos10 is dynamic. 
-          Odd Years (e.g., 2027): Starts Aug 1. Pos10 is fixed at 27.5; Neg10 is dynamic. 
-          Note on the "Season" boundary: Since the switch happens on August 1st, the "2026 season" actually runs from August 1, 2026, to July 31, 2027.
-    - rc39:
-        - added listeners: 
-          In the RoomDemandCalculator Class   
-            input_boolean.boost_enabled_{self.location}: Triggers when you manually toggle the Boost switch for a specific room.
-            input_number.heating_boost_threshold: Triggers when you adjust the temperature difference (e.g., 4°C) required to activate the boost.
-            input_number.heating_boost_factor: Triggers when you change the multiplier that determines how much the flow temperature should increase per degree of deviation.
-          In the HeatSupplyManager Class
-          input_boolean.heating_claim_{loc} (Enhanced with attribute="all"); Previously, this only watched for on/off.
-            input_number.max_flow_temp: Triggers the pump logic if you change the safety ceiling for the water temperature.
-            input_number.heating_boost_factor: (Added here as well) to ensure the pump recalculates its target flow the moment the slider is moved.
-            input_number.heating_boost_threshold: (Added here as well) to ensure the pump syncs its target if the threshold is changed.
-    - rc40: 20260112
-        - minor fixes
-        - base_temp is back (was accidentally removed)
-    - rc41: 20260115
-        - added binary_sensor.boost_status_<location> to 'carry' the former attributes of input_boolean.boost_enabled_<location> (and avoid triggering listener)
-        - added input_number.target_flow_temp to reflect the target flow temp
-        - off-schedule always sets target_temp to 5.0
-    - rc42: 
-        - excluded not standalone room such as bad, wc, and bathroom from boost
-    - rc43: 20260116
-        - moved listeners for attibutes from input_boolean.heating_claim_{loc} to binary_sensor.boost_status_{loc} to avoid unnecessary triggers
-    - rc44: 20260117
-        - improved code for flow temp to be adjusted in steps of 1 degree
-    - rc45: 
-        - switching manually to 'automatik' leads to heating claims being reevaluated
-    - rc46: 20260118
-        - added force_reset to method evaluate_heating_claim
-        - added method check_system_health to HeatSupplyManager + minor adjustments
-        - removed method notify from RoomDemandCalculator
-    - rc47: 20260119
-        - write target flow temp to RAM instead of EEPROM - switched to "Externe Vorgabe" ("External Specification")
-    - rc48:
-        - input_select.heating_mode replaces input_boolean.heating_automation ('Off'), 
-          additional to 'Off' there are these 3 states: Auto, Heating, Party
-    - rc49:
-        - if valves are all < 20%, heating stops
-    - rc50:
-        - switching to "auto" does not reset target temp
-        - change of sensor names in global_config (apps.yaml)
-    - rc51: 20260121
-        - corrected logic where target temp would not be set with schedule turning on/off
-    - rc52:
-        - many fixes for inconsistencies introduced (again...) by changes
-    - rc52_esp32_p4_nano (adapted rc52 for working with esp32_p4_nano)
-    - rc53_esp32_p4_nano: 20260124
-        - enable boost also in party mode (removed "if mode != "Party":" )
-        - By shifting the "Keep-Alive" (heartbeat) responsibility to the ESP, you significantly simplify the 
-        AppDaemon code and increase reliability.
-        The ESP becomes a robust "actuator" that handles the repetitive task of keeping the boiler awake (poking register 48002), 
-        while AppDaemon focuses purely on the high-level logic: "Do we need heat, and at what temperature?"
-        Key Changes:
-        Removed Keep-Alive Loop: AppDaemon no longer runs every 110 seconds. It only runs when parameters change (reactively).
-        Removed Pump Switch: We no longer toggle a specific switch. We simply change the heating_mode to Heating, which tells the ESP to start poking.
-        Variable Sync: We now write the calculated flow temperature to the new holding number entity we created in the YAML.
-    - rc54_esp32: 20260128
-        - fix: heating switches off if active schedule changes even though room temp is in middle ground
-    - rc55_esp32:
-        - added input_number.flow_temp_multi_room_offset to make it possible to increase
-          flow temp when heating more than one room
-    - rc56_esp32: 20260129
-        - per room sun compensation
-    - rc57_esp32: 20250201
-        - helper input_number.hk2_target_flow_temp is now being watched by the ESP. As long as there is a number != 0,
-          the ESP and AppDeamon heartbeat is alive, keeps poking the boilder. Once the value = 0, the EDP stops
-          poking the boiler.
-    - rc58_esp32
-        - newly added input_number.hk2_target_flow_temp: if it is changed, the ESP immediately rewrites register 8001
-          for heating to stop, input_number.hk2_target_flow_temp is set to 0; however, 
-          number.froeling_central_gateway_hk2_flow_setpoint_strategic_target is not; the ESP simply stops poking 
-          the boiler, which leads to heating being stopped after max 2 min.
-    - rc59_esp32: 20260206
-        - removed input_boolean.appdaemon_heartbeat, def send_watchdog_pulse
-    - rc60_esp32: 20260207
-        - solar compensation remodelled
-    - rc61_esp32:
-        - ChatGPT-induced cleanup
-    - rc62_esp32: 20260208
-        - fix: no info shown in binary_sensor.sun_compensation
-        - renamed classes
-    - rc63_esp32: 20260214
-        - new class FroelingHeatingESP incl. writing to input_number.target_flow_temp in HeatSupplyManager and to input_number.hk2_target_flow_temp in FroelingHeatingESP
-    - RC1: common code bases for ESP and Modbus; modules heating_froeling_esp abd heating_froeling_modbus take care of different approaches when 'talking' to Froeling boiler
-'''
-
 
 import hassapi as hass  # type: ignore
 from datetime import datetime, timedelta, time
@@ -477,7 +361,7 @@ class HeatSupplyManager(hass.Hass):
         self.flow_target_helper = "input_number.target_flow_temp"     
         self.mode_select = "input_select.heating_mode"
 
-        self.ext_temp_sensor = self.gl.get_outdoor_temp()
+        self.ext_temp_sensors = self.gl.get_outdoor_sensor_hierarchy()
         self.telegram_target = self.args.get('telegram_id') 
         
         self.debounce_timer = None
@@ -499,7 +383,6 @@ class HeatSupplyManager(hass.Hass):
     def check_system_health(self):
         critical_entities = [
             self.flow_target_helper,
-            self.ext_temp_sensor,
             self.mode_select
         ]
         
@@ -514,6 +397,18 @@ class HeatSupplyManager(hass.Hass):
             state = self.get_state(entity)
             if state in ["unavailable", "unknown", None]:
                 unavailable.append(f"{entity} ({state})")
+
+        # Check temperature sensor hierarchy separately
+        temp_sensor_healthy = False
+        for sensor in self.ext_temp_sensors:
+            if self.entity_exists(sensor):
+                state = self.get_state(sensor)
+                if state not in ["unavailable", "unknown", None]:
+                    temp_sensor_healthy = True
+                    break
+                    
+        if not temp_sensor_healthy:
+            unavailable.append("Any valid outdoor temp sensor")
 
         if missing:
             self.log(f"CRITICAL: Entities missing: {missing}", level="ERROR")
@@ -533,7 +428,9 @@ class HeatSupplyManager(hass.Hass):
             status_sensor = f"binary_sensor.boost_status_{loc}"
             self.listen_state(self.callback_debounced_eval, status_sensor, attribute="all")
             
-        self.listen_state(self.callback_debounced_eval, self.ext_temp_sensor)
+        for sensor in self.ext_temp_sensors:
+            self.listen_state(self.callback_debounced_eval, sensor)
+            
         self.listen_state(self.on_mode_change, self.mode_select)
         
         config_entities = [
@@ -622,8 +519,16 @@ class HeatSupplyManager(hass.Hass):
                 self.call_service("input_select/select_option", entity_id=self.mode_select, option="Auto")
 
         if should_heat:
-            raw_out = self.get_state(self.ext_temp_sensor)
-            out_t = float(raw_out) if raw_out not in [None, "unavailable", "unknown"] else 0.0
+            out_t = 0.0
+            for sensor in self.ext_temp_sensors:
+                raw_out = self.get_state(sensor)
+                if raw_out not in [None, "unavailable", "unknown"]:
+                    try:
+                        out_t = float(raw_out)
+                        break
+                    except ValueError:
+                        pass
+                        
             adj_factor = float(self.get_state("input_number.baseline_adjustment") or 0.4)
             baseline = (-adj_factor * out_t) + float(self.get_state("input_number.heating_baseline_0_deg") or 36.0)
             
