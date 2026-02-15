@@ -1,0 +1,40 @@
+alias: climate_sync_select_bedroom
+description: Syncs climate.bedroom target temp and input_number.target_temp_bedroom
+triggers:
+  - entity_id: climate.bedroom
+    attribute: temperature
+    id: climate_changed
+    trigger: state
+  - entity_id: input_number.target_temp_bedroom
+    id: input_changed
+    trigger: state
+conditions:
+  - condition: template
+    value_template: |
+      {{ (state_attr('climate.bedroom', 'temperature') | float | round(1))
+         != (states('input_number.target_temp_bedroom') | float | round(1)) }}
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: climate_changed
+        sequence:
+          - target:
+              entity_id: input_number.target_temp_bedroom
+            data:
+              value: >-
+                {{ state_attr('climate.bedroom', 'temperature') | float |
+                round(1) }}
+            action: input_number.set_value
+      - conditions:
+          - condition: trigger
+            id: input_changed
+        sequence:
+          - target:
+              entity_id: climate.bedroom
+            data:
+              temperature: >-
+                {{ states('input_number.target_temp_bedroom') | float | round(1)
+                }}
+            action: climate.set_temperature
+mode: restart
