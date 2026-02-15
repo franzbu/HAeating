@@ -180,7 +180,11 @@ The dashboard uses color-coding to signal the current state of the heating deman
 | **Gray** | "No" in `next_event` text | No future heating planned (Schedule **Off**) |
 | **Light Blue** | Else | Standby / Neutral |
 
+---
 
+### Climate Entity
+
+Rather than using the pre-set climate device, this heating automation uses an input_number per room for setting the target temperature. Since thermostats still rely on HA's climate devices, each input_number is synced to its climate device and vice versa in case the target temperature is changed on, for example, the native thermostat app. This two-way sync has been done using HA's automation, an example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
 
 
 ---
