@@ -223,8 +223,8 @@ The ESP is programmed to listen to changes to HA's input_number.target_flow_temp
 
 
 <p float="left">
-  <img src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" height="450" />
-  <img src="https://github.com/user-attachments/assets/ac486b4a-d555-4df0-bb08-0d63469b16ff" height="450" />
+  <img src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" height="300" />
+  <img src="https://github.com/user-attachments/assets/ac486b4a-d555-4df0-bb08-0d63469b16ff" height="300" />
 </p>
 
 The firmware for the ESP WT32-ETH01 can be found in this repository and can easily be adapted to other ESPs.
