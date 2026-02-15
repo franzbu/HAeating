@@ -221,10 +221,11 @@ The example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/b
 
 The ESP is programmed to listen to changes to HA's input_number.target_flow_temp and starts (when value is set to the required flow temp) and stops (when value is set to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work; however, ethernet is recommended for its reliability) and to the Froeling boiler via Modbus.
 
-<img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
-<img width="677" height="638" alt="Screenshot 2026-02-13 at 8 26 48 AM" src="https://github.com/user-attachments/assets/ac486b4a-d555-4df0-bb08-0d63469b16ff" />
-
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" height="450" />
+  <img src="https://github.com/user-attachments/assets/ac486b4a-d555-4df0-bb08-0d63469b16ff" height="450" />
+</p>
 
 The firmware for the ESP WT32-ETH01 can be found in this repository and can easily be adapted to other ESPs.
 
