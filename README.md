@@ -209,7 +209,7 @@ An example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/bl
 
 (b) Using an ESP32
 
-The ESP is programmed to listen to changes to HA's input_number.hk2.target_flow_temp and starts (value changes from 0 to the required flow temp) and stops (value changes to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work) and to the Froeling boiler via Modbus.
+The ESP is programmed to listen to changes to HA's input_number.target_flow_temp and starts (value changes from 0 to the required flow temp) and stops (value changes to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work) and to the Froeling boiler via Modbus.
 
 <img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
@@ -252,6 +252,7 @@ Below you can see a comparison between the two boards:
 
 The firmware in the two examples forwards a range of entities from Froeling to HA; they can easily be changed or extended by consulting [Froeling's Modbus documentation]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf))
 
-[This](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) is the AppDaemon code that connects the heating automation to the ESP, i.e., listens to changes to `input_number.target_flow_temp` and writes `input_number.hk2_target_flow_temp` that in turn triggers the ESP to start and stop heating.
+The ESP directly listens to `input_number.target_flow_temp` and starts and stops heating while also setting the flow temperature. The optional class 
+[FroelingHeatingESP](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) can act as watchdog for the ESP's health and send a warning in case of an issue.
 
 ---
