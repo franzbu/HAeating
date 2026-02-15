@@ -22,10 +22,8 @@ class GlobalSettings(hass.Hass):
     def get_outdoor_sensor_hierarchy(self):
         """Used by HeatSupplyManager for dynamic failover of the main outdoor temp."""
         mapping = self.args.get("temp_outdoor_map", {})
-        priority_keys = ["dallas_outdoor_temp", "outdoor_temp", "froeling_outside_temperature"]
-        
-        # Returns only the sensors actually defined in apps.yaml, keeping the priority order
-        return [mapping[key] for key in priority_keys if key in mapping]
+        # Returns all sensors in the exact order they are listed in apps.yaml
+        return list(mapping.values())
 
     def get_all_rooms(self):
         return self.args.get("temp_room_map", {})
