@@ -17,6 +17,9 @@ The heating automation is split into three specialized layers:
 1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
    
 2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
+
+`HeatSupplyManager` is also responsible for calculating the base flow temperature depending on the outside temperature primarily, and the amount of rooms to heat secondarily (the latter is optional and can be activated via dashboard). For the outside temperature a priority list of sensors can be given in apps.yaml in the section `temp_outdoor_map:`, with descending priority (first highest).
+
    
 3. The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
 
