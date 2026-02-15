@@ -201,13 +201,13 @@ $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{ma
 
 The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This respository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
 
-###(A) Froeling wood boiler, using [GyroGearl00se's HA integration for Froeling](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) `ha_froeling_lambdatronic_modbus`.
+### (A) Froeling wood boiler, using [GyroGearl00se's HA integration for Froeling](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) `ha_froeling_lambdatronic_modbus`.
 
 The example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
-###(B) Froeling wood boiler, using an ESP32
+### (B) Froeling wood boiler, using an ESP32
 
 The ESP is programmed to listen to changes to HA's input_number.target_flow_temp and starts (when value is set to the required flow temp) and stops (when value is set to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work; however, ethernet is recommended for its reliability) and to the Froeling boiler via Modbus.
 
