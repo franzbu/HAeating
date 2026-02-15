@@ -74,7 +74,6 @@ global_config:
     froeling_residual_oxygen_content: 'sensor.froeling_boiler_residual_oxygen_content'
     froeling_return_sensor: 'sensor.froeling_boiler_return_sensor'
     froeling_system_state: 'sensor.froeling_boiler_system_state'
-    froeling_hk2_flow_target_temp_external: 'sensor.froeling_hk2_flow_target_temp'
 
   temp_outdoor_map:
     outdoor_temp: 'sensor.temperature_and_humidity_sensor_outdoor_balkon_temperature'
