@@ -6,22 +6,12 @@
 global_config:
   module: globals
   class: GlobalSettings
-  temp_room_map:
-    stubbe: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature'
-    blueroom: 'sensor.temperature_and_humidity_sensor_blue_room_temperature'
-    kuche: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_kuche_temperature'
-    stibbile: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_stibbile_temperature'
-    livingroom: 'sensor.temperature_and_humidity_sensor_living_room_temperature'
-    kitchen: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_kitchen_temperature'
-    medroom: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_med_temperature'
-    bedroom: 'sensor.temperature_and_humidity_sensor_bedroom_temperature'
-    hallway: 'sensor.temperature_and_humidity_sensor_hallway_temperature'
-    hof: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_hof_temperature'
-    gang: 'sensor.temperature_and_humidity_sensor_gang_mama_temperature'
-    bad: 'sensor.radiator_thermostat_evo_bad_temperature'
-    wc: 'sensor.radiator_thermostat_evo_wc_temperature'
-    bathroom: 'sensor.radiator_thermostat_evo_bathroom_temperature'
-  
+
+  temp_outdoor_map:
+    outdoor_temp: 'sensor.temperature_and_humidity_sensor_outdoor_balkon_temperature'
+    froeling_outside_temperature: 'sensor.froeling_outside_temperature'
+    garten_temp: 'sensor.temperature_and_humidity_sensor_outdoor_garten_temperature'
+
   heating_map:
     froeling_boiler_1_desired_temperature: 'number.froeling_boiler_1_desired_temperature'
     froeling_boiler_1_pump_control: 'sensor.froeling_boiler_1_pump_control'
@@ -64,7 +54,6 @@ global_config:
     froeling_max_buffer_temperature_below_when_solar_charging: 'number.froeling_maximum_buffer_temperature_below_when_solar_charging'
     froeling_operating_hours: 'sensor.froeling_operating_hours'
     froeling_operating_hours_in_fire_maintenance: 'sensor.froeling_operating_hours_in_fire_maintenance'
-    froeling_outside_temperature: 'sensor.froeling_outside_temperature'
     froeling_oxygen_controller: 'sensor.froeling_oxygen_controller'
     froeling_primary_air: 'sensor.froeling_primary_air'
     froeling_remaining_heating_hours_until_ash_emptying_warning: 'sensor.froeling_remaining_heating_hours_until_ash_emptying_warning'
@@ -73,171 +62,6 @@ global_config:
     froeling_solar_sensor_buffer_bottom: 'sensor.froeling_solar_sensor_buffer_bottom'
     froeling_solar_sensor_buffer_top: 'sensor.froeling_solar_sensor_buffer_top'
     froeling_system_state: 'sensor.froeling_system_state'
-
-  temp_outdoor_map:
-    outdoor_temp: 'sensor.temperature_and_humidity_sensor_outdoor_balkon_temperature'
-    garten_temp: 'sensor.temperature_and_humidity_sensor_outdoor_garten_temperature'
-
-  energy_map:
-    main_meter: 'sensor.goe_904101_cec_0_0'
-    ev_charger: 'sensor.goe_240930_eto'
-    tesla_added: 'sensor.tesla_energy_added'
-
-  car_map:
-    tracker: 'device_tracker.tesla_location_tracker'
-    charger_plugged: 'binary_sensor.goe_240930_car_0'
-
-  garage_map:
-    door_state: 'binary_sensor.shelly1minig3_543204694e60_input_0_input'
-    door_switch: 'input_boolean.garage_door'
-    relay: 'switch.shelly1minig3_543204694e60_switch_0'
-    autoclose_toggle: 'input_boolean.garage_autoclose'
-
-  lock_map:
-    nuki_lock: 'lock.smart_lock_ultra'
-    lock_switch: 'input_boolean.front_door'
-
-  system_map:
-    last_update_tracker: 'input_text.goecontroller_last_update'
-    regular_shutdown: 'input_boolean.regular_shutdown'
-    appdaemon_running: 'input_boolean.appdaemon_running'
-
-  valve_map:
-    valve_stubbe: 'sensor.heating_circuit_5_stubbe_valve_position'
-    valve_blueroom: 'sensor.heating_circuit_11_blueroom_valve_position'
-    valve_stibbile: 'sensor.heating_circuit_1_stibbile_valve_position'
-    valve_kuche: 'sensor.heating_circuit_7_kuche_valve_position'
-    valve_bedroom: 'sensor.heating_circuit_3_bedroom_valve_position'
-    valve_medroom: 'sensor.heating_circuit_4_med_valve_position'
-    valve_livingroom: 'sensor.heating_circuit_9_living_room_valve_position'
-    valve_kitchen: 'sensor.heating_circuit_12_kitchen_valve_position'
-    valve_hallway: 'sensor.heating_circuit_9_hallway_valve_position'
-    valve_gang: 'sensor.heating_circuit_11_gang_valve_position'
-    valve_hof: 'sensor.heating_circuit_5_hof_ost_valve_position'
-
-
-# ==========================================
-# HEATING SYSTEM APPS
-# ==========================================
-heating_pump_control:
-  module: heating_automation
-  class: HeatSupplyManager
-  telegram_id: 79867494
-  dependencies: # also used for list of rooms that are NOT standalone (only bad, wc, and bathroom are)
-    - global_config
-    - heating_stubbe
-    - heating_blueroom
-    - heating_kuche
-    - heating_stibbile
-    - heating_livingroom
-    - heating_kitchen
-    - heating_medroom
-    - heating_bedroom
-    - heating_hallway
-    - heating_hof
-    - heating_gang
-
-heating_froeling_modbus:
-  module: heating_froeling_modbus
-  class: FroelingHeatingModbus
-  telegram_id: 79867494
-  dependencies:
-    - global_config
-    - heating_pump_control
-
-# Standard Rooms (Trigger the pump)
-heating_stubbe:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_blueroom:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_kuche:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_stibbile:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_livingroom:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_kitchen:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_medroom:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_bedroom:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_hallway:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_hof:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-heating_gang:
-  module: heating_automation
-  class: RoomDemandCalculator
-  solar_activation_temp: 20
-  solar_peak_temp: 35
-  dependencies: [global_config]
-
-# Standalone Rooms (no pump trigger)
-heating_bad:
-  module: heating_automation
-  class: RoomDemandCalculator
-  dependencies: [global_config]
-
-heating_wc:
-  module: heating_automation
-  class: RoomDemandCalculator
-  dependencies: [global_config]
-
-heating_bathroom:
-  module: heating_automation
-  class: RoomDemandCalculator
-  dependencies: [global_config]
 
 '''
 import hassapi as hass  # type: ignore
