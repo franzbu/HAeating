@@ -18,9 +18,6 @@ The heating automation is split into three specialized layers:
    
 2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
 
-`HeatSupplyManager` is also responsible for calculating the base flow temperature depending on the outside temperature primarily, and the amount of rooms to heat secondarily (the latter is optional and can be activated via dashboard). For the outside temperature a priority list of sensors can be given in apps.yaml in the section `temp_outdoor_map:`, with descending priority (first highest).
-
-   
 3. The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
 
 ---
@@ -202,6 +199,12 @@ $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{ma
 * **Adjustment:** The "slope" of the curve.
 * **Multi-room Offset:** For every additional room asking for heat, the flow temperature is nudged higher to account for increased thermal load.
 
+
+`HeatSupplyManager` is responsible for calculating the base flow temperature depending on the outside temperature primarily, and the amount of rooms to heat secondarily (the latter is optional and can be activated via dashboard).
+
+The outside temperature sensor can have one or more backup sensors, just in case your friendly squirrel chews through the dallas sensor cable or the battery runs out of your Homematic outdoor temperature sensor.
+
+In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be listed with descending priority (first is used first). The list is dynamic, i.e., should a sensor with a higher priority start delivering valid data, AppData is picking that up and switching back.
 
 ---
 ## 3. Connection to Heating Hardware
