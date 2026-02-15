@@ -3,9 +3,9 @@
 
 # 🌡️ Home Assistant Heating
 
-This repository contains a heating control system built for **Home Assistant** with the app (add-on) **AppDaemon**.
+This repository contains a heating control system built with **AppDaemon** (Python) for **Home Assistant**.
 
-Why AppDaemon? Well, AppDaemon has been chosen for its ability for using Python virtually without restrictions (other than PyScript), including its ability to create (multiple) instances. This makes it possible to create an instance of RoomDemandCalculator for each room to be heated, allowing for efficient and straightforward code. 
+Why AppDaemon? AppDaemon has been chosen for its ability to use Python without restrictions (other than PyScript), including the possibility of creating instances of classes. This makes it possible to create an instance of RoomDemandCalculator for each room, allowing for efficient and straightforward code. 
 
 ## 🛠 System Architecture
 The heating automation is split into three specialized layers:  
@@ -16,9 +16,9 @@ The heating automation is split into three specialized layers:
 
 1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
    
-2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms combined. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp`. which then is to be connected to whatever means of heating your house has; this can be another AppDeamaon class controlling the actual hardware or, as in my case, an ESP32 that pokes a Froeling SP Dual (see further down).
+2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
    
-3. The hardware interface "listens" to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. When `input_number.target_flow_temp` is set to `0`, the hardware interface stops heating.
+3. The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
 
 ---
 
@@ -184,7 +184,7 @@ The dashboard uses color-coding to signal the current state of the heating deman
 
 ## 2. 🚂 Central Control (`HeatSupplyManager`)
 
-The central controller monitors all `heating_claim_...` entities. If at least one room is claiming heat, heating starts.
+The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated.
 
 ### Dynamic Flow Temperature (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
@@ -199,30 +199,30 @@ $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{ma
 ---
 ## 3. Connection to Heating Hardware
 
-The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature (not 0); it signals no heating demand if it is set to 0. This respository contains two examples how this can be used. 
+The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This respository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
 
-(a) Using [GyroGearl00se's HA integration for Froeling](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) `ha_froeling_lambdatronic_modbus`.
+###(A) Froeling wood boiler, using [GyroGearl00se's HA integration for Froeling](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) `ha_froeling_lambdatronic_modbus`.
 
-An example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
+The example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
-(b) Using an ESP32
+###(B) Froeling wood boiler, using an ESP32
 
-The ESP is programmed to listen to changes to HA's input_number.target_flow_temp and starts (value changes from 0 to the required flow temp) and stops (value changes to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work) and to the Froeling boiler via Modbus.
+The ESP is programmed to listen to changes to HA's input_number.target_flow_temp and starts (when value is set to the required flow temp) and stops (when value is set to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work; however, ethernet is recommended for its reliability) and to the Froeling boiler via Modbus.
 
 <img width="698" height="478" alt="Screenshot 2026-02-07 at 10 57 21 AM" src="https://github.com/user-attachments/assets/18c4d56d-482e-4042-8cbd-f8fe2cbbbe51" />
 
 <img width="677" height="638" alt="Screenshot 2026-02-13 at 8 26 48 AM" src="https://github.com/user-attachments/assets/ac486b4a-d555-4df0-bb08-0d63469b16ff" />
 
 
-The firmware for the ESP WT32-ETH01 can be found in this repository and can easily be adapted to quite every ESP; however, for reliability reasons, it is recommended to use one with ethernet connection.
+The firmware for the ESP WT32-ETH01 can be found in this repository and can easily be adapted to other ESPs.
 
 To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is needed; I have chosen the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter.
 
 <img width="698" height="491" alt="Screenshot 2026-02-07 at 10 56 14 AM" src="https://github.com/user-attachments/assets/7e730be2-fc2a-40d4-a25d-f43063d35c0e" />
 
-Additionally, the ESP's firmware can be extended with the additional ability to work independently from HA in a so called Master mode, to which it switches if the connection to HA breaks down, e.g., during a reboot. It then calculates the heating flow temperature according to the settings in its own web interface (in case heating was on when the connection got disrupted heating continues for 20 minutes with the last set flow temperature) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased (or decreased in case of a negative value) flow temperature; this can be used when the delta between room temp and target temp is bigger, for example, in the morning)
+Additionally, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during a reboot. It then calculates the heating flow temperature according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set flow temperature) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased (or decreased in case of a negative value) flow temperature; this can be used when the delta between room temp and target temp is bigger, for example, in the morning)
 
 <img width="653" height="807" alt="Screenshot 2026-02-13 at 8 28 01 AM" src="https://github.com/user-attachments/assets/3ecd87ce-e2d9-42af-9af1-ad816feae8c1" />
 
