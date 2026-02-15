@@ -251,7 +251,7 @@ Other than that, the ESP makes the boiler smart in the sense that its entities c
 
 In this repo there is also a firmware file for the Waveshare ESP32-P4-NANO; compiling requires ESPHome 2026.2.0 or newer.
 
-<img width="319" height="329" alt="Screenshot 2026-02-13 at 8 20 30 AM" src="https://github.com/user-attachments/assets/29b461ea-b1f1-4f5a-834e-1a129d0c9ae3" />
+<img width="319" height="409" alt="Screenshot 2026-02-13 at 8 20 30 AM" src="https://github.com/user-attachments/assets/29b461ea-b1f1-4f5a-834e-1a129d0c9ae3" />
 
 
 <img width="509" height="409" alt="Screenshot 2026-02-13 at 8 23 19 AM" src="https://github.com/user-attachments/assets/b3757574-4caf-4d44-88d6-aee97cdbc305" />
