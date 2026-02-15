@@ -1,4 +1,5 @@
-sphome:
+
+esphome:
   name: froeling
   friendly_name: "Froeling"
   
@@ -15,7 +16,7 @@ sphome:
 # dallas: DS18B20 on GPIO54 (Right Header)
 one_wire:
   - platform: gpio
-    pin: 54  # "ignore_pin_validation_error" removed
+    pin: 47  # "ignore_pin_validation_error" removed
 
 esp32:
   board: esp32-p4-evboard
@@ -746,14 +747,29 @@ sensor:
     internal: true
 
   - platform: dallas_temp
-    name: "Outside Temp"
+    name: "Temp Outside"
     id: dallas_outside_temp
-    address: 0xa6000000b3211a28 
+    address: 0xe3000000b318b828  
     update_interval: 60s
 
   - platform: dallas_temp
-    name: "Room Temp"
-    address: 0xe3000000b318b828 
+    name: "Temp Heating Room"
+    address: 0xa6000000b3211a28
+    update_interval: 60s
+
+  - platform: dallas_temp
+    name: "Temp Pellets Room"
+    address: 0xc6000000b2f2a128 
+    update_interval: 60s
+
+  - platform: dallas_temp
+    name: "Temp Mochkommo"
+    address: 0x0a000000b2ca7728 
+    update_interval: 60s
+
+  - platform: dallas_temp
+    name: "Temp HK2 Flow Return"
+    address: 0x34000000b2c61328 
     update_interval: 60s
 
 # ----------------------------------------------------------------------
