@@ -1,11 +1,4 @@
-# ----------------------------------------------------------------------
-# !!! IMPORTANT REQUIREMENT !!!
-# This firmware requires ESPHome 2026.2.0 or newer.
-# Native support for the ESP32-P4 was introduced in this version.
-# Older versions will fail to compile the board definition.
-# ----------------------------------------------------------------------
-
-esphome:
+sphome:
   name: froeling
   friendly_name: "Froeling"
   
@@ -126,11 +119,6 @@ api:
 # 3. SCRIPTS
 # ----------------------------------------------------------------------
 script:
-  - id: ha_offline_shutdown_sequence
-    mode: restart
-    then:
-      - logger.log: "Logic Lost. ESP Reverting to Master Schedule."
-
   - id: calculate_internal_schedule
     mode: restart
     then:
@@ -409,7 +397,7 @@ interval:
 sensor:
   - platform: homeassistant
     id: ha_target_flow_helper
-    entity_id: input_number.hk2_target_flow_temp
+    entity_id: input_number.target_flow_temp
     internal: true
     on_value:
       then:
