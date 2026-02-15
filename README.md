@@ -261,7 +261,7 @@ Below you can see a comparison between the two boards:
 
 <img width="601" height="370" alt="Screenshot 2026-02-13 at 8 22 33 AM" src="https://github.com/user-attachments/assets/f2ddd4d1-315d-4c23-8830-8878a39c7a49" />
 
-The firmware in the two examples forwards a range of entities from Froeling to HA; they can easily be changed or extended by consulting [Froeling's Modbus documentation]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf))
+The firmware in the two examples forwards select entities from Froeling to HA; they can easily be changed or extended [see Froeling's Modbus documentation]([https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus](https://github.com/franzbu/HomeAssistantHeating/blob/main/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf)).
 
 The ESP directly listens to `input_number.target_flow_temp` and starts and stops heating while also setting the flow temperature. The optional class 
 [FroelingHeatingESP](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) can act as watchdog for the ESP's health and send a warning in case of an issue.
