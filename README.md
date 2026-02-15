@@ -204,7 +204,7 @@ $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{ma
 
 The outside temperature sensor can have one or more backup sensors, just in case your friendly squirrel chews through the dallas sensor cable or the battery runs out of your Homematic outdoor temperature sensor.
 
-In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be listed with descending priority (first is used first). The list is dynamic, i.e., should a sensor with a higher priority start delivering valid data, AppData is picking that up and switching back.
+In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be listed with descending priority (first is used first). The list is dynamic, i.e., should a sensor with a higher priority start delivering valid data, AppDaemon is picking that up and switching back.
 
 ---
 ## 3. Connection to Heating Hardware
