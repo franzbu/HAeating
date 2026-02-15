@@ -226,7 +226,7 @@ Additionally, the ESP's firmware can be extended with the additional ability to 
 
 <img width="653" height="807" alt="Screenshot 2026-02-13 at 8 28 01 AM" src="https://github.com/user-attachments/assets/3ecd87ce-e2d9-42af-9af1-ad816feae8c1" />
 
-As can be seen in the screenshot, the first seven slots are for the heating schedule in Master mode (`ESP Status`), i.e., in case the ESP is disconnected from Home Assistant. `AppDaemon Status`, `ESP HA API Status`, and `ESP Modbus Status` show whether AppDaemon, Home Assistant, and the boiler are connected. 
+As can be seen in the screenshot, the first seven slots are for the heating schedule in Master mode (`ESP Status`), i.e., in case the ESP is disconnected from Home Assistant. `AppDaemon Status`, `ESP HA API Status`, and `ESP Modbus Status` show whether AppDaemon, Home Assistant, and the boiler are connected. `AppDaemon Status` is determined by the state of `input_boolean.appdaemon_running`, the logic of which can be found [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/appdaemon_watchdog.py).
 
 `HK2 Enabled` signalls that heating circuit 2 is potentially activated; however, a value of not 0 in `HK2 Flow Target Temp (ESP)` activates heating, which is then reflected in `Heating On`.
 
