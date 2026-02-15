@@ -1,4 +1,16 @@
 
+''' Manual
+FroelingHeatingESP class is a watchdog and notification system.
+
+Its entire existence is waiting for binary_sensor.froeling_modbus_status to change so 
+it can fire off a Telegram message.
+
+HeatSupplyManager does all the heavy lifting for the mathematical logic, the physical ESP32 handles 
+all of the hardware-level fail-safes, and this AppDaemon class just sits in the background 
+keeping an eye on the communication health.
+
+'''
+
 ''' apps.yaml
 # ==========================================
 # GLOBAL CONFIGURATION
@@ -225,7 +237,6 @@ class FroelingHeatingESP(hass.Hass):
         self.gl = self.get_app("global_config")
         self.telegram_target = self.args.get('telegram_id')
         self.target_temp_helper = "input_number.target_flow_temp"
-        self.boiler_target_helper = "input_number.hk2_target_flow_temp"
         self.modbus_sensor = "binary_sensor.froeling_modbus_status"
         
         self.startup_timer = None
@@ -238,40 +249,21 @@ class FroelingHeatingESP(hass.Hass):
         self.boot_up()
 
     def check_system_health(self):
-        # We only block on the presence of the Helpers now.
-        # We don't block on the Modbus Status being 'on' anymore.
-        critical_entities = [self.target_temp_helper, self.boiler_target_helper]
-        
-        for entity in critical_entities:
-            if not self.entity_exists(entity) or self.get_state(entity) in ["unavailable", "unknown", None]:
-                self.log(f"Waiting for {entity}...", level="WARNING")
-                return False
+        # Only block on the presence of the main target helper now
+        if not self.entity_exists(self.target_temp_helper) or self.get_state(self.target_temp_helper) in ["unavailable", "unknown", None]:
+            self.log(f"Waiting for {self.target_temp_helper}...", level="WARNING")
+            return False
         return True
 
     def boot_up(self):
-        self.log("Froeling ESP Interface Booted.")
+        self.log("Froeling ESP Interface Booted. Modbus watchdog active.")
         
-        # Listen for internal target changes
-        self.listen_state(self.on_target_flow_temp_change, self.target_temp_helper)
-        
-        # Monitor Modbus health (now always active regardless of initial state)
+        # Monitor Modbus health (always active regardless of initial state)
         self.listen_state(self.on_modbus_status_change, self.modbus_sensor)
         
         # Initial check in case it's already down at boot
         if self.get_state(self.modbus_sensor) == "off":
             self.on_modbus_status_change(self.modbus_sensor, None, None, "off", None)
-
-    def on_target_flow_temp_change(self, entity, attribute, old, new, args):
-        if new in [None, "unavailable", "unknown"]:
-            return
-            
-        # Optional: Only forward if Modbus is actually healthy
-        if self.get_state(self.modbus_sensor) == "on":
-            self.call_service("input_number/set_value", 
-                              entity_id=self.boiler_target_helper, 
-                              value=new)
-        else:
-            self.log(f"Suppressed target update to {new}°C - Modbus is Down", level="WARNING")
 
     def on_modbus_status_change(self, entity, attribute, old, new, args):
         if new == "off":
