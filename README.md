@@ -22,7 +22,7 @@ The heating automation is split into three specialized layers:
 
 ---
 
-## 1. 🏠 Room-Level Logic (`RoomDemandCalculator`)
+## 1. Room-Level Logic (`RoomDemandCalculator`)
 
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
