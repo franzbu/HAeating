@@ -1,7 +1,7 @@
 
 
 
-# 🌡️ Home Assistant Heating
+# Home Assistant Heating
 
 This repository contains a heating control system built with **AppDaemon** (Python) for **Home Assistant**.
 
@@ -105,7 +105,7 @@ These settings control the overall behavior of the central heating pump and flow
 
 ---
 
-### 🏠 Individual Room Settings
+### Individual Room Settings
 
 Each room is managed via a dedicated dashboard view containing the following data points:
 
@@ -192,7 +192,7 @@ Rather than using the pre-set climate device, this heating automation uses an in
 
 ---
 
-## 2. 🚂 Central Control (`HeatSupplyManager`)
+## 2. Central Control (`HeatSupplyManager`)
 
 The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated.
 
