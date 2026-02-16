@@ -1,9 +1,8 @@
 
 ''' Manual
-FroelingHeatingESP class is a watchdog and notification system.
-
-Its entire existence is waiting for binary_sensor.froeling_modbus_status to change so 
-it can fire off a Telegram message.
+FroelingHeatingESP class is a watchdog and notification system. Additionally it ascertains that 
+the heating circuit is enabled - a requirement that the setting of the flow temp automatically
+activates heating.
 
 HeatSupplyManager does all the heavy lifting for the mathematical logic, the physical ESP32 handles 
 all of the hardware-level fail-safes, and this AppDaemon class just sits in the background 
@@ -121,11 +120,11 @@ class FroelingHeatingESP(hass.Hass):
         
         # Assuming 'on' or 'ON' is the required state for the select entity
         # Adjust 'ON' to the exact option string used by your Fröling Modbus integration
-        if current_state not in ["on", "ON"]:
-            self.log(f"Heating requested. Switching {self.hk2_pump_control} to ON.", level="INFO")
+        if current_state.lower() != "on":
+            self.log(f"Heating requested. Switching {self.hk2_pump_control} to On.", level="INFO")
             self.call_service("select/select_option", 
                               entity_id=self.hk2_pump_control, 
-                              option="ON")
+                              option="On")
 
     def on_modbus_status_change(self, entity, attribute, old, new, args):
         if new == "off":
