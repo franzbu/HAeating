@@ -28,11 +28,6 @@ class RoomDemandCalculator(hass.Hass):
         self.listen_state(self.callback_temp_sensor, f'input_number.target_temp_{self.location}')
         self.listen_state(self.callback_debounced_refresh, f'input_number.delta_temp_{self.location}')
         self.listen_state(self.callback_temp_sensor, self.sensor_temp)
-        
-        # --- SOLAR CONFIGURATION ---
-        # If missing from apps.yaml, defaults to None (Feature Disabled)
-        self.solar_activation_temp = self.args.get("solar_activation_temp")
-        self.solar_peak_temp = self.args.get("solar_peak_temp")
 
         # SUN COMPENSATION: Listen to Garten Temp and the room-specific helper
         self.garten_temp_sensor = self.gl.get_outdoor_temp("garten_temp")
@@ -69,10 +64,32 @@ class RoomDemandCalculator(hass.Hass):
         if self.delay_timer:
             try: self.cancel_timer(self.delay_timer)
             except: pass
-        self.delay_timer = self.run_in(self.first_evaluation, 1)
+        
+        # Use a longer debounce for schedule transitions to allow attributes to populate
+        delay = 3 if (entity.startswith("schedule.") and new == "on") else 1
+        self.delay_timer = self.run_in(self.first_evaluation, delay)
 
     def first_evaluation(self, kwargs):
         self.delay_timer = None
+
+        curr_sched = self.current_schedule()
+        is_active = self.current_schedule_active()
+        
+        # Get both attributes to determine if the entity is fully loaded
+        sched_temp = self.get_state(curr_sched, attribute='temp')
+        next_event = self.get_state(curr_sched, attribute='next_event')
+
+        # RACE CONDITION CHECK:
+        # We only retry if the schedule is ON but BOTH attributes are missing.
+        # If next_event exists but temp doesn't, it's a valid "No Temp" schedule.
+        if is_active and (sched_temp is None) and (next_event is None or next_event == "None"):
+            retry_count = kwargs.get("retry_count", 0)
+            if retry_count < 2:
+                self.log(f"⚠️ {curr_sched} is active but appears unloaded. Retrying in 5s...")
+                self.run_in(self.first_evaluation, 5, retry_count=retry_count + 1)
+                return
+
+        # If we have data, or if it's a valid "No Temp" block, proceed to logic
         self.refresh_logic(force_reset=False)
         self.prepare_dashboard_next_event()
 
@@ -191,10 +208,8 @@ class RoomDemandCalculator(hass.Hass):
     # SOLAR COMPENSATION LOGIC
     # ==============================================================================================
     def get_sun_offset(self):
-        """Pure Query: Calculates offset based on greenhouse heat."""
-        if self.solar_activation_temp is None or self.solar_peak_temp is None:
-            return 0.0
-
+        """Pure Query: Calculates offset based on greenhouse heat with baked-in limits."""
+        # Check if the feature helper exists
         if not self.entity_exists(self.sun_comp_helper):
             return 0.0
             
@@ -208,8 +223,10 @@ class RoomDemandCalculator(hass.Hass):
                 return 0.0
             g_temp = float(raw_g)
             
-            start_t = float(self.solar_activation_temp)
-            peak_t = float(self.solar_peak_temp)
+            # --- BAKED IN VALUES ---
+            start_t = 20.0
+            peak_t = 35.0
+            # -----------------------
 
             if g_temp <= start_t:
                 factor = 0.0
@@ -345,7 +362,6 @@ class RoomDemandCalculator(hass.Hass):
         if date_obj.date() == now.date(): return date_obj.strftime('%H:%M.')
         elif date_obj.date() == (now + timedelta(days=1)).date(): return date_obj.strftime('%H:%M tomorrow.')
         else: return date_obj.strftime('%H:%M on %d.%m.')
-
         
 # ==================================================================================================
 # HEAT SUPPLY MANAGER
