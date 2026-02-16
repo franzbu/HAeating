@@ -31,6 +31,11 @@ If a room has high solar gain (e.g., south-facing windows), the automation proac
 * **Activation:** Triggers when outdoor temperature exceeds a defined threshold.
 * **Dynamic Offset:** As outdoor heat increases, a percentage of the compensation factor is subtracted from the target.
 
+#### How the Calculation Works
+The logic uses the range between 20.0°C (start) and 35.0°C (peak) to decide how much of that 1–5 degree "discount" to apply:
+Below 20°C Garden Temp: The offset is 0.0. The room stays at the full target temp. At 35°C Garden Temp: The offset is 100% of the helper value. If the helper is set to 3.0, the target temp drops by 3.0°C. In between (e.g., 27.5°C): The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
+
+
 ### 🔥 Boost Mode
 If a room temperature is significantly below the target (e.g., after a window was left open), the room calculates a **Boost Factor**. This tells the boiler to provide much hotter water temporarily to recover the room temperature as fast as possible.
 
