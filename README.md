@@ -27,7 +27,8 @@ The heating automation is split into three specialized layers:
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
 ### ☀️ Solar Compensation
-If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside.
+If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comport level.
+
 * **Activation:** Triggers when outdoor temperature exceeds a defined threshold.
 * **Dynamic Offset:** As outdoor heat increases, a percentage of the compensation factor is subtracted from the target.
 
