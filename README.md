@@ -242,18 +242,24 @@ To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is n
 
 Additionally, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during a reboot. It then calculates the heating flow temperature according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set flow temperature) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased (or decreased in case of a negative value) flow temperature; this can be used when the delta between room temp and target temp is bigger, for example, in the morning)
 
-<img width="624" height="957" alt="Screenshot 2026-02-15 at 2 23 49 PM" src="https://github.com/user-attachments/assets/b57cb311-d3b0-4d7c-afa3-bd22672a6792" />
+<img width="622" height="882" alt="Screenshot 2026-02-16 at 11 41 33 AM" src="https://github.com/user-attachments/assets/edfd262e-ddd3-4d51-8b6a-a1eb00d2acb4" />
 
 
-As can be seen in the screenshot, the first seven slots are for the heating schedule in Master mode (`ESP Status`), i.e., in case the ESP is disconnected from Home Assistant. `AppDaemon Status`, `ESP HA API Status`, and `ESP Modbus Status` show whether AppDaemon, Home Assistant, and the boiler are connected. `AppDaemon Status` is determined by the state of `input_boolean.appdaemon_running`, the logic of which can be found [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/appdaemon_watchdog.py).
+As can be seen, the first seven slots are for the heating schedule in Master mode (`ESP Status`), i.e., in case the ESP is disconnected from Home Assistant. 
 
-`HK2 Enabled` signalls that heating circuit 2 is potentially activated; however, a value of not 0 in `HK2 Flow Target Temp (ESP)` activates heating, which is then reflected in `Heating On`.
+`AppDaemon Status`, `ESP HA API Status`, and `ESP Modbus Status` show whether AppDaemon, Home Assistant, and the boiler are connected. `AppDaemon Status` is determined by the state of `input_boolean.appdaemon_running`, the logic of which can be found [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/appdaemon_watchdog.py).
+
+`HK2 Enabled` signals that heating circuit 2 is potentially activated; however, a value of not 0 in `HK2 Flow Target Temp (ESP)` activates heating, which is then reflected in `Heating On`.
 
 `HK2 Flow Temp +10 (Master)` and `HK2 Flow Temp -10 (Master)` are used in `Master` mode to determine the flow temp, which is based on the boiler's outside temperature sensor, unless `Outside Temp`, which is based on a dallas temperature sensor connected to GPIO 54, is in place, then the latters's value is used. `Room Temp` is for an additional dallas temperature sensor, also connected to GPIO 54 (and distinguished by its address -> both need to be changed to the ones of the dallas sensors used).
 
 `Time (Manual Override)`, as already mentioned, allows for the manual adjustment of date and time in case of missing internet connection.
 
-One of the reasons for using an ESP is Froeling having made it possible to write the target flow temperature into the RAM of the boiler, avoiding having to write to EEPROM registers, the lifetime of which is limited. However, this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated within two minutes, otherwise heating stops, and the ESP automatically takes care of that - as long as the value in `input_number.target_flow_temp` is not 0, the ESP keeps poking the boiler.
+Additionally, there are five temperature senors (Dallas DS18B20) connected through 'one_wire' for outside temperature, room temperature and additional heating and solar flow temperatures.
+
+---
+
+One of the reasons for using an ESP is the ability to write the target flow temperature into the RAM of the boiler, avoiding having to write to EEPROM registers, the lifetime of which is limited. However, this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated within two minutes, otherwise heating stops, and the ESP automatically takes care of that - as long as the value in `input_number.target_flow_temp` is not 0, the ESP keeps poking the boiler.
 
 Other than that, the ESP makes the boiler smart in the sense that its entities can be directly integrated into Home Assistant via ESPHome (already integrated into HA, so all entities the ESP is set up for are instantaneously writable and/or readable in HA). However, if that is the only thing one wants, then [GyroGearl00se's HA integration](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) might be the preferrable option.
 
