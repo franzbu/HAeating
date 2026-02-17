@@ -108,6 +108,8 @@ input_number.base_temp_stubbe: 5-30 (0.5 steps): this is the temp target_temp is
 input_number.heat_temp_stubbe: 5-30 (0.5 steps): this is the temp target_temp is set to throughout heating periods (if now overwritten by ‘temp’ in a schedule’s attribute of that specific heating period)
 
 input_text.next_event_stubbe: for showing schedule’s attribute ‘next_event’ on dashboard
+
+optional and only for rooms with sun compensation: input_number.sun_compensation_stubbe: 1-5 (1 steps)
 ```
 
 helpers to create once for heating automation as a whole:
