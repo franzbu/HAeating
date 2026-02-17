@@ -12,9 +12,6 @@ First things first: here is what your heating automation might look like (and ye
 This is a screenshot of a possible HA dashboard with two example rooms (the four sections with the diagrams are hardware-specific and might and probably will look entirely different on your dashboard). 
 
 
-
-
-
 If heating is set to `Off` (top left), it stays off; if it is set to `Party`, it stays on. However, it is the two options in between, `Auto` and `Heating`, where the magic happens.
 
 The one goal of this heating automation has been 'set up and forget'. The house ideally just heats itself to the desired temperature, taking into consideration premeditated factors such as personal circumstances (work, holiday at home, gone), purpose of room, day of week, time of day, or time of year. Even factors such as the current sun exposure can play a role and can optionally be taken into consideratoin by this heating automation.
@@ -24,7 +21,7 @@ The present heating automation works regardless of which kind of heating system 
 This heating control system has been built with **AppDaemon** (Python). Why AppDaemon, you may ask. Well, AppDaemon is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency. 
 
 ## 🛠 System Architecture
-The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating out there. Layer 3 is all about how to address the existing heating hardware and will have to be adjusted - two examples are given.
+The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating, or cooling for that matter, out there. Layer 3 is all about how to address the existing heating hardware and will have to be adjusted - two examples are given.
 
 (1) **Layer 1: Room Level:** RoomDemandCalculator: (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
   
