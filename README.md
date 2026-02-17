@@ -362,4 +362,4 @@ The ESP directly listens to `input_number.target_flow_temp` and starts and stops
 
 ---
 
-For this to work, Modbus access needs to be enabled using the Froeling boiler's touchscreen by following [these instructions](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus#-enabling-modbus-rtu-on-the-boiler).
+For this to work, Modbus access needs to be enabled using the Froeling boiler's touchscreen by following the instructions regarding ['Enabling Modbus RTU on the Boiler'](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus#-enabling-modbus-rtu-on-the-boiler).
