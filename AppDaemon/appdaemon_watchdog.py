@@ -1,9 +1,5 @@
-'''
-    20260101
-
-    AppDaemon watchdog
-
-    combines forces with automation 'AppDaemon Watchdog'
+ '''
+    Unites forces with automation 'AppDaemon Watchdog'
 
     Regular shutdown/restart of AppDaemon: 'input_boolean.appdaemon_running' is switched off if automation (named "AppDaemon Watchdog") 
     is missing 'pulse' initiated by this module (as attribute to input_boolean.appdaemon_running). 
