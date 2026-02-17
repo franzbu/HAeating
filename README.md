@@ -179,7 +179,7 @@ Additionally, the schedule can be set by entering start and end time.
 
 <img width="335" height="438" alt="Screenshot 2026-02-17 at 10 04 11 PM" src="https://github.com/user-attachments/assets/906f36f3-c262-435f-849c-cddf352aed9b" />
 
-As can be seen in the screenshot above, each heating period has the option of setting a target temperature that is different from the one that is general one that is pre-set for each room; by, for example, adding `temp: 22` to `Additional data`, the target temperature for this specific heating period will be `22`°C, regardless of what the general target temp for this room is. 
+As can be seen in the screenshot above, each heating period has the option of setting a target temperature that is different from the one that is pre-set for each room; by, for example, adding `temp: 22` to `Additional data`, the target temperature for this specific heating period will be `22`°C, regardless of what the general target temp for this room is. 
 
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same compfort level.
