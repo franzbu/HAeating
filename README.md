@@ -83,23 +83,10 @@ input_number.hk2_target_flow_temp
 
 ---
 
-<img width="369" height="274" alt="Screenshot 2026-02-07 at 10 32 44 AM" src="https://github.com/user-attachments/assets/7badd294-1c8c-4a2e-b169-c7a4e3e969bf" />
+## Layer 1: Room-Level Logic (`RoomDemandCalculator`)
 
+Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
-### ⚙️ Main Heating Settings (Global)
-
-These settings control the overall behavior of the central heating pump and flow temperature calculations.
-
-* **Main Switch:** Global toggle to enable or disable the entire heating automation.
-* **Heating Margin:** Defines the stop trigger. Heating stops when `Current Temp >= Target Temp - Heating Margin`.
-* **Cooldown:** Minimum time between switching the heating pump on or off (protects mechanical components from wear).
-* **Claim Duration:** Delay before a dashboard change takes effect (filters out temporary temperature "jitter").
-* **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
-* **Boost Factor:** Determines the flow temperature increase: 
-    * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
-* **Baseline at $0^\circ C$:** The base flow temperature when the outside temperature is exactly $0^\circ C$.
-* **Curve Adjustment:** The factor by which flow temperature is increased or decreased relative to changes in outside temperature.
-* **Max Flow Temp:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
 
 ---
 
@@ -161,12 +148,6 @@ The schedules are the heart of the automation. The system follows the logic of t
 4.  **Temporary:** Short-term adjustments.
 5.  **Off:** Frost protection only (Target set to $5^\circ C$).
 
-
----
-
-## Layer 1: Room-Level Logic (`RoomDemandCalculator`)
-
-Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comport level.
@@ -233,6 +214,29 @@ Rather than using the pre-set climate device, this heating automation uses an in
 ## Layer 2: Central Control (`HeatSupplyManager`)
 
 The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party' (heating stays on)
+
+
+---
+
+<img width="369" height="274" alt="Screenshot 2026-02-07 at 10 32 44 AM" src="https://github.com/user-attachments/assets/7badd294-1c8c-4a2e-b169-c7a4e3e969bf" />
+
+
+### ⚙️ Main Heating Settings (Global)
+
+These settings control the overall behavior of the central heating pump and flow temperature calculations.
+
+* **Main Switch:** Global toggle to enable or disable the entire heating automation.
+* **Heating Margin:** Defines the stop trigger. Heating stops when `Current Temp >= Target Temp - Heating Margin`.
+* **Cooldown:** Minimum time between switching the heating pump on or off (protects mechanical components from wear).
+* **Claim Duration:** Delay before a dashboard change takes effect (filters out temporary temperature "jitter").
+* **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
+* **Boost Factor:** Determines the flow temperature increase: 
+    * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
+* **Baseline at $0^\circ C$:** The base flow temperature when the outside temperature is exactly $0^\circ C$.
+* **Curve Adjustment:** The factor by which flow temperature is increased or decreased relative to changes in outside temperature.
+* **Max Flow Temp:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
+
+---
 
 ### Dynamic Flow Temperature (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
