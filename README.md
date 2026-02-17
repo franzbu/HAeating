@@ -18,16 +18,6 @@ The heating automation is split into three specialized layers; the first two are
 
 ---
 
-### Required Home Assistant Entities
-For the code to function, your Home Assistant instance must have the following entities configured per room:
-
-| Entity Type | Naming Convention |
-| :--- | :--- |
-| `input_boolean` | `heating_claim_{location}` |
-| `input_number` | `target_temp_{location}` |
-| `input_select` | `heating_schedule_{location}` |
-| `schedule` | `standard_{location}`, `holiday_{location}`, etc. |
-
 ### AppDaemon `apps.yaml` Example
 ```yaml
 heating_livingroom:
@@ -52,10 +42,11 @@ In case you are wondering what the listing of the valve states is for, this is d
 
 ---
 
-AppDaemon gets the room names and the names of the HA Helpers based on this config, and for that it is important that the Helpers are created following the naming pattern below.
+AppDaemon gets the room names and the names of the HA Helpers based on this config, and for that it is important that the Helpers are created following the naming pattern in the section below.
 
-### Home Assistant Heating needs the following HA Helpers to be created beforehand
-Helpers to create for each room, replace 'stubbe' with the name of the room:
+### Required Home Assistant Entities
+
+Helpers to create for each room, replace 'stubbe' with the name of each of the rooms:
 ```
 schedule.standard_stubbe
 schedule.holiday_stubbe
