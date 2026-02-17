@@ -24,7 +24,7 @@ The present heating automation works regardless of which kind of heating system 
 This heating control system has been built with **AppDaemon** (Python) for **Home Assistant**. Why AppDaemon, you may ask. Well, AppDaemon is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency. 
 
 ## 🛠 System Architecture
-The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating there is. Layer 3 is all about how to address the existing heating hardware and will have to adjusted - two examples are given.
+The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating there is. Layer 3 is all about how to address the existing heating hardware and will have to be adjusted - two examples are given.
 
 (1) **Layer 1: Room Level:** RoomDemandCalculator: (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
   
