@@ -8,10 +8,11 @@ This repository contains a heating control system built with **AppDaemon** (Pyth
 Why AppDaemon? AppDaemon has been chosen for its ability to code in Python for Home Assistant without restrictions (other than regarding PyScript), including the possibility of creating instances of classes. This makes it possible to create an instance of RoomDemandCalculator for each room, allowing for efficient and straightforward code. 
 
 ## 🛠 System Architecture
-The heating automation is split into three specialized layers:  
-  (1) Room Level: RoomDemandCalculator
-  (2 Central Heating Control: HeatSupplyManager
-  (3) Hardware Interface: connects to the actual hardware, for example, a Froeling SP Dual
+The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating there is. Layer 3 is all about how to address the existing heating hardware and will have to adjusted - two examples are given.
+
+  (1) Layer 1: Room Level: RoomDemandCalculator
+  (2 Layer 2: Central Heating Control: HeatSupplyManager
+  (3) Layer 3: Hardware Interface: connects to the actual hardware, for example, a Froeling SP Dual
 
 
 1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
@@ -22,7 +23,7 @@ The heating automation is split into three specialized layers:
 
 ---
 
-## 1. Room-Level Logic (`RoomDemandCalculator`)
+## Layer 1: Room-Level Logic (`RoomDemandCalculator`)
 
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
@@ -234,7 +235,7 @@ Rather than using the pre-set climate device, this heating automation uses an in
 
 ---
 
-## 2. Central Control (`HeatSupplyManager`)
+## Layer 2: Central Control (`HeatSupplyManager`)
 
 The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated.
 
@@ -255,7 +256,7 @@ The outside temperature sensor can have one or more backup sensors, just in case
 In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be listed with descending priority (first is used first). The list is dynamic, i.e., should a sensor with a higher priority start delivering valid data, AppDaemon is picking that up and switching back.
 
 ---
-## 3. Connection to Heating Hardware
+## Layer 3: Connection to Heating Hardware
 
 The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This respository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
 
