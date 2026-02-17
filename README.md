@@ -35,10 +35,11 @@ heating_pump_control:
   telegram_id: "-1001234536788"
 ```
 
----
 The AppDaemon code relies on a `global_config:` section in [apps.yaml](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/apps.yaml) and the module [globals.py](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/globals.py).
 
 In case you are wondering what the listing of the valve states is for, this is done to prevent the heating circuit pump pushing against closed valves; in case they are all closed (< 20%), heating stops.
+
+Rooms that are only heated passively, i.e., they will never have the heating started but simply benefit from the heating up and running, are not listed in the `dependencies:` section of `heating_pump_control:`. The same, for example, goes for radiators that are heated by gravitational flow (simpy physics instead of circuit pump).
 
 ---
 
