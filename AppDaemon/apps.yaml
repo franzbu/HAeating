@@ -1,4 +1,4 @@
- # ==========================================
+# ==========================================
 # GLOBAL CONFIGURATION
 # ==========================================
 global_config:
@@ -118,18 +118,20 @@ heat_supply_manager:
     - heating_hof
     - heating_gang
 
-#froeling_interface_modbus:
-#  module: heating_froeling_modbus  
-#  class: FroelingHeatingModbus
-#  telegram_id: 79867494
-#  dependencies:
-#    - global_config
-#    - heat_supply_manager  # Ensures it boots after the manager is ready
+froeling_interface_modbus:
+  module: heating_froeling_modbus  
+  class: FroelingHeatingModbus
+  disable: true  # <--- Set to true to turn off, false or remove to turn on
+  telegram_id: 79867494
+  dependencies:
+    - global_config
+    - heat_supply_manager  # Ensures it boots after the manager is ready
 
 # Boiler Interface: Forwards calculation to physical hardware
 froeling_interface:
   module: heating_froeling_esp
   class: FroelingHeatingESP
+  disable: false  # <--- Set to true to turn off, false or remove to turn on
   telegram_id: 79867494
   dependencies:
     - global_config
@@ -206,5 +208,3 @@ heating_bathroom:
   module: heating_automation
   class: RoomDemandCalculator
   dependencies: [global_config]
-
-
