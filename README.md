@@ -7,11 +7,13 @@ First things first: let me show you what your heating automation can look like:
 
 <img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
 
-This is a screenshot of my HA dashboard with two rooms. If heating is set to `Off`, it stays off; if it is set to `Party`, it stays on. However, it is the two possibilities in betweee: `Auto` and `Heating` where the magic starts.
+This is a screenshot of my HA dashboard with two rooms (the four sections with the diagrams are hardware-specific and can be disregaraded - yours might be and look entirely different).
 
-The one goal of this heating automation has been: set up and forget. The house ideally just heats itself to the desired temperature, depending on personal circumstances (work, holiday at home, gone), the room, day of week, time of day, and time of year. Even factors such as the current sun exposure can play a role and can optionally be part of this heating automation.
+If heating is set to `Off` (top left), it stays off; if it is set to `Party`, it stays on. However, it is the two options in between, `Auto` and `Heating`, where the magic happens.
 
-This heating automation works regardless of which kind of heating system is in place. The heating system is divided into three abstraction layers: (1) and (2) need not to be touched, as they calculate the heating demand and the required flow temperature of the heating 'fluid'; (3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from two examples provided farther down).
+The one goal of this heating automation has been 'set up and forget'. The house ideally just heats itself to the desired temperature, taking into consideration premeditated factors such as personal circumstances (work, holiday at home, gone), purpose of room, day of week, time of day, or time of year. Even factors such as the current sun exposure can play a role and can optionally be taken into consideratoin by this heating automation.
+
+The present heating automation works regardless of which kind of heating system is in place; it is divided into three abstraction layers: (1) and (2) need not to be touched, as they calculate the heating demand and the required flow temperature of the heating 'fluid'; (3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, which can be done in various ways such as a HA automation or an ESP.
 
 This heating control system has been built with **AppDaemon** (Python) for **Home Assistant**. Why AppDaemon, you may ask. Well, AppDaemon has is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency. 
 
