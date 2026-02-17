@@ -120,7 +120,7 @@ Each room is managed via dedicated dashboard section containing the following da
 
 Swiping the upper section leads to further settings and information:
 
-| Swiping upper secgtion |
+| Swiping upper section |
 | :--- |
 | <img width="292" src="https://github.com/user-attachments/assets/6e5e54fc-775d-4a4b-8153-d598174724bc" /> |
 | <img width="294" src="https://github.com/user-attachments/assets/58a7a374-33ea-4a6c-8f62-0d0614033cf7" /> |
