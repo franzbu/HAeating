@@ -10,16 +10,12 @@ Why AppDaemon? AppDaemon has been chosen for its ability to code in Python for H
 ## 🛠 System Architecture
 The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating there is. Layer 3 is all about how to address the existing heating hardware and will have to adjusted - two examples are given.
 
-* **Layer 1: Room Level:** RoomDemandCalculator
-* **Layer 2: Central Heating Control:** HeatSupplyManager
-* **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual)
+(1) **Layer 1: Room Level:** RoomDemandCalculator: (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
+  
+(2) **Layer 2: Central Heating Control:** HeatSupplyManager: (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
+  
+(3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
 
-
-1.  **`RoomDemandCalculator` (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
-   
-2.  **`HeatSupplyManager` (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
-
-3. The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
 
 ---
 
