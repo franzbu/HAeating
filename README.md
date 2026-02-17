@@ -9,7 +9,7 @@ First things first: let me show you what your heating automation might look like
 
 This is a screenshot of a possible HA dashboard with two example rooms (the four sections with the diagrams are hardware-specific and might and probably will look entirely different on your dashboard). 
 
-Below a screenshot in dark mode:
+Below a screenshot in dark mode (and yes, the colors carry meaning, for example, once glance suffices to see whether a room is currently heating, in heating demand, or off):
 
 <img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
 
