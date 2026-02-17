@@ -3,9 +3,17 @@
 
 # Home Assistant Heating
 
-This repository contains a heating control system built with **AppDaemon** (Python) for **Home Assistant**.
+First things first: let me show you what your heating automation can look like:
 
-Why AppDaemon? AppDaemon has been chosen for its ability to code in Python for Home Assistant without restrictions (other than regarding PyScript), including the possibility of creating instances of classes. This makes it possible to create an instance of RoomDemandCalculator for each room, allowing for efficient and straightforward code. 
+<img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
+
+This is a screenshot of my HA dashboard with two rooms. If heating is set to `Off`, it stays off; if it is set to `Party`, it stays on. However, it is the two possibilities in betweee: `Auto` and `Heating` where the magic starts.
+
+The one goal of this heating automation has been: set up and forget. The house ideally just heats itself to the desired temperature, depending on personal circumstances (work, holiday at home, gone), the room, day of week, time of day, and time of year. Even factors such as the current sun exposure can play a role and can optionally be part of this heating automation.
+
+This heating automation works regardless of which kind of heating system is in place. The heating system is divided into three abstraction layers: (1) and (2) need not to be touched, as they calculate the heating demand and the required flow temperature of the heating 'fluid'; (3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from two examples provided farther down).
+
+This heating control system has been built with **AppDaemon** (Python) for **Home Assistant**. Why AppDaemon, you may ask. Well, AppDaemon has is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency. 
 
 ## 🛠 System Architecture
 The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating there is. Layer 3 is all about how to address the existing heating hardware and will have to adjusted - two examples are given.
@@ -130,7 +138,11 @@ Swiping the upper section leads to further settings and information:
 
 
 * **Heat Temp:** The default target temperature used during active schedule events if no specific temperature is defined within the schedule itself.
-<img width="377" height="97" alt="Screenshot 2026-02-07 at 10 37 49 AM" src="https://github.com/user-attachments/assets/f8f194f5-165b-42b0-a338-0a6951cd8fb9" /> 
+<img width="377" height="97" alt="Screenshot 2026-02-07 at 10 37 49 AM" src="https://github.com/user-attachments/assets/f8f194f5-165b-42b0-a338-0a6951cd8fb9" />
+
+
+The yaml file for the dashboard for an example room can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/dashboard/dashboard_room.yaml); for its full functionality (long-tap/press on icons and buttons increases/decreases step size), [these HA scripts](https://github.com/franzbu/HomeAssistantHeating/tree/main/HA) can be put in place.
+
 ---
 
 ### 📅 Scheduling System
