@@ -1,0 +1,149 @@
+square: false
+type: grid
+cards:
+  - type: tile
+    entity: input_number.heating_margin
+    name: heating margin
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.heating_margin
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.heating_margin
+    vertical: false
+  - type: tile
+    entity: input_number.heating_claim_duration
+    name: claim duration
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.heating_claim_duration
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.heating_claim_duration
+  - type: tile
+    entity: input_number.heating_boost_threshold
+    name: boost threshold
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.heating_boost_threshold
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.heating_boost_threshold
+  - type: tile
+    entity: input_number.heating_boost_factor
+    name: boost factor
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.heating_boost_factor
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.heating_boost_factor
+  - type: tile
+    entity: input_number.heating_baseline_0_deg
+    name: baseline at 0 °C
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.heating_baseline_0_deg
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.heating_baseline_0_deg
+    vertical: false
+  - type: tile
+    entity: input_number.baseline_adjustment
+    name: baseline adj. per degree
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.baseline_adjustment
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.baseline_adjustment
+    vertical: false
+  - type: tile
+    entity: input_number.max_flow_temp
+    name: max flow temp
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.max_flow_temp
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.max_flow_temp
+    vertical: false
+  - type: tile
+    entity: input_number.flow_temp_multi_room_offset
+    name: offset multi room flow temp
+    tap_action:
+      action: perform-action
+      perform_action: input_number.increment
+      target:
+        entity_id: input_number.flow_temp_multi_room_offset
+    hold_action:
+      action: more-info
+    icon_hold_action:
+      action: more-info
+    icon_tap_action:
+      action: perform-action
+      perform_action: input_number.decrement
+      target:
+        entity_id: input_number.flow_temp_multi_room_offset
+    vertical: false
+    features_position: bottom
+grid_options:
+  columns: 6
+  rows: auto
+columns: 2
