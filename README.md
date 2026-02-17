@@ -41,8 +41,8 @@ heating_livingroom:
   class: RoomDemandCalculator
   dependencies: [global_config]
 
-heating_pump_control:
-  module: heating_pump_control
+heat_supply_manager:
+  module: heating_automation
   class: HeatSupplyManager
   dependencies:
     - global_config
