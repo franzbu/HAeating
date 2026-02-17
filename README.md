@@ -3,15 +3,15 @@
 
 # Home Assistant Heating
 
-First things first: here is what your heating automation might look like:
+First things first: here is what your heating automation might look like (and yes, the colors carry meaning, for example, once glance suffices to see whether a room is currently heating, in heating demand, or off):
 
-<img width="737" height="801" alt="Screenshot 2026-02-17 at 8 32 36 AM" src="https://github.com/user-attachments/assets/9d5c47bb-1a20-4efe-a4a7-a5b65a6dd1ea" />
+
+<img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
+
 
 This is a screenshot of a possible HA dashboard with two example rooms (the four sections with the diagrams are hardware-specific and might and probably will look entirely different on your dashboard). 
 
-Below a screenshot in dark mode (and yes, the colors carry meaning, for example, once glance suffices to see whether a room is currently heating, in heating demand, or off):
 
-<img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
 
 
 
