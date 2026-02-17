@@ -225,7 +225,7 @@ The dashboard uses color-coding to signal the current state of the heating deman
 
 ### Climate Entity
 
-Rather than using the pre-set climate device, this heating automation uses an input_number per room for setting the target temperature. Since thermostats still rely on HA's climate devices, each input_number is synced to its climate device and vice versa in case the target temperature is changed on, for example, the native thermostat app. This two-way sync has been done using HA's automation, an example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
+Rather than using the pre-set climate device, this heating automation uses an input_number per room for setting the target temperature. Since thermostats still rely on HA's climate devices, each input_number is synced to its climate device and vice versa in case the target temperature is changed on, for example, the native thermostat app. This two-way sync has been done using HA's automation, an example can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
 
 
 ---
@@ -283,7 +283,7 @@ Depending on whether you use method (A) or (B) below, make sure to either commen
 
 ### (A) Froeling wood boiler, using [ha_froeling_lambdatronic_modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
 
-An example can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
+An example can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
