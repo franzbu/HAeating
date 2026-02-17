@@ -4,6 +4,7 @@
 # Home Assistant Heating
 
 First things first: let me show you what your heating automation can look like:
+<img width="912" height="695" alt="Screenshot 2026-02-17 at 8 28 35 AM" src="https://github.com/user-attachments/assets/f5313b1b-93ca-49ca-9dff-772298056e22" />
 
 <img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
 
