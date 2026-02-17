@@ -132,8 +132,6 @@ heating_stubbe:
   module: heating_automation
   class: RoomDemandCalculator
   dependencies: [global_config]
-  solar_activation_temp: 20
-  solar_peak_temp: 35
 
 heating_blueroom:
   module: heating_automation
