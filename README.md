@@ -14,7 +14,7 @@ This is a screenshot of a possible HA dashboard with two example rooms (the four
 
 If heating is set to `Off` (top left), it stays off; if it is set to `Party`, it stays on. However, it is the two options in between, `Auto` and `Heating`, where the magic happens.
 
-The one goal of this heating automation has been 'set up and forget'. The house ideally just heats itself to the desired temperature, taking into consideration premeditated factors such as personal circumstances (work, holiday at home, gone), purpose of room, day of week, time of day, or time of year. Even factors such as the current sun exposure can play a role and can optionally be taken into consideratoin by this heating automation.
+The one goal of this heating automation has been 'set up and forget'. The house ideally just heats itself to the desired temperature, taking into consideration premeditated factors such as personal circumstances (work, holiday at home, gone), purpose of room, day of week, time of day, or time of year. Even factors such as the current sun exposure can play a role and can optionally be taken into consideration by this heating automation.
 
 The present heating automation works regardless of which kind of heating system is in place; it is divided into three abstraction layers: (1) and (2) need not to be touched, as they calculate the heating demand and the required flow temperature of the heating 'fluid'; (3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, `input_number.target_flow_temp`, which can be done in various ways such as a HA automation or an ESP.
 
@@ -52,7 +52,7 @@ The AppDaemon code relies on a `global_config:` section in [apps.yaml](https://g
 
 In case you are wondering what the listing of the valve states is for, this is done to prevent the heating circuit pump pushing against closed valves; in case they are all closed (< 20%), heating stops.
 
-Rooms that are only heated passively, i.e., they will never have the heating started but simply benefit from the heating up and running, are not listed in the `dependencies:` section of `heating_pump_control:`. The same, for example, goes for radiators that are heated by gravitational flow (simpy physics instead of circuit pump).
+Rooms that are only heated passively, i.e., they will never have the heating started but simply benefit from the heating up and running, are not listed in the `dependencies:` section of `heating_pump_control:`. The same, for example, goes for radiators that are heated by gravitational flow (simply physics instead of circuit pump).
 
 ---
 
@@ -72,7 +72,7 @@ input_select.heating_schedule_stubbe: Standard, Holiday, Party, Temporary, Off
 input_select.heating_claim_stubbe
 
 input_number.target_temp_stubbe: 5-30 (0.5 steps)
-input_number.delta_temp_stubbe: 1-5 (0.5 steps) when
+input_number.delta_temp_stubbe: 1-5 (0.5 steps) 
 input_number.base_temp_stubbe: 5-30 (0.5 steps): this is the temp target_temp is set to outside of heating periods
 input_number.heat_temp_stubbe: 5-30 (0.5 steps): this is the temp target_temp is set to throughout heating periods (if now overwritten by ‘temp’ in a schedule’s attribute of that specific heating period)
 
@@ -116,7 +116,7 @@ Each room is managed via dedicated dashboard section containing the following da
 * **Live Metrics:** Current temperature, heating valve opening percentage, and humidity.
 * **Target temp:** Current heating target temperature and the name of the currently active schedule.
 * **Event Info:** Swipe horizontally to view detailed information regarding the current or next heating event.
-* **Advanced:** Switching between the five different schedules (Standard, Holiday, Party, Temporary, Off) can, besides the general way of swiping and long-tapping/pressing the desired schedult - short-tap/press leads to editing) be achieved via 'shortcut' by long-tapping/pressing the schedule's icon (Standard), remaining button (Off), temperature (Holiday), valve state (Party), and humidity (Temporary). 
+* **Advanced:** Switching between the five different schedules (Standard, Holiday, Party, Temporary, Off) can (besides the general way of swiping and long-tapping/pressing the desired schedule - short-tap/press leads to editing) be achieved via 'shortcut' by long-tapping/pressing the schedule's icon (Standard), remaining button (Off), temperature (Holiday), valve state (Party), and humidity (Temporary). 
 
 Swiping the upper section leads to further settings and information:
 
@@ -169,7 +169,7 @@ The schedules are the heart of the automation. The system follows the logic of t
 
 
 ### ☀️ Solar Compensation
-If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comport level.
+If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same compfort level.
 
 The most straightforward solution to gauge the sun's intensity is a brightness sensor; however momentary cloudiness would need to be taken into account. What I have found a reliable source of gauging the sun's intensity is the temperature in a greenhouse, and since there is one in my garden, that is what I use.
 
@@ -232,7 +232,7 @@ Rather than using the pre-set climate device, this heating automation uses an in
 
 ## Layer 2: Central Control (`HeatSupplyManager`)
 
-The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party' (heating stays on)
+The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party` (heating stays on)
 
 
 ---
@@ -277,7 +277,7 @@ In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be 
 
 ## Layer 3: Connection to Heating Hardware
 
-The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This respository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
+The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This repository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
 
 Depending on whether you use method (A) or (B) below, make sure to either comment out or delete the other one in apps.yaml, or, alternatively, add `disable: true  # <--- Set to true to turn off, false or remove to turn on` to the one you don't use.
 
@@ -305,7 +305,7 @@ To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is n
   <img src="https://github.com/user-attachments/assets/7e730be2-fc2a-40d4-a25d-f43063d35c0e" height="300" />
 </p>
 
-Additionally, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during a reboot. It then calculates the heating flow temperature according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set flow temperature) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased (or decreased in case of a negative value) flow temperature; this can be used when the delta between room temp and target temp is bigger, for example, in the morning)
+Additionally, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during a reboot. It then calculates the heating flow temperature according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set flow temperature) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased - or decreased in case of a negative value - flow temperature; this can be used when the delta between room temp and target temp is bigger, for example, in the morning).
 
 <img width="622" height="882" alt="Screenshot 2026-02-16 at 11 41 33 AM" src="https://github.com/user-attachments/assets/edfd262e-ddd3-4d51-8b6a-a1eb00d2acb4" />
 
@@ -316,11 +316,11 @@ As can be seen, the first seven slots are for the heating schedule in Master mod
 
 `HK2 Enabled` signals that heating circuit 2 is potentially activated; however, a value of not 0 in `HK2 Flow Target Temp (ESP)` activates heating, which is then reflected in `Heating On`.
 
-`HK2 Flow Temp +10 (Master)` and `HK2 Flow Temp -10 (Master)` are used in `Master` mode to determine the flow temp, which is based on the boiler's outside temperature sensor, unless `Outside Temp`, which is based on a Dallas temperature sensor connected to GPIO 54, is in place, then the latters's value is used. `Room Temp` is for an additional dallas temperature sensor, also connected to GPIO 54 (and distinguished by its address -> both need to be changed to the ones of the dallas sensors used).
+`HK2 Flow Temp +10 (Master)` and `HK2 Flow Temp -10 (Master)` are used in `Master` mode to determine the flow temp, which is based on the boiler's outside temperature sensor, unless `Outside Temp`, which is based on a Dallas temperature sensor connected to GPIO 54, is in place, then the latter's value is used. `Room Temp` is for an additional dallas temperature sensor, also connected to GPIO 54 (and distinguished by its address -> both need to be changed to the ones of the dallas sensors used).
 
 `Time (Manual Override)`, as already mentioned, allows for the manual adjustment of date and time in case of missing internet connection.
 
-Additionally, there are five temperature senors (Dallas DS18B20) connected through 'one_wire' for outside temperature, room temperature and additional heating and solar flow temperatures.
+Additionally, there are five temperature sensors (Dallas DS18B20) connected through 'one_wire' for outside temperature, room temperature and additional heating and solar flow temperatures.
 
 ---
 
@@ -338,6 +338,6 @@ In this repo there is also a firmware file for the Waveshare ESP32-P4-NANO, and 
 The ESP forwards select entities (sensors) from Froeling to HA; they can easily be [changed or extended](https://github.com/franzbu/HomeAssistantHeating/blob/main/doc/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf).
 
 The ESP directly listens to `input_number.target_flow_temp` and starts and stops heating while also setting the flow temperature. The optional class 
-[FroelingHeatingESP](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) can act as watchdog for the ESP's health and send a warning in case of an issue.
+[FroelingHeatingESP](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) can act as a watchdog for the ESP's health and send a warning in case of an issue.
 
 ---
