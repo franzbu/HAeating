@@ -3,7 +3,7 @@
 
 # Home Assistant Heating
 
-First things first: let me show you what your heating automation might look like:
+First things first: here is what your heating automation might look like:
 
 <img width="737" height="801" alt="Screenshot 2026-02-17 at 8 32 36 AM" src="https://github.com/user-attachments/assets/9d5c47bb-1a20-4efe-a4a7-a5b65a6dd1ea" />
 
