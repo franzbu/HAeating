@@ -103,7 +103,7 @@ global_config:
 heating_pump_control:
   module: heating_automation
   class: HeatSupplyManager
-  telegram_id: 79867494
+  telegram_id: 7986474924
   dependencies:
     - global_config
     - heating_stubbe
