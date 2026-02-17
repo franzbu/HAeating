@@ -302,19 +302,14 @@ One of the reasons for using an ESP is the ability to write the target flow temp
 
 Other than that, the ESP makes the boiler smart in the sense that its entities can be directly integrated into Home Assistant via ESPHome (already integrated into HA, so all entities the ESP is set up for are instantaneously writable and/or readable in HA). However, if that is the only thing one wants, then [GyroGearl00se's HA integration](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) might be the preferrable option.
 
-In this repo there is also a firmware file for the Waveshare ESP32-P4-NANO; compiling requires ESPHome 2026.2.0 or newer.
+In this repo there is also a firmware file for the Waveshare ESP32-P4-NANO, and while the WT32-ETH01 will do just fine the ESP32-P4-NANO is the fast and future-proof option for those who might extend the project at a future stage with, let's say, a touchscreen.
 
 <p float="left">
   <img src="https://github.com/user-attachments/assets/29b461ea-b1f1-4f5a-834e-1a129d0c9ae3" height="300" />
   <img src="https://github.com/user-attachments/assets/b3757574-4caf-4d44-88d6-aee97cdbc305" height="300" />
 </p>
 
-
-Below you find a comparison of core aspects of the two boards:
-
-<img width="608" height="353" alt="Screenshot 2026-02-15 at 8 36 18 PM" src="https://github.com/user-attachments/assets/584a1a14-6594-4bf9-99e3-1ba10ff71ccb" />
-
-The firmware in the two examples forwards select entities from Froeling to HA; they can easily be changed or extended; [see Froeling's Modbus documentation](https://github.com/franzbu/HomeAssistantHeating/blob/main/doc/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf).
+The ESP forwards select entities from Froeling to HA; they can easily be [changed or extended](https://github.com/franzbu/HomeAssistantHeating/blob/main/doc/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf).
 
 The ESP directly listens to `input_number.target_flow_temp` and starts and stops heating while also setting the flow temperature. The optional class 
 [FroelingHeatingESP](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) can act as watchdog for the ESP's health and send a warning in case of an issue.
