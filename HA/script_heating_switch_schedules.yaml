@@ -1,0 +1,18 @@
+alias: heating_switch_schedules
+fields:
+  room:
+    description: The name of the room
+    example: stubbe
+sequence:
+  - action: input_select.select_option
+    target:
+      entity_id: input_select.heating_schedule_{{ room }}
+    data:
+      option: >
+        {% set entity = 'input_select.heating_schedule_' ~ room %} {% if
+        is_state(entity, 'Off') %}
+          Standard
+        {% else %}
+          Off
+        {% endif %}
+description: ""

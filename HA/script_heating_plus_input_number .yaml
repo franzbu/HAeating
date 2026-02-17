@@ -1,0 +1,10 @@
+alias: heating_plus_input_number
+sequence:
+  - action: input_number.set_value
+    target:
+      entity_id: "{{ entity }}"
+    data:
+      value: >
+        {% set current = states(entity) | float(0) %} {{ [current + 5, 30] | min
+        }}
+description: ""

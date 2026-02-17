@@ -1,0 +1,10 @@
+alias: heating_delta_minus_input_number
+sequence:
+  - action: input_number.set_value
+    target:
+      entity_id: "{{ entity }}"
+    data:
+      value: >
+        {% set current = states(entity) | float(0) %} {{ [current - 1, 1] | max
+        }}
+description: ""
