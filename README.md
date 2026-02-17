@@ -117,13 +117,12 @@ Each room is managed via dedicated dashboard section containing the following da
 * **Advanced:** Switching between the five different schedules (Standard, Holiday, Party, Temporary, Off) can, besides the general way of swiping and long-tapping/pressing the desired schedult - short-tap/press leads to editing) be achieved via 'shortcut' by long-tapping/pressing the schedule's icon (Standard), remaining button (Off), temperature (Holiday), valve state (Party), and humidity (Temporary). 
 
 Swiping the upper section leads to further settings and information:
-  
-<img width="395" height="108" alt="Screenshot 2026-02-07 at 10 36 04 AM" src="https://github.com/user-attachments/assets/b0c5bb49-fd8e-4411-a793-c64a77b5ef8e" />
 
-<img width="294" height="119" alt="Screenshot 2026-02-17 at 7 30 40 AM" src="https://github.com/user-attachments/assets/58a7a374-33ea-4a6c-8f62-0d0614033cf7" />
-
-<img width="302" height="116" alt="Screenshot 2026-02-17 at 7 30 47 AM" src="https://github.com/user-attachments/assets/338cac9c-323b-415f-a72d-5ae0efd3a939" />
-
+| System Architecture Layers |
+| :--- |
+| <img width="292" src="https://github.com/user-attachments/assets/6e5e54fc-775d-4a4b-8153-d598174724bc" /> |
+| <img width="294" src="https://github.com/user-attachments/assets/58a7a374-33ea-4a6c-8f62-0d0614033cf7" /> |
+| <img width="302" src="https://github.com/user-attachments/assets/338cac9c-323b-415f-a72d-5ae0efd3a939" /> |
 
 #### Advanced Room Parameters
 
