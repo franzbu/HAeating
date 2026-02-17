@@ -1,4 +1,4 @@
-# ==========================================
+ # ==========================================
 # GLOBAL CONFIGURATION
 # ==========================================
 global_config:
@@ -100,10 +100,10 @@ global_config:
 # ==========================================
 
 # Master Supply Manager: Calculates target flow based on claims
-heating_pump_control:
+heat_supply_manager:
   module: heating_automation
   class: HeatSupplyManager
-  telegram_id: 7986474924
+  telegram_id: 79867494
   dependencies:
     - global_config
     - heating_stubbe
@@ -118,6 +118,14 @@ heating_pump_control:
     - heating_hof
     - heating_gang
 
+#froeling_interface_modbus:
+#  module: heating_froeling_modbus  
+#  class: FroelingHeatingModbus
+#  telegram_id: 79867494
+#  dependencies:
+#    - global_config
+#    - heat_supply_manager  # Ensures it boots after the manager is ready
+
 # Boiler Interface: Forwards calculation to physical hardware
 froeling_interface:
   module: heating_froeling_esp
@@ -125,7 +133,7 @@ froeling_interface:
   telegram_id: 79867494
   dependencies:
     - global_config
-    - heating_pump_control
+    - heat_supply_manager
 
 # --- Standard Rooms (Trigger the pump) ---
 heating_stubbe:
@@ -198,3 +206,5 @@ heating_bathroom:
   module: heating_automation
   class: RoomDemandCalculator
   dependencies: [global_config]
+
+
