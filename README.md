@@ -192,9 +192,12 @@ The system dynamically generates status messages for your Home Assistant UI:
 * *“Heating stops at 22:30 tomorrow.”*
 * *“Heating stops at next power cut ;)”* (For continuous 24/7 schedules).
 
+<img width="291" height="119" alt="Screenshot 2026-02-17 at 9 57 28 PM" src="https://github.com/user-attachments/assets/0e560278-dd88-4500-b2af-521ce879e3f1" />
+
+
 ### Safety Features
-* **Modbus Health Check:** If the connection to the boiler's ESP32 Gateway fails, the system sends an emergency Telegram notification.
-* **Auto-Revert:** If **Party Mode** is active but all radiator valves have closed (meaning the house is warm), the system automatically reverts to **Auto** to save fuel.
+* **Health Check:** If a connection fails, the system sends an emergency Telegram notification.
+* **Auto-Revert:** If **Party Mode** is active but all radiator valves have closed (meaning the house is warm), the system automatically reverts to **Auto** to save energy.
 
 ---
 
