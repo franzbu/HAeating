@@ -11,7 +11,7 @@ Why AppDaemon? AppDaemon has been chosen for its ability to code in Python for H
 The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating there is. Layer 3 is all about how to address the existing heating hardware and will have to adjusted - two examples are given.
 
   (1) Layer 1: Room Level: RoomDemandCalculator
-  (2 Layer 2: Central Heating Control: HeatSupplyManager
+  (2) Layer 2: Central Heating Control: HeatSupplyManager
   (3) Layer 3: Hardware Interface: connects to the actual hardware, for example, a Froeling SP Dual
 
 
