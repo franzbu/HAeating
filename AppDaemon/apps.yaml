@@ -95,49 +95,9 @@ global_config:
     appdaemon_running: 'input_boolean.appdaemon_running'
 
 
-# ==========================================
-# HEATING SYSTEM APPS
-# ==========================================
-
-# Master Supply Manager: Calculates target flow based on claims
-heat_supply_manager:
-  module: heating_automation
-  class: HeatSupplyManager
-  telegram_id: 79867494
-  dependencies:
-    - global_config
-    - heating_stubbe
-    - heating_blueroom
-    - heating_kuche
-    - heating_stibbile
-    - heating_livingroom
-    - heating_kitchen
-    - heating_medroom
-    - heating_bedroom
-    - heating_hallway
-    - heating_hof
-    - heating_gang
-
-froeling_interface_modbus:
-  module: heating_froeling_modbus  
-  class: FroelingHeatingModbus
-  disable: true  # <--- Set to true to turn off, false or remove to turn on
-  telegram_id: 79867494
-  dependencies:
-    - global_config
-    - heat_supply_manager  # Ensures it boots after the manager is ready
-
-# Boiler Interface: Forwards calculation to physical hardware
-froeling_interface:
-  module: heating_froeling_esp
-  class: FroelingHeatingESP
-  disable: false  # <--- Set to true to turn off, false or remove to turn on
-  telegram_id: 79867494
-  dependencies:
-    - global_config
-    - heat_supply_manager
-
-# --- Standard Rooms (Trigger the pump) ---
+# =============================================
+# HEATING SYSTEM APPS: (1) RoomDemandCalculator
+# =============================================
 heating_stubbe:
   module: heating_automation
   class: RoomDemandCalculator
@@ -208,3 +168,24 @@ heating_bathroom:
   module: heating_automation
   class: RoomDemandCalculator
   dependencies: [global_config]
+
+# =============================================
+# HEATING SYSTEM APPS: (2) HeatSupplyManager
+# =============================================
+heat_supply_manager:
+  module: heating_automation
+  class: HeatSupplyManager
+  telegram_id: 79867494
+  dependencies:
+    - global_config
+    - heating_stubbe
+    - heating_blueroom
+    - heating_kuche
+    - heating_stibbile
+    - heating_livingroom
+    - heating_kitchen
+    - heating_medroom
+    - heating_bedroom
+    - heating_hallway
+    - heating_hof
+    - heating_gang
