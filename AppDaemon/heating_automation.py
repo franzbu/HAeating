@@ -1,4 +1,3 @@
-
 import hassapi as hass  # type: ignore
 from datetime import datetime, timedelta, time
 
@@ -374,7 +373,7 @@ class HeatSupplyManager(hass.Hass):
         # PHASE 1: Static Initialization (Runs ONCE)
         self.gl = self.get_app("global_config")
         raw_deps = self.args.get('dependencies', [])
-        self.managed_locations = [d.replace("heating_", "") for d in raw_deps if d not in ["global_config", "heating_pump_control"]]
+        self.managed_locations = [d.replace("heating_", "") for d in raw_deps if d not in ["global_config", "heat_supply_manager"]]
         
         self.valve_map = self.gl.args.get("valve_map", {})
         self.flow_target_helper = "input_number.target_flow_temp"     
