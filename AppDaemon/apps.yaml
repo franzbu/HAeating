@@ -197,7 +197,7 @@ heat_supply_manager:
 froeling_interface_modbus:
   module: heating_froeling_modbus  
   class: FroelingHeatingModbus
-  disable: true  # <--- Set to true to turn off, false or remove to turn on
+  disable: false  # <--- Set to true to turn off, false or remove to turn on
   telegram_id: 79867494
   dependencies:
     - global_config
@@ -207,7 +207,7 @@ froeling_interface_modbus:
 froeling_interface:
   module: heating_froeling_esp
   class: FroelingHeatingESP
-  disable: false  # <--- Set to true to turn off, false or remove to turn on
+  disable: true  # <--- Set to true to turn off, false or remove to turn on
   telegram_id: 79867494
   dependencies:
     - global_config
