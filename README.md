@@ -69,8 +69,7 @@ For the code to function, your Home Assistant instance must have the following e
 heating_livingroom:
   module: heating_automation
   class: RoomDemandCalculator
-  solar_activation_temp: 15
-  solar_peak_temp: 25
+  dependencies: [global_config]
 
 heating_pump_control:
   module: heating_pump_control
@@ -79,7 +78,122 @@ heating_pump_control:
     - global_config
     - heating_livingroom
     - heating_bedroom
-  telegram_id: "-100123456788"
+  telegram_id: "-1001234536788"
+```
+
+---
+The AppDaemon code relies on a `global_config:` section in apps.yaml such as the one below:
+
+```
+# ==========================================
+# GLOBAL CONFIGURATION
+# ==========================================
+global_config:
+  module: globals
+  class: GlobalSettings
+
+  temp_outdoor_map:
+    dallas_outdoor_temp: 'sensor.froeling_temp_outside'
+    outdoor_temp: 'sensor.temperature_and_humidity_sensor_outdoor_balkon_temperature'
+    froeling_outside_temperature: 'sensor.froeling_boiler_outside_temp'
+    garten_temp: 'sensor.temperature_and_humidity_sensor_outdoor_garten_temperature'
+  
+  heating_map:
+    froeling_boiler_1_pump_control: 'sensor.froeling_boiler_pump_control'
+    froeling_boiler_1_pump_on_off: 'binary_sensor.froeling_boiler_pump_status' 
+    froeling_boiler_state: 'sensor.froeling_boiler_state'
+    froeling_boiler_temp: 'sensor.froeling_boiler_temp'
+    froeling_buffer_1_charge_state: 'sensor.froeling_buffer_charge_state'
+    froeling_buffer_1_pump_control: 'sensor.froeling_buffer_pump_control'
+    froeling_buffer_temp_1: 'sensor.froeling_buffer_temp_sensor_1'
+    froeling_buffer_temp_2: 'sensor.froeling_buffer_temp_sensor_2'
+    froeling_buffer_temp_3: 'sensor.froeling_buffer_temp_sensor_3'
+    froeling_buffer_temp_4: 'sensor.froeling_buffer_temp_sensor_4'
+    froeling_collector_flow_temp: 'sensor.froeling_collector_flow_temp'
+    froeling_collector_pump_control: 'sensor.froeling_collector_pump_control'
+    froeling_collector_return_temp: 'sensor.froeling_collector_return_temp'
+    froeling_collector_temp: 'sensor.froeling_collector_temp'
+    froeling_current_control_of_the_collector_boiler_pump: 'sensor.froeling_collector_boiler_pump_control'
+    froeling_exhaust_temp: 'sensor.froeling_boiler_flue_gas_temp'
+    froeling_hk2_flow_actual_temp: 'sensor.froeling_hk2_flow_actual_temp'
+    froeling_hk2_flow_target_temp: 'sensor.froeling_hk2_flow_target_temp'
+    froeling_hk2_pump_external: 'select.froeling_hk2_enabled'
+    froeling_hk2_pump_on_off: 'binary_sensor.froeling_hk2_pump_status' 
+    froeling_induced_draft_control: 'sensor.froeling_boiler_induced_draught_control'
+    froeling_induced_draft_speed: 'sensor.froeling_boiler_induced_draught_speed'
+    froeling_oxygen_controller: 'sensor.froeling_boiler_oxygen_controller'
+    froeling_primary_air: 'sensor.froeling_boiler_primary_air'
+    froeling_residual_oxygen_content: 'sensor.froeling_boiler_residual_oxygen_content'
+    froeling_return_sensor: 'sensor.froeling_boiler_return_sensor'
+    froeling_system_state: 'sensor.froeling_boiler_system_state'
+    froeling_hk2_flow_target_temp_external: 'sensor.froeling_hk2_flow_target_temp'
+
+  temp_room_map:
+    stubbe: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature'
+    blueroom: 'sensor.temperature_and_humidity_sensor_blue_room_temperature'
+    kuche: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_kuche_temperature'
+    stibbile: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_stibbile_temperature'
+    livingroom: 'sensor.temperature_and_humidity_sensor_living_room_temperature'
+    kitchen: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_kitchen_temperature'
+    medroom: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_med_temperature'
+    bedroom: 'sensor.temperature_and_humidity_sensor_bedroom_temperature'
+    hallway: 'sensor.temperature_and_humidity_sensor_hallway_temperature'
+    hof: 'sensor.wall_thermostat_with_switching_output_for_brand_switches_hof_temperature'
+    gang: 'sensor.temperature_and_humidity_sensor_gang_mama_temperature'
+    bad: 'sensor.radiator_thermostat_evo_bad_temperature'
+    wc: 'sensor.radiator_thermostat_evo_wc_temperature'
+    bathroom: 'sensor.radiator_thermostat_evo_bathroom_temperature'
+
+  valve_map:
+    valve_stubbe: 'sensor.heating_circuit_5_stubbe_valve_position'
+    valve_blueroom: 'sensor.heating_circuit_11_blueroom_valve_position'
+    valve_stibbile: 'sensor.heating_circuit_1_stibbile_valve_position'
+    valve_kuche: 'sensor.heating_circuit_7_kuche_valve_position'
+    valve_bedroom: 'sensor.heating_circuit_3_bedroom_valve_position'
+    valve_medroom: 'sensor.heating_circuit_4_med_valve_position'
+    valve_livingroom: 'sensor.heating_circuit_9_living_room_valve_position'
+    valve_kitchen: 'sensor.heating_circuit_12_kitchen_valve_position'
+    valve_hallway: 'sensor.heating_circuit_9_hallway_valve_position'
+    valve_gang: 'sensor.heating_circuit_11_gang_valve_position'
+    valve_hof: 'sensor.heating_circuit_5_hof_ost_valve_position'
+```
+
+AppDaemin gets the room names and the names of all HA Helpers from this config, and for that it is important that the Helpers are created following the same pattern.
+
+In case you are wondering what the listing of the valve states is for, this is done to prevent the heating circuit pump pushing against closed valves; in case they are all closed (< 20%), heating stops.
+
+---
+### Home Assistant Heating needs the following HA Helpers to be created beforehand
+Helpers to create for each room, replace 'stubbe' with the name of the room:
+```
+schedule.standard_stubbe
+schedule.holiday_stubbe
+schedule.party_stubbe
+schedule.temp_stubbe
+schedule.off_stubbe
+
+input_select.heating_schedule_stubbe: Standard, Holiday, Party, Temporary, Off
+input_select.heating_claim_stubbe
+
+input_number.target_temp_stubbe: 5-30 (0.5 steps)
+input_number.delta_temp_stubbe: 1-5 (0.5 steps) when
+input_number.base_temp_stubbe: 5-30 (0.5 steps): this is the temp target_temp is set to outside of heating periods
+input_number.heat_temp_stubbe: 5-30 (0.5 steps): this is the temp target_temp is set to throughout heating periods (if now overwritten by ‘temp’ in a schedule’s attribute of that specific heating period)
+
+input_text.next_event_stubbe: for showing schedule’s attribute ‘next_event’ on dashboard
+```
+
+helpers to create once for heating automation as a whole:
+```
+input_boolean.heating_automation
+input_number.heating_boost_threshold (2-25)
+input_number.heating_baseline_0_deg (25-45)
+input_number.heating_boost_factor (0.5-4)
+input_number.heating_claim_duration (0-60)
+input_number.heating_margin (0-1)
+input_number.max_flow_temp (30-50)
+input_number.flow_temp_multi_room_offset (0-1; step: 0.1)
+input_number.hk2_target_flow_temp
 ```
 
 ---
