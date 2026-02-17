@@ -156,7 +156,7 @@ The yaml file for the dashboard for an example room can be seen [here](https://g
 
 ### 📅 Scheduling System
 
-The schedules are the heart of the automation. The system follows the logic of the currently selected schedule to determine if heating is allowed.
+The schedules are the heart of the automation. The system follows the logic of the currently selected schedule to determine if heating is enabled.
 
 #### Schedule Types
 1.  **Standard:** Your everyday routine.
@@ -169,6 +169,17 @@ The schedules are the heart of the automation. The system follows the logic of t
 4.  **Temporary:** Short-term adjustments.
 5.  **Off:** Frost protection only (Target set to $5^\circ C$).
 
+#### Schedule Adjustment
+
+HA's Helper Schedule can easily be set up by dragging and dropping.
+
+<img width="475" height="412" alt="Screenshot 2026-02-17 at 10 01 54 PM" src="https://github.com/user-attachments/assets/7d45a5dd-b95f-4462-904f-d39dcfe8f548" />
+
+Additionally, the schedule can be set by entering start and end time.
+
+<img width="335" height="438" alt="Screenshot 2026-02-17 at 10 04 11 PM" src="https://github.com/user-attachments/assets/906f36f3-c262-435f-849c-cddf352aed9b" />
+
+As can be seen in the screenshot above, each heating period has the option of setting a target temperature that is different from the one that is general one that is pre-set for each room; by, for example, adding `temp: 22` to `Additional data`, the target temperature for this specific heating period will be `22`°C, regardless of what the general target temp for this room is. 
 
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same compfort level.
