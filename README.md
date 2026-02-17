@@ -100,6 +100,8 @@ input_number.hk2_target_flow_temp
 
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
+You can access the code for class RoomDemandCalculator [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_automation.py).
+
 
 ---
 
@@ -233,6 +235,8 @@ Rather than using the pre-set climate device, this heating automation uses an in
 ## Layer 2: Central Control (`HeatSupplyManager`)
 
 The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party` (heating stays on)
+
+You can access the code for class HeatSupplyManager [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_automation.py). (You will have to scroll down.)
 
 
 ---
