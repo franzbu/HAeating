@@ -1,0 +1,66 @@
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        entity: input_select.heating_mode
+        name: "Off"
+        icon: mdi:fire-off
+        color_type: card
+        color: rgba(0,0,0,0%)
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          target:
+            entity_id: input_select.heating_mode
+          data:
+            option: "Off"
+        state:
+          - value: "Off"
+            color: gray
+      - type: custom:button-card
+        entity: input_select.heating_mode
+        name: Auto
+        icon: mdi:sun-thermometer-outline
+        color_type: card
+        color: rgba(0,0,0,0%)
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          target:
+            entity_id: input_select.heating_mode
+          data:
+            option: Auto
+        state:
+          - value: Auto
+            color: lightgreen
+      - type: custom:button-card
+        entity: input_select.heating_mode
+        name: Heating
+        icon: mdi:fire
+        color_type: card
+        color: rgba(0,0,0,0%)
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          target:
+            entity_id: input_select.heating_mode
+          data:
+            option: Heating
+        state:
+          - value: Heating
+            color: orange
+      - type: custom:button-card
+        entity: input_select.heating_mode
+        name: Party
+        icon: mdi:fire-alert
+        color_type: card
+        color: rgba(0,0,0,0%)
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          target:
+            entity_id: input_select.heating_mode
+          data:
+            option: Party
+        state:
+          - value: Party
+            color: red
