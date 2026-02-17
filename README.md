@@ -118,17 +118,19 @@ Each room is managed via dedicated dashboard section containing the following da
 
 Swiping the upper section leads to further settings and information:
 
-| System Architecture Layers |
+| Swiping upper secgtion |
 | :--- |
 | <img width="292" src="https://github.com/user-attachments/assets/6e5e54fc-775d-4a4b-8153-d598174724bc" /> |
 | <img width="294" src="https://github.com/user-attachments/assets/58a7a374-33ea-4a6c-8f62-0d0614033cf7" /> |
 | <img width="302" src="https://github.com/user-attachments/assets/338cac9c-323b-415f-a72d-5ae0efd3a939" /> |
 
-#### Advanced Room Parameters
 
-* **Boost Status:** Displays if boost is active and how many degrees the flow temperature is being increased by this specific room.
-<img width="394" height="112" alt="Screenshot 2026-02-07 at 10 36 30 AM" src="https://github.com/user-attachments/assets/2b0aed9d-7890-4431-b1e4-91fc5476c28a" />
+* **Boost:** Toggles and displays Boost - more farther down.
+
+* **Sun compensation:** If a room experiences solar gain, the target temperature can temporarily be decreased - more farther down.
   
+
+#### Additional Parameters
 
 * **Heating Delta ($\Delta$):** The "Start" trigger. Heating turns on when the temperature drops below `Target Temp - Delta`.
     * *Control:* Tap the card/icon to adjust; long-tap for larger increments.
@@ -230,7 +232,7 @@ Rather than using the pre-set climate device, this heating automation uses an in
 
 ## Layer 2: Central Control (`HeatSupplyManager`)
 
-The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated.
+The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party' (heating stays on)
 
 ### Dynamic Flow Temperature (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
