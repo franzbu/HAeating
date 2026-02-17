@@ -94,7 +94,8 @@ class RoomDemandCalculator(hass.Hass):
         self.prepare_dashboard_next_event()
 
     def callback_master_switch(self, entity, attribute, old, new, args):
-        self.evaluate_heating_claim()
+        force_start = (new == "Heating" and old != "Heating")
+        self.evaluate_heating_claim(force_start=force_start)
 
     def callback_temp_sensor(self, entity, attribute, old, new, args):
         self.evaluate_heating_claim() 
@@ -128,7 +129,7 @@ class RoomDemandCalculator(hass.Hass):
         effective_target = target - sun_offset
         self.evaluate_heating_claim(override_target=effective_target, force_reset=force_reset)
 
-    def evaluate_heating_claim(self, override_target=None, force_reset=False):
+    def evaluate_heating_claim(self, override_target=None, force_reset=False, force_start=False):
         if self.get_state("input_select.heating_mode") == "Off":
             self.update_heating_claim(False)
             self.update_boost_attributes(0.0, 0.0, "off")
@@ -156,6 +157,8 @@ class RoomDemandCalculator(hass.Hass):
         if curr_t >= upper_bound:
             has_claim = False
         elif curr_t < lower_bound:
+            has_claim = True
+        elif force_start and curr_t < upper_bound:
             has_claim = True
 
         self.update_heating_claim(has_claim)
@@ -469,7 +472,7 @@ class HeatSupplyManager(hass.Hass):
             return
         if old == "Heating" and new == "Auto":
             self.reset_all_claims()
-        self.evaluate_heating_pump()
+        self.callback_debounced_eval(entity, attribute, old, new, args)
 
     def reset_all_claims(self):
         for loc in self.managed_locations:
