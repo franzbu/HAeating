@@ -16,39 +16,6 @@ The heating automation is split into three specialized layers; the first two are
   
 (3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
 
-
----
-
-## Layer 1: Room-Level Logic (`RoomDemandCalculator`)
-
-Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
-
-### ☀️ Solar Compensation
-If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comport level.
-
-The most straightforward solution to gauge the sun's intensity is a brightness sensor; however momentary cloudiness would need to be taken into account. What I have found a reliable source of gauging the sun's intensity is the temperature in a greenhouse, and since there is one in my garden, that is what I use.
-
-#### How the Calculation Works
-The logic uses the range between 20.0°C (start) and 35.0°C (peak) to decide how much of that 1–5 degree "discount" to apply:
-Below 20°C Garden Temp: The offset is 0.0. The room stays at the full target temp. At 35°C Garden Temp: The offset is 100% of the helper value. If the helper is set to 3.0, the target temp drops by 3.0°C. In between (e.g., 27.5°C): The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
-
-
-### 🔥 Boost Mode
-If a room temperature is significantly below the target (e.g., after a window was left open), the room calculates a **Boost Factor**. This tells the boiler to provide much hotter water temporarily to recover the room temperature as fast as possible.
-
-
----
-
-### Dashboard Intelligence
-The system dynamically generates status messages for your Home Assistant UI:
-* *“Heating starts at 06:00”*
-* *“Heating stops at 22:30 tomorrow.”*
-* *“Heating stops at next power cut ;)”* (For continuous 24/7 schedules).
-
-### Safety Features
-* **Modbus Health Check:** If the connection to the boiler's ESP32 Gateway fails, the system sends an emergency Telegram notification.
-* **Auto-Revert:** If **Party Mode** is active but all radiator valves have closed (meaning the house is warm), the system automatically reverts to **Auto** to save fuel.
-
 ---
 
 ### Required Home Assistant Entities
@@ -81,12 +48,12 @@ heating_pump_control:
 ---
 The AppDaemon code relies on a `global_config:` section in [apps.yaml](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/apps.yaml) and the module [globals.py](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/globals.py).
 
-
-AppDaemin gets the room names and the names of all HA Helpers from this config, and for that it is important that the Helpers are created following the same pattern.
-
 In case you are wondering what the listing of the valve states is for, this is done to prevent the heating circuit pump pushing against closed valves; in case they are all closed (< 20%), heating stops.
 
 ---
+
+AppDaemon gets the room names and the names of the HA Helpers based on this config, and for that it is important that the Helpers are created following the naming pattern below.
+
 ### Home Assistant Heating needs the following HA Helpers to be created beforehand
 Helpers to create for each room, replace 'stubbe' with the name of the room:
 ```
@@ -195,7 +162,39 @@ The schedules are the heart of the automation. The system follows the logic of t
 5.  **Off:** Frost protection only (Target set to $5^\circ C$).
 
 
+---
 
+## Layer 1: Room-Level Logic (`RoomDemandCalculator`)
+
+Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
+
+### ☀️ Solar Compensation
+If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comport level.
+
+The most straightforward solution to gauge the sun's intensity is a brightness sensor; however momentary cloudiness would need to be taken into account. What I have found a reliable source of gauging the sun's intensity is the temperature in a greenhouse, and since there is one in my garden, that is what I use.
+
+#### How the Calculation Works
+The logic uses the range between 20.0°C (start) and 35.0°C (peak) to decide how much of that 1–5 degree "discount" to apply:
+Below 20°C Garden Temp: The offset is 0.0. The room stays at the full target temp. At 35°C Garden Temp: The offset is 100% of the helper value. If the helper is set to 3.0, the target temp drops by 3.0°C. In between (e.g., 27.5°C): The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
+
+
+### 🔥 Boost Mode
+If a room temperature is significantly below the target (e.g., after a window was left open), the room calculates a **Boost Factor**. This tells the boiler to provide much hotter water temporarily to recover the room temperature as fast as possible.
+
+
+---
+
+### Dashboard Intelligence
+The system dynamically generates status messages for your Home Assistant UI:
+* *“Heating starts at 06:00”*
+* *“Heating stops at 22:30 tomorrow.”*
+* *“Heating stops at next power cut ;)”* (For continuous 24/7 schedules).
+
+### Safety Features
+* **Modbus Health Check:** If the connection to the boiler's ESP32 Gateway fails, the system sends an emergency Telegram notification.
+* **Auto-Revert:** If **Party Mode** is active but all radiator valves have closed (meaning the house is warm), the system automatically reverts to **Auto** to save fuel.
+
+---
 
 #### Interaction & Controls
 * **Cycle Schedules:** Tap the main schedule card to cycle forward; tap the icon to cycle backward.
