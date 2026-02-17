@@ -275,9 +275,12 @@ The outside temperature sensor can have one or more backup sensors, just in case
 In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be listed with descending priority (first is used first). The list is dynamic, i.e., should a sensor with a higher priority start delivering valid data, AppDaemon is picking that up and switching back.
 
 ---
+
 ## Layer 3: Connection to Heating Hardware
 
 The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This respository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
+
+Depending on whether you use method (A) or (B) below, make sure to either comment out or delete the other one in apps.yaml, or, alternatively, add `disable: true  # <--- Set to true to turn off, false or remove to turn on` to the one you don't use.
 
 ### (A) Froeling wood boiler, using [ha_froeling_lambdatronic_modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
 
