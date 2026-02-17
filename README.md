@@ -301,7 +301,9 @@ Depending on whether you use method (A) or (B) below, make sure to either commen
 
 ### (A) Froeling wood boiler, using [ha_froeling_lambdatronic_modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
 
-An example can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
+As already mentioned, `FroelingHeatingModbus` in the `module heating_froeling_modbus` listens to changes made by `HeatSupplyManager` to `input_number.target_flow_temp`. `FroelingHeatingModbus` uses the HA integration [Froeling Lambdatronic Modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) to connect to the Froeling boiler using a ethernet to RS232 converter; more information, including examples for setting up boiler as well as converter, can be found on the integration's [homepage](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
+
+The AppDaemon class that enables HA to reading `input_number.target_flow_temp` as well as starting and stopping the heating cycles including setting the correct flow temperature can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
@@ -359,3 +361,5 @@ The ESP directly listens to `input_number.target_flow_temp` and starts and stops
 [FroelingHeatingESP](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_esp.py) can act as a watchdog for the ESP's health and send a warning in case of an issue.
 
 ---
+
+For this to work, Modbus access needs to be enabled using the Froeling boiler's touchscreen by following [these instructions](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus#-enabling-modbus-rtu-on-the-boiler).
