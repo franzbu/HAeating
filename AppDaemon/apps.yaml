@@ -153,7 +153,7 @@ heating_gang:
   class: RoomDemandCalculator
   dependencies: [global_config]
 
-# --- Standalone Rooms (no pump trigger) ---
+# --- Standalone Rooms (no pump trigger, so not listed as HeatSupplyManager's dependendies) ---
 heating_bad:
   module: heating_automation
   class: RoomDemandCalculator
