@@ -30,7 +30,7 @@ The heating automation is split into three specialized layers; the first two are
   
 (2) **Layer 2: Central Heating Control:** HeatSupplyManager: (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
   
-(3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to `input_number.target_flow_temp` and initiates heating in accordance with the value in `input_number.target_flow_temp`. 
+(3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to changes to `input_number.target_flow_temp` and handles heating in accordance with the value in `input_number.target_flow_temp`. 
 
 ---
 
