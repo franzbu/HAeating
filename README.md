@@ -92,7 +92,7 @@ input_number.heating_baseline_0_deg (25-45)
 input_number.heating_boost_factor (0.5-4)
 input_number.heating_claim_duration (0-60)
 input_number.heating_margin (0-1)
-input_number.max_flow_temp (30-50)
+input_number.max_flow_temp (20-75)
 input_number.flow_temp_multi_room_offset (0-1; step: 0.1)
 input_number.hk2_target_flow_temp
 ```
