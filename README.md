@@ -217,11 +217,11 @@ In this context the above-mentioned passive heating might be of interest under c
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comfort level.
 
-The most straightforward solution to gauge the sun's intensity is a brightness sensor; however momentary cloudiness would need to be taken into account. What I have found a reliable source of gauging the sun's intensity is the temperature in a greenhouse, and since there is one in my garden, that is what I use.
+The most straightforward solution to gauge the sun's intensity is a brightness sensor; however momentary cloudiness would need to be taken into account. What turns out to be a reliable source is the temperature in a greenhouse, as long as there is one in the vicinity.
 
 #### How the Calculation Works
-The logic uses the range between 20.0°C (start) and 35.0°C (peak) to decide how much of that 1–5 degree "discount" to apply:
-Below 20°C Garden Temp: The offset is 0.0. The room stays at the full target temp. At 35°C Garden Temp: The offset is 100% of the helper value. If the helper is set to 3.0, the target temp drops by 3.0°C. In between (e.g., 27.5°C): The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
+The logic uses the range between 20.0°C (start) and 35.0°C (peak) to decide how much of a "discount" to apply:
+Below 20°C Garden Temp: The offset is 0.0. The room stays at the full target temp. At 35°C Garden Temp: The offset is 100% of the helper value (1–5 degrees). If the helper is set to 3.0, the target temperature drops by 3.0°C once the greenhouse temperature hits 35 degrees. In between (e.g., 27.5°C): The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
 
 
 ### 🔥 Boost Mode
