@@ -107,64 +107,76 @@ You can access the code for class RoomDemandCalculator [here](https://github.com
 
 ### Individual Room Settings
 
-The beauty of Home Assistant, amongst other benefits, is its modularity, which is why you might choose to arrange your dashboard differently from what you see below. If, however, you'd like to start with what there already is, some cards need to be installed via HACS: [card-mod](https://github.com/thomasloven/lovelace-card-mod), [mushroom card](https://github.com/piitaya/lovelace-mushroom), [button-card](https://github.com/custom-cards/button-card), [more-info-card](https://github.com/thomasloven/lovelace-more-info-card), [simple swipe card](https://github.com/nutteloost/simple-swipe-card), and, in case you have a Froeling boiler, [Froeling Card](https://github.com/GyroGearl00se/lovelace-froeling-card) (if you want them to look like the ones on top of this page, you need to use the modified ones [here](https://github.com/franzbu/lovelace-froeling-card)).
+The beauty of Home Assistant is its modularity, meaning you can arrange your dashboard however you like. If you'd like to use the layout shown below as a starting point, you will need to install a few custom cards via HACS:
 
-Each room is managed via dedicated dashboard section containing the following data points:
-
-#### Standard View
-
-<img width="385" height="112" alt="Screenshot 2026-02-07 at 10 35 32 AM" src="https://github.com/user-attachments/assets/0c0b9c39-e116-45f0-83b4-16c06f6ccf9b" />
-
-* **Live Metrics:** Current temperature, heating valve opening percentage, and humidity.
-* **Target temp:** Current heating target temperature and the name of the currently active schedule.
-* **Event Info:** Swipe horizontally to view detailed information regarding the current or next heating event.
-* **Advanced:** Switching between the five different schedules (Standard, Holiday, Party, Temporary, Off) can (besides the general way of swiping and long-tapping/pressing the desired schedule - short-tap/press leads to editing) be achieved via 'shortcut' by long-tapping/pressing the schedule's icon (Standard), remaining button (Off), temperature (Holiday), valve state (Party), and humidity (Temporary). 
-
-Swiping the upper section leads to further settings and information:
-
-| Swiping upper section |
-| :--- |
-| <img width="292" src="https://github.com/user-attachments/assets/6e5e54fc-775d-4a4b-8153-d598174724bc" /> |
-| <img width="294" src="https://github.com/user-attachments/assets/58a7a374-33ea-4a6c-8f62-0d0614033cf7" /> |
-| <img width="302" src="https://github.com/user-attachments/assets/338cac9c-323b-415f-a72d-5ae0efd3a939" /> |
-
-
-* **Boost:** Toggles and displays Boost - more farther down.
-
-* **Sun compensation:** If a room experiences solar gain, the target temperature can temporarily be decreased - more farther down.
-  
-
-#### Additional Parameters
-
-* **Heating Delta ($\Delta$):** The "Start" trigger. Heating turns on when the temperature drops below `Target Temp - Delta`.
-    * *Control:* Tap the card/icon to adjust; long-tap for larger increments.
-<img width="407" height="113" alt="Screenshot 2026-02-07 at 10 37 04 AM" src="https://github.com/user-attachments/assets/4fd796f9-9c4a-43ab-8d84-e34d37a3c926" />
-
-
-* **Base Temp:** The "Background" temperature used outside of scheduled heating events. This allows for passive heating to prevent the room from getting too cold.
-<img width="375" height="105" alt="Screenshot 2026-02-07 at 10 37 27 AM" src="https://github.com/user-attachments/assets/3b2c6b25-d1bf-4f1d-b902-28566b1f9d08" />
-
-
-* **Heat Temp:** The default target temperature used during active schedule events if no specific temperature is defined within the schedule itself.
-<img width="377" height="97" alt="Screenshot 2026-02-07 at 10 37 49 AM" src="https://github.com/user-attachments/assets/f8f194f5-165b-42b0-a338-0a6951cd8fb9" />
-
-
-The yaml file for the dashboard for an example room can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/dashboard/dashboard_room.yaml); for its full functionality (long-tap/press on icons and buttons increases/decreases step size), [these HA scripts](https://github.com/franzbu/HomeAssistantHeating/tree/main/HA) can be put in place.
+**Required HACS Cards:**
+* [card-mod](https://github.com/thomasloven/lovelace-card-mod)
+* [mushroom card](https://github.com/piitaya/lovelace-mushroom)
+* [button-card](https://github.com/custom-cards/button-card)
+* [more-info-card](https://github.com/thomasloven/lovelace-more-info-card)
+* [simple swipe card](https://github.com/nutteloost/simple-swipe-card)
+* *(Optional)* [Froeling Card](https://github.com/GyroGearl00se/lovelace-froeling-card) – If you have a Froeling boiler and want it to match the style at the top of this page, use this [modified version](https://github.com/franzbu/lovelace-froeling-card).
 
 ---
 
-To adjust this dashboard card to your specific room(s), five changes need to be made:
+Each room is managed via a dedicated dashboard section containing the following data points:
 
-(1) **heading:** exchange the one instance of `heading: Stubbe` with the name of your room; spaces such as in `living room` are possible.
+#### Standard View
 
-(2) **temperature sensor:** exchange the many instances of `sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature`.
+<p align="center">
+  <img width="385" alt="Standard View" src="https://github.com/user-attachments/assets/0c0b9c39-e116-45f0-83b4-16c06f6ccf9b" />
+</p>
 
-(3) **valve sensor:** exchange the one instance of `sensor.heating_circuit_5_stubbe_valve_position`.
+* **Live Metrics:** Current temperature, heating valve opening percentage, and humidity.
+* **Target Temp:** Current heating target temperature and the name of the active schedule.
+* **Event Info:** Swipe horizontally to view detailed information regarding the current or next heating event.
+* **Advanced Shortcuts:** Switching between the five schedules (Standard, Holiday, Party, Temporary, Off) can be done by swiping and long-tapping the desired schedule (a short-tap opens the edit menu). You can also use these quick long-tap shortcuts:
+  * **Standard:** Long-tap the schedule's icon.
+  * **Holiday:** Long-tap the temperature.
+  * **Party:** Long-tap the valve state.
+  * **Temporary:** Long-tap the humidity.
+  * **Off:** Long-tap the remaining button.
 
-(4) **humidity sensor:** exchange the one instance of `sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_humidity`.
+#### Swipe Views
 
-(5) **Helper names:** exchange the names off all Helpers; in case you follow the naming conventions in the present guideline, all you need tgo to is search for `stubbe` and exchange it with, for example, `livingroom` (do not use spaces here).
+Swiping the upper section reveals further settings and information, including **Boost** (toggles and displays boost mode) and **Sun Compensation** (temporarily decreases target temp during solar gain).
 
+<p align="center">
+  <img width="292" src="https://github.com/user-attachments/assets/6e5e54fc-775d-4a4b-8153-d598174724bc" />
+  <img width="294" src="https://github.com/user-attachments/assets/58a7a374-33ea-4a6c-8f62-0d0614033cf7" />
+  <img width="302" src="https://github.com/user-attachments/assets/338cac9c-323b-415f-a72d-5ae0efd3a939" />
+</p>
+
+---
+
+#### Additional Parameters
+
+* **Heating Delta ($\Delta$):** The "Start" trigger. Heating turns on when the temperature drops below `Target Temp - Delta`. 
+  > *Control:* Tap the card/icon to adjust; long-tap for larger increments.
+  
+  <img width="407" alt="Heating Delta" src="https://github.com/user-attachments/assets/4fd796f9-9c4a-43ab-8d84-e34d37a3c926" />
+
+* **Base Temp:** The "Background" temperature used outside of scheduled heating events. This allows for passive heating to prevent the room from getting too cold.
+  
+  <img width="375" alt="Base Temp" src="https://github.com/user-attachments/assets/3b2c6b25-d1bf-4f1d-b902-28566b1f9d08" />
+
+* **Heat Temp:** The default target temperature used during active schedule events if no specific temperature is defined within the schedule itself.
+  
+  <img width="377" alt="Heat Temp" src="https://github.com/user-attachments/assets/f8f194f5-165b-42b0-a338-0a6951cd8fb9" />
+
+---
+
+#### Configuration & Setup
+
+You can view the YAML file for an example room dashboard [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/dashboard/dashboard_room.yaml). For full functionality (such as long-tapping to increase/decrease step sizes), ensure [these HA scripts](https://github.com/franzbu/HomeAssistantHeating/tree/main/HA) are installed.
+
+To adjust this dashboard card for your specific room(s), make the following five replacements in the YAML:
+
+1. **Heading:** Replace the single instance of `heading: Stubbe` with your room's name (spaces are allowed, e.g., `living room`).
+2. **Temperature Sensor:** Replace all instances of `sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature`.
+3. **Valve Sensor:** Replace the single instance of `sensor.heating_circuit_5_stubbe_valve_position`.
+4. **Humidity Sensor:** Replace the single instance of `sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_humidity`.
+5. **Helper Names:** Replace the names of all Helpers. If you follow this guide's naming conventions, simply search for `stubbe` and replace it with your room's name (e.g., `livingroom` — **do not use spaces here**).
 
 ---
 
