@@ -215,7 +215,7 @@ Each room's heating claim including its requested HFFT is managed by HeatSupplyM
 In this context the above-mentioned passive heating might be of interest under certain circumstances: In case there is a room that should get heated, but should not keep the heating running of its own accord, `base temp` instead of setting `heat temp` is set to the room's maximum temperature. This keeps the heating valve for that room open and consequently gets the room heated whenever another room triggers the heating (until the maximum temperature).
 
 ### ☀️ Solar Compensation
-If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same compfort level.
+If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same comfort level.
 
 The most straightforward solution to gauge the sun's intensity is a brightness sensor; however momentary cloudiness would need to be taken into account. What I have found a reliable source of gauging the sun's intensity is the temperature in a greenhouse, and since there is one in my garden, that is what I use.
 
