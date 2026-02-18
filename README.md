@@ -16,7 +16,7 @@ If heating is set to `Off` (top left), it stays off; if it is set to `Party`, it
 
 The one goal of this heating automation has been 'set up and forget'. The house ideally heats itself to the desired temperature, taking into consideration premeditated factors such as personal circumstances (work, holiday at home, gone), purpose of room, day of week, time of day, or time of year. Even factors such as the current sun exposure can play a role and can optionally be taken into consideration by this heating automation.
 
-The present heating automation works regardless of which kind of heating system is in place; it is divided into three abstraction layers: (1) and (2) need not to be touched, as they calculate the heating demand and the required flow temperature of the heating 'fluid'; (3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from the two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, `input_number.target_flow_temp`, which can be done in various ways such as a HA automation or an ESP.
+The present heating automation works regardless of which kind of heating system is in place; it is divided into three abstraction layers: (1) and (2) need not to be touched, as they calculate the heating demand and the required heating fluid flow temperature (from now onwards called HFFT); (3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from the two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, `input_number.target_flow_temp`, which can be done in various ways such as a HA automation or an ESP.
 
 This heating control system has been built with **AppDaemon** (Python). Why AppDaemon, you may ask. Well, AppDaemon is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency. 
 
@@ -25,7 +25,7 @@ The heating automation is split into three specialized layers; the first two are
 
 (1) **Layer 1: Room Level:** RoomDemandCalculator: (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
   
-(2) **Layer 2: Central Heating Control:** HeatSupplyManager: (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the target flow temperature to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
+(2) **Layer 2: Central Heating Control:** HeatSupplyManager: (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the HFFT to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
   
 (3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to changes to `input_number.target_flow_temp` and handles heating in accordance with the value in `input_number.target_flow_temp`. 
 
@@ -141,7 +141,6 @@ Swiping the upper section leads to further settings and information:
 <img width="407" height="113" alt="Screenshot 2026-02-07 at 10 37 04 AM" src="https://github.com/user-attachments/assets/4fd796f9-9c4a-43ab-8d84-e34d37a3c926" />
 
 
-
 * **Base Temp:** The "Background" temperature used outside of scheduled heating events. This allows for passive heating to prevent the room from getting too cold.
 <img width="375" height="105" alt="Screenshot 2026-02-07 at 10 37 27 AM" src="https://github.com/user-attachments/assets/3b2c6b25-d1bf-4f1d-b902-28566b1f9d08" />
 
@@ -151,6 +150,21 @@ Swiping the upper section leads to further settings and information:
 
 
 The yaml file for the dashboard for an example room can be seen [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/dashboard/dashboard_room.yaml); for its full functionality (long-tap/press on icons and buttons increases/decreases step size), [these HA scripts](https://github.com/franzbu/HomeAssistantHeating/tree/main/HA) can be put in place.
+
+---
+
+To adjust this dashboard card to your specific room(s), five changes need to be made:
+
+(1) **heading:** exchange the one instance of `heading: Stubbe` with the name of your room; spaces such as in `living room` are possible.
+
+(2) **temperature sensor:** exchange the many instances of `sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_temperature`.
+
+(3) **valve sensor:** exchange the one instance of `sensor.heating_circuit_5_stubbe_valve_position`.
+
+(4) **humidity sensor:** exchange the one instance of `sensor.wall_thermostat_with_switching_output_for_brand_switches_stubbe_humidity`.
+
+(5) **Helper names:** exchange the names off all Helpers; in case you follow the naming conventions in the present guideline, all you need tgo to is search for `stubbe` and exchange it with, for example, `livingroom` (do not use spaces here).
+
 
 ---
 
@@ -180,6 +194,14 @@ Additionally, the schedule can be set by entering start and end time.
 <img width="335" height="438" alt="Screenshot 2026-02-17 at 10 04 11 PM" src="https://github.com/user-attachments/assets/906f36f3-c262-435f-849c-cddf352aed9b" />
 
 As can be seen in the screenshot above, each heating period has the option of setting a target temperature that is different from the one that is pre-set for each room; by, for example, adding `temp: 22` to `Additional data`, the target temperature for this specific heating period will be `22`°C, regardless of what the general target temp for this room is. 
+
+---
+
+So you've read above that schedules are the heart of this heating automation, but what does that actually mean? Well, schedules are THE way of starting and stopping the heating automatically, i.e., you add, for example, to the 'Standard' schedule a heating period on Monday from 6am to 10am. The heating automation then every Monday, 6am, will switch your room target temperature to the temperature you set as `heat temp` (look at the data points above). At 10am the roomm target temperature will be set to `base temp`. This is a so called active heating period; there is also the option for passive ones, the workings of which will be explained below. Throughout an active heating period the room will claim heating until the room target temperature minus `margin` is reached, then the heating claim is removed until the room target temperature minus delta is reached, at which point the room claims heating again.
+
+Each room's heating claim including its requested HFFT is managed by HeatSupplyManager, which switches the heating off once there is no room left with a heating claim and keeps heating on for as long as at least one room claims heating.
+
+In this context the above-mentioned passive heating period will be of interest given certain circumstances: In case there is a room that should get some heat, but should not keep the heating running of its own accord, instead of setting `heat temp` to the room's desired temperature, but `base temp`. This will keep the valve open and consequently get the room heated whenever another room triggers the heating.
 
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same compfort level.
@@ -260,32 +282,32 @@ You can access the code for class HeatSupplyManager [here](https://github.com/fr
 
 ### ⚙️ Main Heating Settings (Global)
 
-These settings control the overall behavior of the central heating pump and flow temperature calculations.
+These settings control the overall behavior of the central heating pump and HFFT calculations.
 
 * **Main Switch:** Global toggle to enable or disable the entire heating automation.
 * **Heating Margin:** Defines the stop trigger. Heating stops when `Current Temp >= Target Temp - Heating Margin`.
 * **Cooldown:** Minimum time between switching the heating pump on or off (protects mechanical components from wear).
 * **Claim Duration:** Delay before a dashboard change takes effect (filters out temporary temperature "jitter").
 * **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
-* **Boost Factor:** Determines the flow temperature increase: 
+* **Boost Factor:** Determines the HFFT increase: 
     * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
-* **Baseline at $0^\circ C$:** The base flow temperature when the outside temperature is exactly $0^\circ C$.
-* **Curve Adjustment:** The factor by which flow temperature is increased or decreased relative to changes in outside temperature.
-* **Max Flow Temp:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
+* **Baseline at $0^\circ C$:** The base HFFT when the outside temperature is exactly $0^\circ C$.
+* **Curve Adjustment:** The factor by which HFFT is increased or decreased relative to changes in outside temperature.
+* **Max HFFT:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
 
 ---
 
-### Dynamic Flow Temperature (Heating Curve)
+### Dynamic HFFT (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
 
 $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{max} + Offset_{multi}$$
 
-* **Baseline:** The required flow temperature when it is $0^\circ C$ outside.
+* **Baseline:** The required HFFT when it is $0^\circ C$ outside.
 * **Adjustment:** The "slope" of the curve.
-* **Multi-room Offset:** For every additional room asking for heat, the flow temperature is nudged higher to account for increased thermal load.
+* **Multi-room Offset:** For every additional room asking for heat, the HFFT is nudged higher to account for increased thermal load.
 
 
-`HeatSupplyManager` is responsible for calculating the base flow temperature depending on the outside temperature primarily, and the amount of rooms to heat secondarily (the latter is optional and can be activated via dashboard).
+`HeatSupplyManager` is responsible for calculating the base HFFT depending on the outside temperature primarily, and the amount of rooms to heat secondarily (the latter is optional and can be activated via dashboard).
 
 The outside temperature sensor can have one or more backup sensors, just in case your friendly squirrel chews through the Dallas DS18B20 temperature sensor cable or the battery runs out of your Homematic outdoor temperature sensor.
 
@@ -303,7 +325,7 @@ Depending on whether you use method (A) or (B) below, make sure to either commen
 
 As already mentioned, `FroelingHeatingModbus` in the `module heating_froeling_modbus` listens to changes made by `HeatSupplyManager` to `input_number.target_flow_temp`. `FroelingHeatingModbus` uses the HA integration [Froeling Lambdatronic Modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) to connect to the Froeling boiler using a ethernet to RS232 converter; more information, including examples for setting up boiler as well as converter, can be found on the integration's [homepage](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
 
-The AppDaemon class that enables HA to reading `input_number.target_flow_temp` as well as starting and stopping the heating cycles including setting the correct flow temperature can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
+The AppDaemon class that enables HA to reading `input_number.target_flow_temp` as well as starting and stopping the heating cycles including setting the correct HFFT can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
@@ -325,7 +347,7 @@ To connect to the aforementioned Froeling SP Dual, a TTL to RS232 converter is n
   <img src="https://github.com/user-attachments/assets/7e730be2-fc2a-40d4-a25d-f43063d35c0e" height="300" />
 </p>
 
-Additionally, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during a reboot. It then calculates the heating flow temperature according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set flow temperature) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased - or decreased in case of a negative value - flow temperature; this can be used when the delta between room temp and target temp is bigger, for example, in the morning).
+Additionally, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during a reboot. It then calculates the HFFT according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set HFFT) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased - or decreased in case of a negative value - HFFT; this can be used when the delta between room temp and target temp is bigger, for example, in the morning).
 
 <img width="622" height="882" alt="Screenshot 2026-02-16 at 11 41 33 AM" src="https://github.com/user-attachments/assets/edfd262e-ddd3-4d51-8b6a-a1eb00d2acb4" />
 
@@ -336,7 +358,7 @@ As can be seen, the first seven slots are for the heating schedule in Master mod
 
 `HK2 Enabled` signals that heating circuit 2 is potentially activated; however, a value of not 0 in `HK2 Flow Target Temp (ESP)` activates heating, which is then reflected in `Heating On`.
 
-`HK2 Flow Temp +10 (Master)` and `HK2 Flow Temp -10 (Master)` are used in `Master` mode to determine the flow temp, which is based on the boiler's outside temperature sensor, unless `Outside Temp`, which is based on a Dallas temperature sensor connected to GPIO 54, is in place, then the latter's value is used. `Room Temp` is for an additional dallas temperature sensor, also connected to GPIO 54 (and distinguished by its address -> both need to be changed to the ones of the dallas sensors used).
+`HK2 Flow Temp +10 (Master)` and `HK2 Flow Temp -10 (Master)` are used in `Master` mode to determine the HFFT, which is based on the boiler's outside temperature sensor, unless `Outside Temp`, which is based on a Dallas temperature sensor connected to GPIO 54, is in place, then the latter's value is used. `Room Temp` is for an additional dallas temperature sensor, also connected to GPIO 54 (and distinguished by its address -> both need to be changed to the ones of the dallas sensors used).
 
 `Time (Manual Override)`, as already mentioned, allows for the manual adjustment of date and time in case of missing internet connection.
 
@@ -344,7 +366,7 @@ Additionally, there are five temperature sensors (Dallas DS18B20) connected thro
 
 ---
 
-One of the reasons for using an ESP is the ability to write the target flow temperature into the RAM of the boiler, avoiding having to write to EEPROM registers, the lifetime of which is limited. However, this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated within two minutes, otherwise heating stops, and the ESP automatically takes care of that - as long as the value in `input_number.target_flow_temp` is not 0, the ESP keeps poking the boiler (this 'poking' can also be done by Home Assistant when using the integration in (A); however, using an ESP is the straightforward option).
+One of the reasons for using an ESP is the ability to write the target HFFT into the RAM of the boiler, avoiding having to write to EEPROM registers, the lifetime of which is limited. However, this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated within two minutes, otherwise heating stops, and the ESP automatically takes care of that - as long as the value in `input_number.target_flow_temp` is not 0, the ESP keeps poking the boiler (this 'poking' can also be done by Home Assistant when using the integration in (A); however, using an ESP is the straightforward option).
 
 Other than that, the ESP makes the boiler smart in the sense that its entities can be directly integrated into Home Assistant via ESPHome (already integrated into HA, so all entities the ESP is set up for are instantaneously writable and/or readable in HA). However, if that is the only thing one wants, then [GyroGearl00se's HA integration](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) might be the preferrable option.
 
