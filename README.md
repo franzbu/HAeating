@@ -9,7 +9,7 @@ As always, first things first: here is what your heating automation might look l
 <img width="924" height="532" alt="Screenshot 2026-02-17 at 8 04 22 AM" src="https://github.com/user-attachments/assets/32b9a76a-f5c5-4db7-a06a-e69e7604f3b8" />
 
 
-This is a screenshot of a possible HA dashboard with two example rooms (the four sections with the diagrams are hardware-specific and might and probably will look entirely different on your dashboard). 
+This is a screenshot of a possible HA dashboard with two example rooms (the first four cards are hardware-specific and might and probably will look entirely different on your dashboard). 
 
 
 If heating is set to `Off` (top left), it stays off; if it is set to `Party`, it stays on. However, it is the two options in between, `Auto` and `Heating`, where the magic happens.
@@ -197,11 +197,11 @@ As can be seen in the screenshot above, each heating period has the option of se
 
 ---
 
-So you've read above that schedules are the heart of this heating automation, but what does that actually mean? Well, schedules are THE way of starting and stopping the heating automatically, i.e., you add, for example, to the 'Standard' schedule a heating period on Monday from 6am to 10am. The heating automation then every Monday, 6am, will switch your room target temperature to the temperature you set as `heat temp` (look at the data points above). At 10am the roomm target temperature will be set to `base temp`. This is a so called active heating period; there is also the option for passive ones, the workings of which will be explained below. Throughout an active heating period the room will claim heating until the room target temperature minus `margin` is reached, then the heating claim is removed until the room target temperature minus delta is reached, at which point the room claims heating again.
+So you've read above that schedules are the heart of this heating automation, but what does that actually mean? Well, schedules are THE way of starting and stopping the heating automatically, i.e., you add, for example, to the 'Standard' schedule a heating period on Monday from 6am to 10am. The heating automation then every Monday, 6am, will switch your room target temperature to the temperature you set as `heat temp` (look at the data points above). At 10am the roomm target temperature will be set to `base temp`. This is a so called active heating period; there is also the option for passive ones, the workings of which will be explained below. Throughout an active heating period the room will claim heating until the room target temperature minus `margin` is reached; then the heating claim is removed until the room target temperature minus delta is reached, at which point the room claims heating again.
 
 Each room's heating claim including its requested HFFT is managed by HeatSupplyManager, which switches the heating off once there is no room left with a heating claim and keeps heating on for as long as at least one room claims heating.
 
-In this context the above-mentioned passive heating period will be of interest given certain circumstances: In case there is a room that should get some heat, but should not keep the heating running of its own accord, instead of setting `heat temp` to the room's desired temperature, but `base temp`. This will keep the valve open and consequently get the room heated whenever another room triggers the heating.
+In this context the above-mentioned passive heating might be of interest under certain circumstances: In case there is a room that should get heated, but should not keep the heating running of its own accord, `base temp` instead of setting `heat temp` is set to the room's maximum temperature. This keeps the heating valve for that room open and consequently gets the room heated whenever another room triggers the heating (until the maximum temperature).
 
 ### ☀️ Solar Compensation
 If a room has high solar gain (e.g., south-facing windows), the automation proactively reduces the target temperature when it's warm outside. This is used as a means of compensating for the fact that with direct sun exposure the surrounding temperature can be lowered to achieve the same compfort level.
@@ -261,9 +261,15 @@ The dashboard uses color-coding to signal the current state of the heating deman
 
 ---
 
-### Climate Entity
+### Climate device
 
-Rather than using the pre-set climate device, this heating automation uses an input_number per room for setting the target temperature. Since thermostats still rely on HA's climate devices, each input_number is synced to its climate device and vice versa in case the target temperature is changed on, for example, the native thermostat app. This two-way sync has been done using HA's automation, an example can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
+HA's climate device is the interface between software and hardware, i.e., the present heating automation and the heating valves of the rooms. By adding thermostats (or any combination of temperature sensors and heating valves) to HA, these climate devices are autogenerated, and they link the desired temperature of the room each one of them are assigned to to the state if the heating valve (or valves in case of more than one heating circuit or radiators) of that room. What this boils down to is that as long as the current room temperature is below the target temperature, the heating valve(s) will be open and close once that temperature is reached. As with the heating hardware I have dealt with so far, there no direct way (which, BTW, would not provide any additional benefits) of targeting the opening of the valve(s), these climate devices are the way to adjust the valves and start respectively stop heating. This concept works flawlessly and without compromises.
+
+Rather than using these, for the present purpose unnecessarily clunky, climate cards, the present heating automation uses the HA Helper `input_number.target_temp_<room>`  instead. Since, as has just been explained, thermostats with the attached valves rely on HA's climate device, each input_number is synced to its climate device (and vice versa in case the target temperature is changed on, for example, the native thermostat app). This two-way sync has been done using HA's automation, an example, which can easily be adjusted for each room, can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
+
+Generally speaking, it might be favorable to use local HA integrations for your heating hardware; however, also cloud-based ones will do their job. Be aware, though, that a disruption of your internet connection might have negative effects on your heating automation.
+
+For the Homematic valves I am using an integration I use and recommend is [Homematic IP Local (HCU) Integration for Home Assistant](https://github.com/Ediminator/hacs-homematicip-hcu).
 
 
 ---
