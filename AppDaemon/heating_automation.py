@@ -464,10 +464,19 @@ class HeatSupplyManager(hass.Hass):
             self.listen_state(self.callback_debounced_eval, e)
                 
         self.evaluate_heating_pump()
+
+    def _set_flow_target(self, new_val):
+        """Internal helper: Update Home Assistant only if value changed."""
+        try:
+            current = float(self.get_state(self.flow_target_helper) or -1.0)
+        except (ValueError, TypeError):
+            current = -1.0
+        if new_val != current:
+            self.call_service("input_number/set_value", entity_id=self.flow_target_helper, value=new_val)
     
     def on_mode_change(self, entity, attribute, old, new, args):
         if new == "Off":
-            self.call_service("input_number/set_value", entity_id=self.flow_target_helper, value=0)
+            self._set_flow_target(0)
             return
         if old == "Heating" and new == "Auto":
             self.reset_all_claims()
@@ -493,7 +502,7 @@ class HeatSupplyManager(hass.Hass):
         mode = self.get_state(self.mode_select)
 
         if mode == "Off": 
-            self.call_service("input_number/set_value", entity_id=self.flow_target_helper, value=0)
+            self._set_flow_target(0)
             return
 
         now = datetime.now()
@@ -532,7 +541,7 @@ class HeatSupplyManager(hass.Hass):
             should_heat = True
         else:
             should_heat = False
-            self.call_service("input_number/set_value", entity_id=self.flow_target_helper, value=0)
+            self._set_flow_target(0)
             if mode == "Heating":
                 self.call_service("input_select/select_option", entity_id=self.mode_select, option="Auto")
 
@@ -559,11 +568,11 @@ class HeatSupplyManager(hass.Hass):
             multi_room_factor = float(self.get_state("input_number.flow_temp_multi_room_offset") or 0.0)
             multi_room_boost = max(0, len(active_claims) - 1) * multi_room_factor
 
-            calc_target = float(round(baseline + max_realized_boost + multi_room_boost))
+            calc_target = float(round((baseline + max_realized_boost + multi_room_boost) * 2) / 2)
             max_f = float(self.get_state("input_number.max_flow_temp") or 45.0)
             if calc_target > max_f: calc_target = max_f
                 
-            self.call_service("input_number/set_value", entity_id=self.flow_target_helper, value=calc_target)
+            self._set_flow_target(calc_target)
             if mode != "Heating" and mode != "Party":
                 self.call_service("input_select/select_option", entity_id=self.mode_select, option="Heating")
 
