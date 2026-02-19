@@ -13,9 +13,9 @@ The one goal of this heating automation has been 'set up and forget'. The house 
 
 The present heating automation works regardless of which kind of heating system is in place; it is divided into three abstraction layers: 
 
-(1) and (2) need not to be touched, as they calculate the heating demand and the required heating fluid flow temperature (from now onwards called **HFFT**). Regarding HFFT: Every sophisticated heating automation needs controlling the HFFT at least at its most basic level, in connection to outside temperature. Besides that, the present heating automation gives the user the means to fine tune the HFFT regarding aspects such as room delta temperature or amount of rooms to be heated.
+(1) and (2) need not be touched, as they calculate the heating demand and the required heating fluid flow temperature (from now onwards called **HFFT**). Regarding HFFT: Every sophisticated heating automation needs controlling the HFFT at least at its most basic level, in connection to outside temperature. Besides that, the present heating automation gives the user the means to fine-tune the HFFT regarding aspects such as room delta temperature or amount of rooms to be heated.
 
-(3) links the automation to the hardware in place and will be in need of adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from the two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, `input_number.target_flow_temp`, which can be done in various ways such as a HA automation or an ESP.
+(3) links the automation to the hardware in place and will need adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from the two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, `input_number.target_flow_temp`, which can be done in various ways such as a HA automation or an ESP.
 
 <img width="1024" height="565" alt="image" src="https://github.com/user-attachments/assets/1ec9aac1-f5ab-4949-88ad-21c0c0b31b9f" />
 
@@ -53,7 +53,7 @@ The AppDaemon code relies on the `global_config:` section in [apps.yaml](https:/
 
 In case you are wondering what the listing of the valve states is for, this is done to prevent the heating circuit pump pushing against closed valves; in case they are all closed (< 20%), heating stops.
 
-Rooms that are only heated passively, i.e., they will never have the heating started but simply benefit from the heating up and running, are not listed in the `dependencies:` section of `heating_pump_control:`. The same, for example, goes for radiators that are heated by gravitational flow (simply physics instead of circuit pump).
+Rooms that are only heated passively, i.e., they will never have the heating started but simply benefit from the heating up and running, are not listed in the `dependencies:` section of `heating_pump_control:`. The same, for example, goes for radiators that are heated by gravitational flow (simple physics instead of circuit pump).
 
 ---
 
@@ -210,7 +210,7 @@ As can be seen in the screenshot above, each heating period has the option of se
 
 ---
 
-So you've read above that schedules are the heart of this heating automation, but what does that actually mean? Well, schedules are THE way of starting and stopping the heating automatically, i.e., you add, for example, to the 'Standard' schedule a heating period on Monday from 6am to 10am. The heating automation then every Monday, 6am, will switch your room target temperature to the temperature you set as `heat temp` (look at the data points above). At 10am the roomm target temperature will be set to `base temp`. This is a so called active heating period; there is also the option for passive ones, the workings of which will be explained below. Throughout an active heating period the room will claim heating until the room target temperature minus `margin` is reached; then the heating claim is removed until the room target temperature minus delta is reached, at which point the room claims heating again.
+So you've read above that schedules are the heart of this heating automation, but what does that actually mean? Well, schedules are THE way of starting and stopping the heating automatically, i.e., you add, for example, to the 'Standard' schedule a heating period on Monday from 6am to 10am. The heating automation then every Monday, 6am, will switch your room target temperature to the temperature you set as `heat temp` (look at the data points above). At 10am the room target temperature will be set to `base temp`. This is a so called active heating period; there is also the option for passive ones, the workings of which will be explained below. Throughout an active heating period the room will claim heating until the room target temperature minus `margin` is reached; then the heating claim is removed until the room target temperature minus delta is reached, at which point the room claims heating again.
 
 Each room's heating claim including its requested HFFT is managed by HeatSupplyManager, which switches the heating off once there is no room left with a heating claim and keeps heating on for as long as at least one room claims heating.
 
@@ -276,9 +276,9 @@ The dashboard uses color-coding to signal the current state of the heating deman
 
 ### Climate device
 
-HA's climate device is the interface between software and hardware, i.e., the present heating automation and the heating valves of the rooms. By adding thermostats (or any combination of temperature sensors and heating valves) to HA, these climate devices are autogenerated, and they link the desired temperature of the room each one of them are assigned to to the state if the heating valve (or valves in case of more than one heating circuit or radiators) of that room. What this boils down to is that as long as the current room temperature is below the target temperature, the heating valve(s) will be open and close once that temperature is reached. As with the heating hardware I have dealt with so far, there no direct way (which, BTW, would not provide any additional benefits) of targeting the opening of the valve(s), these climate devices are the way to adjust the valves and start respectively stop heating. This concept works flawlessly and without compromises.
+HA's climate device is the interface between software and hardware, i.e., the present heating automation and the heating valves of the rooms. By adding thermostats (or any combination of temperature sensors and heating valves) to HA, these climate devices are autogenerated, and they link the required room temperature (of the room each one of them is assigned to) to the heating valve (or valves in case of more than one heating circuit or radiators) of that room. What this boils down to is that as long as the current room temperature is below the target temperature, the heating valve(s) will be open and close once that temperature is reached. As with the heating hardware I have dealt with so far, there is no direct way (which, BTW, would not provide any additional benefits) of targeting the opening of the valve(s), these climate devices are the way to adjust the valves and start respectively stop heating. This concept works flawlessly and without compromises.
 
-Rather than using these, for the present purpose unnecessarily clunky, climate cards, the present heating automation uses the HA Helper `input_number.target_temp_<room>`  instead. Since, as has just been explained, thermostats with the attached valves rely on HA's climate device, each input_number is synced to its climate device (and vice versa in case the target temperature is changed on, for example, the native thermostat app). This two-way sync has been done using HA's automation, an example, which can easily be adjusted for each room, can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
+Rather than using these, for the present purpose unnecessarily clunky, climate cards, the present heating automation uses the HA Helper `input_number.target_temp_<room>`  instead. Since, as has just been explained, thermostats with the attached valves rely on HA's climate device, each input_number is synced to its climate device (and vice versa in case the target temperature is changed on, for example, the native thermostat app). This two-way sync has been done using HA's automation, an example that can easily be adapted to all your rooms can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/HA/climate_sync_select_bedroom.yaml).
 
 Generally speaking, it might be favorable to use local HA integrations for your heating hardware; however, also cloud-based ones will do their job. Be aware, though, that a disruption of your internet connection might have negative effects on your heating automation.
 
@@ -289,7 +289,7 @@ For the Homematic valves I am using an integration I use and recommend is [Homem
 
 ## Layer 2: Central Control (`HeatSupplyManager`)
 
-The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party` (heating stays on)
+The central controller monitors all rooms; if at least one room is claiming heat, heating is initiated; however, this automatic heating is only enabled if `input_select.heating_mode` is not `Off` (heating stays off regardless of any room's heating claims) and not `Party` (heating stays on).
 
 You can access the code for class HeatSupplyManager [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_automation.py). (You will have to scroll down.)
 
@@ -321,7 +321,7 @@ In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be 
 These settings control the overall behavior of the central heating pump and HFFT calculations.
 
 * **Heating Margin:** value determines how much before reaching target temp the room stops claiming heat
-* **Claim Duration:** defaults to 0 sec.; however, change this value if you wamt a delay before a dashboard change takes effect (defaults to 0; however, inrease this value in case you encounter temporary temperature 'jitter').
+* **Claim Duration:** defaults to 0 sec.; however, change this value if you want a delay before a dashboard change takes effect (defaults to 0; however, increase this value in case you encounter temporary temperature 'jitters').
 * **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
 * **Boost Factor:** Determines the HFFT increase: 
     * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
@@ -334,21 +334,21 @@ These settings control the overall behavior of the central heating pump and HFFT
 
 ## Layer 3: Connection to Heating Hardware
 
-The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This repository contains two examples how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
+The principle is simple: HA's helper `input_number.target_flow_temp` signals heating demand when it contains the required flow temperature; it signals no heating demand if it is set to `0`. This repository contains two examples of how this can be used to connect the actual heating device, which can be a thermal heat pump, wood boiler, ... 
 
 Depending on whether you use method (A) or (B) below, make sure to either comment out or delete the other one in apps.yaml, or, alternatively, add `disable: true  # <--- Set to true to turn off, false or remove to turn on` to the one you don't use.
 
 ### (A) Froeling wood boiler, using [ha_froeling_lambdatronic_modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
 
-As already mentioned, `FroelingHeatingModbus` in the `module heating_froeling_modbus` listens to changes made by `HeatSupplyManager` to `input_number.target_flow_temp`. `FroelingHeatingModbus` uses the HA integration [Froeling Lambdatronic Modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) to connect to the Froeling boiler using a ethernet to RS232 converter; more information, including examples for setting up boiler as well as converter, can be found on the integration's [homepage](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
+As already mentioned, `FroelingHeatingModbus` in the `module heating_froeling_modbus` listens to changes made by `HeatSupplyManager` to `input_number.target_flow_temp`. `FroelingHeatingModbus` uses the HA integration [Froeling Lambdatronic Modbus](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus) to connect to the Froeling boiler using an ethernet to RS232 converter; more information, including examples for setting up boiler as well as converter, can be found on the integration's [homepage](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus).
 
-The AppDaemon class that enables HA to reading `input_number.target_flow_temp` as well as starting and stopping the heating cycles including setting the correct HFFT can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
+The AppDaemon class that enables HA to read `input_number.target_flow_temp` as well as starting and stopping the heating cycles including setting the correct HFFT can be accessed [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_froeling_modbus.py).
 
 ---
 
 ### (B) Froeling Wood Boiler - ESP32
 
-In case you want to turn the heating's AI up a notch, you can go ESP. Instead of just being a middle-man like the solution presented in (A), the ESP is a device with its own logic and agenda, so much so that with the user can access its proper web interface and can schedule the heating including HFFT.
+In case you want to turn the heating's AI up a notch, you can go ESP. Instead of just being a middle-man like the solution presented in (A), the ESP is a device with its own logic and agenda, so much so that the user can access its proper web interface and schedule the heating including HFFT.
 
 But what is the benefit in that? As far as the Froeling boiler is concerned, here is the answer: HFFT, the heat fluid flow temperature. On its own, the Froeling boiler can only base its calculations on its own outside temperature sensor. Since a well-functioning heating automating needs to go beyond that, it is essential to use another way for setting the HFFT. The ethernet-to-modbus device presented in (A) is such another way; however, there is a catch: the registers for the HFFT at $-10^\circ C$ and $10^\circ C$ outside temperature need to be dynamically and thus continually adjusted, and while that is certainly possible, it wears out the EEPROM with its limited life span as far as writing operations are concerned.
 
@@ -394,7 +394,7 @@ Altogether there are five temperature sensors (Dallas DS18B20) connected through
 
 As mentioned, one of the reasons for using an ESP is its ability to write the target HFFT into the RAM of the boiler autonomously. However, this register (48001-48018 for Froeling's 18 heating circuits) needs to be updated within two minutes, otherwise heating stops, and the ESP automatically takes care of that - as long as the value in `input_number.target_flow_temp` is not 0, the ESP keeps poking the boiler.
 
-Other than that, the ESP makes the boiler smart in the sense that its entities can be directly integrated into Home Assistant via ESPHome (wich is already baked into HA's standard installation, so all entities in the ESP are directly available in HA).
+Other than that, the ESP makes the boiler smart in the sense that its entities can be directly integrated into Home Assistant via ESPHome (which is already baked into HA's standard installation, so all entities in the ESP are directly available in HA).
 
 The Froeling entities (sensors) in the ESP can easily be [changed or extended](https://github.com/franzbu/HomeAssistantHeating/blob/main/doc/B1200522_ModBus%20Lambdatronic%203200_50-04_05-19_de.pdf).
 
