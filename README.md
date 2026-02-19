@@ -1,5 +1,9 @@
 # Home Assistant Heating
 
+![Home Assistant](https://img.shields.io/badge/Home_Assistant-blue?logo=home-assistant)
+![AppDaemon](https://img.shields.io/badge/AppDaemon-Python-yellow?logo=python)
+![ESPHome](https://img.shields.io/badge/ESPHome-ready-black?logo=espressif)
+
 First things first: Here is what your heating automation might look like (and yes, the colors for the rooms, in this case 'Stubbe' and 'Blue Room', carry meaning; so one glance suffices to know whether a room is currently heating, in heating demand, or off).
 
 <img width="913" height="519" alt="Screenshot 2026-02-19 at 1 04 55 PM" src="https://github.com/user-attachments/assets/b7a57efd-a91c-4d96-a5c9-da20839213f9" />
@@ -20,6 +24,16 @@ The present heating automation works regardless of which kind of heating system 
 
 This heating control system has been built with **AppDaemon** (Python). Why AppDaemon, you may ask. Well, AppDaemon is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency.
 
+---
+
+## Table of Contents
+- [System Architecture](#-system-architecture)
+- [Layer 1: Room-Level Logic](#layer-1-room-level-logic-roomdemandcalculator)
+- [Layer 2: Central Control](#layer-2-central-control-heatsupplymanager)
+- [Layer 3: Connection to Heating Hardware](#layer-3-connection-to-heating-hardware)
+
+---
+
 ## 🛠 System Architecture
 The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating, or cooling for that matter, out there. Layer 3 is all about how to address the existing heating hardware and will have to be adjusted - two examples are given.
 
@@ -29,9 +43,9 @@ The heating automation is split into three specialized layers; the first two are
   
 (3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to changes to `input_number.target_flow_temp` and handles heating in accordance with the value in `input_number.target_flow_temp`. 
 
----
+<details>
+<summary><b>Click to expand: AppDaemon <code>apps.yaml</code> Example</b></summary>
 
-### AppDaemon `apps.yaml` Example
 ```yaml
 heating_livingroom:
   module: heating_automation
@@ -53,12 +67,12 @@ The AppDaemon code relies on the `global_config:` section in [apps.yaml](https:/
 In case you are wondering what the listing of the valve states is for, this is done to prevent the heating circuit pump pushing against closed valves; in case they are all closed (< 20%), heating stops.
 
 Rooms that are only heated passively, i.e., they will never have the heating started but simply benefit from the heating up and running, are not listed in the `dependencies:` section of `heating_pump_control:`. The same, for example, goes for radiators that are heated by gravitational flow (simple physics instead of circuit pump).
+</details>
 
----
+<details>
+<summary><b>Click to expand: Required Home Assistant Entities</b></summary>
 
 AppDaemon gets the room names and the names of the HA Helpers based on this config, and for that it is important that the Helpers are created following the naming pattern in the section below.
-
-### Required Home Assistant Entities
 
 Helpers to create for each room, replace 'stubbe' with the name of each of the rooms:
 ```text
@@ -93,6 +107,7 @@ input_number.max_flow_temp (20-75)
 input_number.flow_temp_multi_room_offset (0-1; step: 0.1)
 input_number.hk2_target_flow_temp
 ```
+</details>
 
 ---
 
@@ -115,8 +130,6 @@ The beauty of Home Assistant is its modularity, meaning you can arrange your das
 * [more-info-card](https://github.com/thomasloven/lovelace-more-info-card)
 * [simple swipe card](https://github.com/nutteloost/simple-swipe-card)
 * *(Optional)* [Froeling Card](https://github.com/GyroGearl00se/lovelace-froeling-card) – If you have a Froeling boiler and want it to match the style at the top of this page, use this [modified version](https://github.com/franzbu/lovelace-froeling-card).
-
----
 
 Each room is managed via a dedicated dashboard section containing the following data points:
 
@@ -146,8 +159,6 @@ Swiping the upper section reveals further settings and information, including **
   <img width="302" src="https://github.com/user-attachments/assets/338cac9c-323b-415f-a72d-5ae0efd3a939" />
 </p>
 
----
-
 #### Additional Parameters
 
 * **Heating Delta (Δ):** The "Start" trigger. Heating turns on when the temperature drops below `Target Temp - Delta`. 
@@ -162,8 +173,6 @@ Swiping the upper section reveals further settings and information, including **
 * **Heat Temp:** The default target temperature used during active schedule events if no specific temperature is defined within the schedule itself.
   
   <img width="377" alt="Heat Temp" src="https://github.com/user-attachments/assets/f8f194f5-165b-42b0-a338-0a6951cd8fb9" />
-
----
 
 #### Configuration & Setup
 
@@ -205,8 +214,6 @@ Additionally, the schedule can be set by entering start and end time.
 <img width="335" height="438" alt="Screenshot 2026-02-17 at 10 04 11 PM" src="https://github.com/user-attachments/assets/906f36f3-c262-435f-849c-cddf352aed9b" />
 
 As can be seen in the screenshot above, each heating period has the option of setting a target temperature that is different from the one that is pre-set for each room; by, for example, adding `temp: 22` to `Additional data`, the target temperature for this specific heating period will be `22`°C, regardless of what the general target temp for this room is. 
-
----
 
 So you've read above that schedules are the heart of this heating automation, but what does that actually mean? Well, schedules are THE way of starting and stopping the heating automatically, i.e., you add, for example, to the 'Standard' schedule a heating period on Monday from 6am to 10am. The heating automation then every Monday, 6am, will switch your room target temperature to the temperature you set as `heat temp` (look at the data points above). At 10am the room target temperature will be set to `base temp`. This is a so called active heating period; there is also the option for passive ones, the workings of which will be explained below. Throughout an active heating period the room will claim heating until the room target temperature minus `margin` is reached; then the heating claim is removed until the room target temperature minus delta is reached, at which point the room claims heating again.
 
@@ -309,7 +316,8 @@ In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be 
 
 ---
 
-### ⚙️ Main Heating Settings (Global)
+<details>
+<summary><b>Click to expand: Main Heating Settings (Global)</b></summary>
 
 <img width="299" height="237" alt="Screenshot 2026-02-19 at 12 47 33 PM" src="https://github.com/user-attachments/assets/63f3e4e1-5b5e-4d11-9828-ad5042c1026a" />
 
@@ -324,6 +332,7 @@ These settings control the overall behavior of the central heating pump and HFFT
 * **Baseline Adjustment:** factor by which HFFT is increased or decreased when outside temperature is below or above 0°C.
 * **Max HFFT:** max temp of the HFFT, e.g., for plaster protection in wall heating
 * **HFFT Multiroom Offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
+</details>
 
 ---
 
@@ -345,7 +354,10 @@ The AppDaemon class that enables HA to read `input_number.target_flow_temp` as w
 
 In case you want to turn the heating's AI up a notch, you can go ESP. Instead of just being a middle-man like the solution presented in (A), the ESP is a device with its own logic and agenda, so much so that the user can access its proper web interface and schedule the heating including HFFT.
 
-But what is the benefit in that? As far as the Froeling boiler is concerned, here is the answer: HFFT, the heat fluid flow temperature. On its own, the Froeling boiler can only base its calculations on its own outside temperature sensor. Since a well-functioning heating automating needs to go beyond that, it is essential to use another way for setting the HFFT. The ethernet-to-modbus device presented in (A) is such another way; however, there is a catch: the registers for the HFFT at -10°C and 10°C outside temperature need to be dynamically and thus continually adjusted, and while that is certainly possible, it wears out the EEPROM with its limited life span as far as writing operations are concerned.
+But what is the benefit in that? As far as the Froeling boiler is concerned, here is the answer: HFFT, the heat fluid flow temperature. On its own, the Froeling boiler can only base its calculations on its own outside temperature sensor. Since a well-functioning heating automating needs to go beyond that, it is essential to use another way for setting the HFFT. The ethernet-to-modbus device presented in (A) is such another way; however, there is a catch: 
+
+> [!WARNING]
+> The registers for the HFFT at -10°C and 10°C outside temperature need to be dynamically and thus continually adjusted, and while that is certainly possible, it wears out the EEPROM with its limited life span as far as writing operations are concerned.
 
 To cut a long story short; there is another solution. Froeling enables changing the HFFT in a register of the RAM of the boiler, which means that writing to it virtually causes no wear and tear. However, Froeling has engineered this changing of the HFFT via RAM register in a way that the heating stops if the writing is not repeated within two minutes. 
 
@@ -397,4 +409,5 @@ As we have established by now, the ESP directly listens to `input_number.target_
 
 ---
 
-For this to work, Modbus access needs to be enabled using the Froeling boiler's touchscreen by following the instructions regarding ['Enabling Modbus RTU on the Boiler'](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus#-enabling-modbus-rtu-on-the-boiler).
+> [!IMPORTANT]
+> For this to work, Modbus access needs to be enabled using the Froeling boiler's touchscreen by following the instructions regarding ['Enabling Modbus RTU on the Boiler'](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus#-enabling-modbus-rtu-on-the-boiler).
