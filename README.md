@@ -293,14 +293,6 @@ The central controller monitors all rooms; if at least one room is claiming heat
 
 You can access the code for class HeatSupplyManager [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_automation.py). (You will have to scroll down.)
 
-* **heating margin:** value determines how much before reaching target temp the room stops claiming heat
-* **claim duration:** defaults at 0 sec.; however, change this value if you prefer changing the heating parameters in the dashboard and want some seconds to pass for them to take effect to avoid jittering.
-* **boost threshold:** if boost is enabled for a room, this value in degrees determines its range: `< target temp - boost threshold`
-* **boost factor:** HFFT in increased by `boost factor * (target temp - boost threshold)`
-* **baseline at 0 degrees:** together with next parameter used for calculating HFFT; this value determines the HFFT at 0 degrees outside temperature
-* **baseline adjustment:** factor by which HFFT is increased or decreased when outside temperature is below or above 0 degrees.
-* **max flow temp:** max temp of the HFFT, e.g., for plaster protection in wall heating
-* **flow temp multiroom offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
 ---
 
 
@@ -328,15 +320,15 @@ In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be 
 
 These settings control the overall behavior of the central heating pump and HFFT calculations.
 
-* **Heating Margin:** Defines the stop trigger. Heating stops when `Current Temp >= Target Temp - Heating Margin`.
-* **Cooldown:** Minimum time between switching the heating pump on or off (protects mechanical components from wear).
-* **Claim Duration:** Delay before a dashboard change takes effect (filters out temporary temperature "jitter").
+* **Heating Margin:** value determines how much before reaching target temp the room stops claiming heat
+* **Claim Duration:** defaults to 0 sec.; however, change this value if you wamt a delay before a dashboard change takes effect (defaults to 0; however, inrease this value in case you encounter temporary temperature 'jitter').
 * **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
 * **Boost Factor:** Determines the HFFT increase: 
     * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
-* **Baseline at $0^\circ C$:** The base HFFT when the outside temperature is exactly $0^\circ C$.
-* **Curve Adjustment:** The factor by which HFFT is increased or decreased relative to changes in outside temperature.
-* **Max HFFT:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
+* **Baseline at $0^\circ C$:** together with next parameter used for calculating HFFT; this value determines the HFFT at $0^\circ C$ outside temperature
+* **Baseline Adjustment:** factor by which HFFT is increased or decreased when outside temperature is below or above $0^\circ C$.
+* **Max HFFT:** max temp of the HFFT, e.g., for plaster protection in wall heating
+* **HFFT Multiroom Offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
 
 ---
 
