@@ -2,7 +2,7 @@
 
 First things first: Here is what your heating automation might look like (and yes, the colors for the rooms, in this case 'Stubbe' and 'Blue Room', carry meaning; so one glance suffices to know whether a room is currently heating, in heating demand, or off).
 
-<img width="925" height="524" alt="Screenshot 2026-02-19 at 6 46 51 AM" src="https://github.com/user-attachments/assets/031d14f5-4e46-40ef-b47a-b291fb44eb9d" />
+<img width="920" height="524" alt="Screenshot 2026-02-19 at 12 16 34 PM" src="https://github.com/user-attachments/assets/4fbc03d6-7e58-4746-8a65-abf91b1dbbe2" />
 
 
 This is a screenshot of a possible HA dashboard with two example rooms (the first four cards are hardware-specific and might and probably will look entirely different on your dashboard). 
