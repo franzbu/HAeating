@@ -20,8 +20,6 @@ The present heating automation works regardless of which kind of heating system 
 
 (3) links the automation to the hardware in place and will need adjusting (unless you happen to own a Froeling Lambdatronic-powered boiler such as the SP Dual, then you can choose from the two examples provided farther down). Linking your heating hardware, however, boils down to accessing one variable only, `input_number.target_flow_temp`, which can be done in various ways such as a HA automation or an ESP.
 
-<img width="1024" height="565" alt="image" src="https://github.com/user-attachments/assets/1ec9aac1-f5ab-4949-88ad-21c0c0b31b9f" />
-
 This heating control system has been built with **AppDaemon** (Python). Why AppDaemon, you may ask. Well, AppDaemon is unparalleled when it comes to using Python within Home Assistant without restrictions, including the possibility of creating instances of classes (which, for example, PyScript cannot do). The availability of all Python libraries and possibilities allows for the ultimate straightforwardness and efficiency.
 
 ---
@@ -34,7 +32,39 @@ This heating control system has been built with **AppDaemon** (Python). Why AppD
 
 ---
 
+## 📂 Repository Structure
+```text
+📦 HomeAssistantHeating
+├── 📂 AppDaemon
+│   ├── appdaemon_watchdog.py
+│   ├── apps.yaml
+│   ├── globals.py
+│   ├── heating_automation.py
+│   ├── heating_froeling_esp.py
+│   └── heating_froeling_modbus.py
+├── 📂 dashboard
+│   └── dashboard_room.yaml
+├── 📂 doc
+│   └── B1200522_ModBus Lambdatronic 3200_50-04_05-19_de.pdf
+├── 📂 firmware
+│   └── ESP32-P4-NANO_Froeling_Lambdatronic3200.yml
+└── 📂 HA
+    └── climate_sync_select_bedroom.yaml
+```
+
+---
+
 ## 🛠 System Architecture
+
+<img width="1024" height="565" alt="image" src="https://github.com/user-attachments/assets/1ec9aac1-f5ab-4949-88ad-21c0c0b31b9f" />
+
+```mermaid
+graph TD;
+    A[Layer 1: RoomDemandCalculator] -->|Requests Heat| B(Layer 2: HeatSupplyManager);
+    B -->|Writes HFFT| C{HA Helper: input_number};
+    C -->|Reads HFFT| D[Layer 3: Hardware Interface];
+```
+
 The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating, or cooling for that matter, out there. Layer 3 is all about how to address the existing heating hardware and will have to be adjusted - two examples are given.
 
 (1) **Layer 1: Room Level (RoomDemandCalculator: The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
@@ -289,6 +319,8 @@ Generally speaking, it might be favorable to use local HA integrations for your 
 
 For the Homematic valves I am using an integration I use and recommend is [Homematic IP Local (HCU) Integration for Home Assistant](https://github.com/Ediminator/hacs-homematicip-hcu).
 
+[⬆ Back to top](#table-of-contents)
+
 ---
 
 ## Layer 2: Central Control (`HeatSupplyManager`)
@@ -333,6 +365,8 @@ These settings control the overall behavior of the central heating pump and HFFT
 * **Max HFFT:** max temp of the HFFT, e.g., for plaster protection in wall heating
 * **HFFT Multiroom Offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
 </details>
+
+[⬆ Back to top](#table-of-contents)
 
 ---
 
@@ -411,3 +445,5 @@ As we have established by now, the ESP directly listens to `input_number.target_
 
 > [!IMPORTANT]
 > For this to work, Modbus access needs to be enabled using the Froeling boiler's touchscreen by following the instructions regarding ['Enabling Modbus RTU on the Boiler'](https://github.com/GyroGearl00se/ha_froeling_lambdatronic_modbus#-enabling-modbus-rtu-on-the-boiler).
+
+[⬆ Back to top](#table-of-contents)
