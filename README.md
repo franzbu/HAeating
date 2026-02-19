@@ -6,7 +6,6 @@ First things first: Here is what your heating automation might look like (and ye
 
 This is a screenshot of a possible HA dashboard with two example rooms (the first four cards are hardware-specific and might and probably will look entirely different on your dashboard). 
 
-
 If heating is set to `Off` (top left), it stays off; if it is set to `Party`, it stays on. However, it is the two options in between, `Auto` and `Heating`, where the magic happens.
 
 The one goal of this heating automation has been 'set up and forget'. The house ideally heats itself to the desired temperature, taking into consideration premeditated factors such as personal circumstances (work, holiday at home, gone), purpose of room, day of week, time of day, or time of year. Even factors such as the current sun exposure can play a role and can optionally be taken into consideration by this heating automation.
@@ -24,9 +23,9 @@ This heating control system has been built with **AppDaemon** (Python). Why AppD
 ## 🛠 System Architecture
 The heating automation is split into three specialized layers; the first two are abstraction layers that can stay the same for any kind of heating, or cooling for that matter, out there. Layer 3 is all about how to address the existing heating hardware and will have to be adjusted - two examples are given.
 
-(1) **Layer 1: Room Level:** RoomDemandCalculator: (The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
+(1) **Layer 1: Room Level (RoomDemandCalculator: The Brain):** An instance of this app runs for every room. It handles schedules, hysteresis, solar gain compensation, boost demands, and calculates the heat claim for the room.
   
-(2) **Layer 2: Central Heating Control:** HeatSupplyManager: (The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the HFFT to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
+(2) **Layer 2: Central Heating Control (HeatSupplyManager: The Muscle):** HeatSupplyManager acts as control center for juggling the heating demands for all rooms. Heating is initiated by writing the HFFT to the HA Helper `input_number.target_flow_temp` (heating stops by writing 0).
   
 (3) **Layer 3: Hardware Interface:** Connects to the actual hardware (e.g., Froeling SP Dual): The hardware interface listens to changes to `input_number.target_flow_temp` and handles heating in accordance with the value in `input_number.target_flow_temp`. 
 
@@ -62,7 +61,7 @@ AppDaemon gets the room names and the names of the HA Helpers based on this conf
 ### Required Home Assistant Entities
 
 Helpers to create for each room, replace 'stubbe' with the name of each of the rooms:
-```
+```text
 schedule.standard_stubbe
 schedule.holiday_stubbe
 schedule.party_stubbe
@@ -82,8 +81,8 @@ input_text.next_event_stubbe: for showing schedule’s attribute ‘next_event�
 optional and only for rooms with sun compensation: input_number.sun_compensation_stubbe: 1-5 (1 steps)
 ```
 
-helpers to create once for heating automation as a whole:
-```
+Helpers to create once for heating automation as a whole:
+```text
 input_boolean.heating_automation
 input_number.heating_boost_threshold (2-25)
 input_number.heating_baseline_0_deg (25-45)
@@ -102,7 +101,6 @@ input_number.hk2_target_flow_temp
 Each room functions as an independent agent. It monitors its own temperature and decides whether to "request" heat from the boiler.
 
 You can access the code for class RoomDemandCalculator [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_automation.py).
-
 
 ---
 
@@ -152,7 +150,7 @@ Swiping the upper section reveals further settings and information, including **
 
 #### Additional Parameters
 
-* **Heating Delta ($\Delta$):** The "Start" trigger. Heating turns on when the temperature drops below `Target Temp - Delta`. 
+* **Heating Delta (Δ):** The "Start" trigger. Heating turns on when the temperature drops below `Target Temp - Delta`. 
   > *Control:* Tap the card/icon to adjust; long-tap for larger increments.
   
   <img width="407" alt="Heating Delta" src="https://github.com/user-attachments/assets/4fd796f9-9c4a-43ab-8d84-e34d37a3c926" />
@@ -194,7 +192,7 @@ The schedules are the heart of the automation. The system follows the logic of t
 
 3.  **Party:** Overrides timers for extended comfort.
 4.  **Temporary:** Short-term adjustments.
-5.  **Off:** Frost protection only (Target set to $5^\circ C$).
+5.  **Off:** Frost protection only (Target set to 5°C).
 
 #### Schedule Adjustment
 
@@ -223,12 +221,13 @@ The most straightforward solution to gauge the sun's intensity is a brightness s
 
 #### How the Calculation Works
 The logic uses the range between 20.0°C (start) and 35.0°C (peak) to decide how much of a "discount" to apply:
-Below 20°C Garden Temp: The offset is 0.0. The room stays at the full target temp. At 35°C Garden Temp: The offset is 100% of the helper value (1–5 degrees). If the helper is set to 3.0, the target temperature drops by 3.0°C once the greenhouse temperature hits 35 degrees. In between (e.g., 27.5°C): The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
 
+* **Below 20°C Garden Temp:** The offset is 0.0. The room stays at the full target temp. 
+* **At 35°C Garden Temp:** The offset is 100% of the helper value (1–5 degrees). If the helper is set to 3.0, the target temperature drops by 3.0°C once the greenhouse temperature hits 35 degrees. 
+* **In between (e.g., 27.5°C):** The offset is scaled linearly (at 27.5°C, it would be 50% of the helper).
 
 ### 🔥 Boost Mode
 If a room temperature is significantly below the target (e.g., after a window was left open), the room calculates a **Boost Factor**. This tells the boiler to provide much hotter water temporarily to recover the room temperature as fast as possible.
-
 
 ---
 
@@ -239,7 +238,6 @@ The system dynamically generates status messages for your Home Assistant UI:
 * *“Heating stops at next power cut ;)”* (For continuous 24/7 schedules).
 
 <img width="291" height="119" alt="Screenshot 2026-02-17 at 9 57 28 PM" src="https://github.com/user-attachments/assets/0e560278-dd88-4500-b2af-521ce879e3f1" />
-
 
 ### Safety Features
 * **Health Check:** If a connection fails, the system sends an emergency Telegram notification.
@@ -284,7 +282,6 @@ Generally speaking, it might be favorable to use local HA integrations for your 
 
 For the Homematic valves I am using an integration I use and recommend is [Homematic IP Local (HCU) Integration for Home Assistant](https://github.com/Ediminator/hacs-homematicip-hcu).
 
-
 ---
 
 ## Layer 2: Central Control (`HeatSupplyManager`)
@@ -295,16 +292,14 @@ You can access the code for class HeatSupplyManager [here](https://github.com/fr
 
 ---
 
-
 ### Dynamic HFFT (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
 
 $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{max} + Offset_{multi}$$
 
-* **Baseline:** The required HFFT when it is $0^\circ C$ outside.
+* **Baseline:** The required HFFT when it is 0°C outside.
 * **Adjustment:** The "slope" of the curve.
 * **Multi-room Offset:** For every additional room asking for heat, the HFFT is nudged higher to account for increased thermal load.
-
 
 `HeatSupplyManager` is responsible for calculating the base HFFT depending on the outside temperature primarily, and the amount of rooms to heat secondarily (the latter is optional and can be activated via dashboard).
 
@@ -325,8 +320,8 @@ These settings control the overall behavior of the central heating pump and HFFT
 * **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
 * **Boost Factor:** Determines the HFFT increase: 
     * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
-* **Baseline at $0^\circ C$:** together with next parameter used for calculating HFFT; this value determines the HFFT at $0^\circ C$ outside temperature
-* **Baseline Adjustment:** factor by which HFFT is increased or decreased when outside temperature is below or above $0^\circ C$.
+* **Baseline at 0°C:** together with next parameter used for calculating HFFT; this value determines the HFFT at 0°C outside temperature
+* **Baseline Adjustment:** factor by which HFFT is increased or decreased when outside temperature is below or above 0°C.
 * **Max HFFT:** max temp of the HFFT, e.g., for plaster protection in wall heating
 * **HFFT Multiroom Offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
 
@@ -350,7 +345,7 @@ The AppDaemon class that enables HA to read `input_number.target_flow_temp` as w
 
 In case you want to turn the heating's AI up a notch, you can go ESP. Instead of just being a middle-man like the solution presented in (A), the ESP is a device with its own logic and agenda, so much so that the user can access its proper web interface and schedule the heating including HFFT.
 
-But what is the benefit in that? As far as the Froeling boiler is concerned, here is the answer: HFFT, the heat fluid flow temperature. On its own, the Froeling boiler can only base its calculations on its own outside temperature sensor. Since a well-functioning heating automating needs to go beyond that, it is essential to use another way for setting the HFFT. The ethernet-to-modbus device presented in (A) is such another way; however, there is a catch: the registers for the HFFT at $-10^\circ C$ and $10^\circ C$ outside temperature need to be dynamically and thus continually adjusted, and while that is certainly possible, it wears out the EEPROM with its limited life span as far as writing operations are concerned.
+But what is the benefit in that? As far as the Froeling boiler is concerned, here is the answer: HFFT, the heat fluid flow temperature. On its own, the Froeling boiler can only base its calculations on its own outside temperature sensor. Since a well-functioning heating automating needs to go beyond that, it is essential to use another way for setting the HFFT. The ethernet-to-modbus device presented in (A) is such another way; however, there is a catch: the registers for the HFFT at -10°C and 10°C outside temperature need to be dynamically and thus continually adjusted, and while that is certainly possible, it wears out the EEPROM with its limited life span as far as writing operations are concerned.
 
 To cut a long story short; there is another solution. Froeling enables changing the HFFT in a register of the RAM of the boiler, which means that writing to it virtually causes no wear and tear. However, Froeling has engineered this changing of the HFFT via RAM register in a way that the heating stops if the writing is not repeated within two minutes. 
 
@@ -376,7 +371,6 @@ To connect to the aforementioned Froeling SP Dual via Modbus, a TTL to RS232 con
 As has been mentioned, the ESP's firmware can be extended with the ability to work independently from HA in a so called `Master` mode, to which it switches automatically if the connection to HA is interrupted, e.g., during maintenance work to HA. In that mode the ESP calculates the HFFT according to the settings in its own web interface (in case heating was on when the connection got disrupted, heating continues for 20 minutes with the last set HFFT) and starts and stops the heating according to its schedule ('#' ignores anything afterwards; '8-10' determines the heating period, and '@', if present, stands for the increased - or decreased in case of a negative value - HFFT; this can be used when the delta between room temp and target temp is bigger, for example, in the morning).
 
 <img width="622" height="882" alt="Screenshot 2026-02-16 at 11 41 33 AM" src="https://github.com/user-attachments/assets/edfd262e-ddd3-4d51-8b6a-a1eb00d2acb4" />
-
 
 Seven slots (one per day of the week) are reserved for the heating schedule in Master mode (`ESP Status`), i.e., in case the ESP is disconnected from Home Assistant. 
 
