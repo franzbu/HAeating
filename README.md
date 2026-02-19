@@ -304,24 +304,6 @@ You can access the code for class HeatSupplyManager [here](https://github.com/fr
 * **flow temp multiroom offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
 ---
 
-<img width="299" height="237" alt="Screenshot 2026-02-19 at 12 47 33 PM" src="https://github.com/user-attachments/assets/63f3e4e1-5b5e-4d11-9828-ad5042c1026a" />
-
-### ⚙️ Main Heating Settings (Global)
-
-These settings control the overall behavior of the central heating pump and HFFT calculations.
-
-* **Main Switch:** Global toggle to enable or disable the entire heating automation.
-* **Heating Margin:** Defines the stop trigger. Heating stops when `Current Temp >= Target Temp - Heating Margin`.
-* **Cooldown:** Minimum time between switching the heating pump on or off (protects mechanical components from wear).
-* **Claim Duration:** Delay before a dashboard change takes effect (filters out temporary temperature "jitter").
-* **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
-* **Boost Factor:** Determines the HFFT increase: 
-    * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
-* **Baseline at $0^\circ C$:** The base HFFT when the outside temperature is exactly $0^\circ C$.
-* **Curve Adjustment:** The factor by which HFFT is increased or decreased relative to changes in outside temperature.
-* **Max HFFT:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
-
----
 
 ### Dynamic HFFT (Heating Curve)
 The system doesn't use a fixed water temperature. It calculates the **Flow Target** using a linear heating curve:
@@ -338,6 +320,24 @@ $$T_{flow} = (-Adjustment \times T_{outdoor}) + Baseline_{0^\circ C} + Boost_{ma
 The outside temperature sensor can have one or more backup sensors, just in case your friendly squirrel chews through the Dallas DS18B20 temperature sensor cable or the battery runs out of your Homematic outdoor temperature sensor.
 
 In apps.yaml, section `temp_outdoor_map:`, any number of outdoor sensors can be listed with descending priority (first is used first). The list is dynamic, i.e., should a sensor with a higher priority start delivering valid data, AppDaemon is picking that up and switching back.
+
+---
+
+### ⚙️ Main Heating Settings (Global)
+
+<img width="299" height="237" alt="Screenshot 2026-02-19 at 12 47 33 PM" src="https://github.com/user-attachments/assets/63f3e4e1-5b5e-4d11-9828-ad5042c1026a" />
+
+These settings control the overall behavior of the central heating pump and HFFT calculations.
+
+* **Heating Margin:** Defines the stop trigger. Heating stops when `Current Temp >= Target Temp - Heating Margin`.
+* **Cooldown:** Minimum time between switching the heating pump on or off (protects mechanical components from wear).
+* **Claim Duration:** Delay before a dashboard change takes effect (filters out temporary temperature "jitter").
+* **Boost Threshold:** Activation trigger for high-output heating. Boost starts if `Current Temp < Target Temp - Boost Threshold`.
+* **Boost Factor:** Determines the HFFT increase: 
+    * $$Flow\ Increase = (Target\ Temp - Current\ Temp) \times Boost\ Factor$$
+* **Baseline at $0^\circ C$:** The base HFFT when the outside temperature is exactly $0^\circ C$.
+* **Curve Adjustment:** The factor by which HFFT is increased or decreased relative to changes in outside temperature.
+* **Max HFFT:** The safety ceiling for water temperature (prevents damage to floor plaster/screed).
 
 ---
 
