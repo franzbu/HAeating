@@ -294,11 +294,17 @@ The central controller monitors all rooms; if at least one room is claiming heat
 
 You can access the code for class HeatSupplyManager [here](https://github.com/franzbu/HomeAssistantHeating/blob/main/AppDaemon/heating_automation.py). (You will have to scroll down.)
 
-
+* **heating margin:** value determines how much before reaching target temp the room stops claiming heat
+* **claim duration:** defaults at 0 sec.; however, change this value if you prefer changing the heating parameters in the dashboard and want some seconds to pass for them to take effect to avoid jittering.
+* **boost threshold:** if boost is enabled for a room, this value in degrees determines its range: `< target temp - boost threshold`
+* **boost factor:** HFFT in increased by `boost factor * (target temp - boost threshold)`
+* **baseline at 0 degrees:** together with next parameter used for calculating HFFT; this value determines the HFFT at 0 degrees outside temperature
+* **baseline adjustment:** factor by which HFFT is increased or decreased when outside temperature is below or above 0 degrees.
+* **max flow temp:** max temp of the HFFT, e.g., for plaster protection in wall heating
+* **flow temp multiroom offset:** if more than one room is being heated at the same time, the HFFT is increased by `flow temp multiroom offset * (amount of rooms - 1)`
 ---
 
-<img width="369" height="274" alt="Screenshot 2026-02-07 at 10 32 44 AM" src="https://github.com/user-attachments/assets/7badd294-1c8c-4a2e-b169-c7a4e3e969bf" />
-
+<img width="299" height="237" alt="Screenshot 2026-02-19 at 12 47 33 PM" src="https://github.com/user-attachments/assets/63f3e4e1-5b5e-4d11-9828-ad5042c1026a" />
 
 ### ⚙️ Main Heating Settings (Global)
 
