@@ -12,7 +12,7 @@ esphome:
             id: modbus_status
             state: !lambda 'return !std::isnan(id(boiler_temp_actual).state);'
 
-# dallas: DS18B20 on GPIO54 (Right Header)
+# dallas: DS18B20 on GPIO54
 one_wire:
   - platform: gpio
     pin: 47  # "ignore_pin_validation_error" removed
