@@ -49,7 +49,7 @@ global_config:
     froeling_induced_draft_speed: 'sensor.froeling_boiler_induced_draught_speed'
     froeling_oxygen_controller: 'sensor.froeling_boiler_oxygen_controller'
     froeling_primary_air: 'sensor.froeling_boiler_primary_air'
-    froeling_residual_oxygen_content: 'sensor.froeling_boiler_residual_oxygen_content'
+    froeling_residual_oxygen_content: 'sensor.froeling_boiler_residual_oxygen'
     froeling_return_sensor: 'sensor.froeling_boiler_return_sensor'
     froeling_system_state: 'sensor.froeling_boiler_system_state'
     froeling_hk2_flow_target_temp_external: 'sensor.froeling_hk2_flow_target_temp'
