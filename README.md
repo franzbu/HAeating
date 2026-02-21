@@ -43,13 +43,20 @@ This heating control system has been built with **AppDaemon** (Python). Why AppD
 │   ├── heating_froeling_esp.py
 │   └── heating_froeling_modbus.py
 ├── 📂 dashboard
-│   └── dashboard_room.yaml
+│   ├── dashboard_room.yaml
+│   ├── dashboard_settings.yaml
+│   └── heating_options.yaml
 ├── 📂 doc
 │   └── B1200522_ModBus Lambdatronic 3200_50-04_05-19_de.pdf
 ├── 📂 firmware
 │   └── ESP32-P4-NANO_Froeling_Lambdatronic3200.yml
 └── 📂 HA
-    └── climate_sync_select_bedroom.yaml
+    ├── automation_climate_sync_select_bedroom.yaml
+    ├── script_heating_delta_minus_input_number.yaml
+    ├── script_heating_delta_plus_input_number.yaml
+    ├── script_heating_minus_input_number.yaml
+    ├── script_heating_plus_input_number.yaml
+    └── script_heating_switch_schedules.yaml
 ```
 
 ---
