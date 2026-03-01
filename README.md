@@ -49,7 +49,8 @@ This heating control system has been built with **AppDaemon** (Python). Why AppD
 ├── 📂 doc
 │   └── B1200522_ModBus Lambdatronic 3200_50-04_05-19_de.pdf
 ├── 📂 firmware
-│   └── ESP32-P4-NANO_Froeling_Lambdatronic3200.yml
+│   └── ESP32-P4-ETH_Froeling_Lambdatronic3200.yml
+    └── ESP32-P4-NANO_Froeling_Lambdatronic3200.yml
 └── 📂 HA
     ├── automation_climate_sync_select_bedroom.yaml
     ├── script_heating_delta_minus_input_number.yaml
@@ -407,6 +408,14 @@ While Home Assistant can certainly do this, this still means that the heating ca
 #### How All This Works
 
 The ESP is programmed to listen to changes to HA's input_number.target_flow_temp and starts (when value is set to the required flow temp) and stops (when value is set to 0) heating accordingly. The ESP is connected to HA via ethernet (also Wifi or other wireless communication will work; however, ethernet is recommended for its reliability) and to the Froeling boiler via Modbus.
+
+
+<p float="left">
+    <img src="https://github.com/user-attachments/assets/4f0ae5a7-f1cb-4eab-89ed-40c418b770e5" height="300" />
+    <img src="https://github.com/user-attachments/assets/12582661-d97b-43ec-b185-a310ce84cf0c" height="300" />
+</p>
+
+The [firmware for the Waveshare ESP32-P4-ETH](https://github.com/franzbu/HomeAssistantHeating/blob/main/firmware/ESP32-P4-ETH_Froeling_Lambdatronic3200.yml) can easily be adapted to other ESPs. Another example can be seen below.
 
 <p float="left">
   <img src="https://github.com/user-attachments/assets/29b461ea-b1f1-4f5a-834e-1a129d0c9ae3" height="300" />
