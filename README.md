@@ -415,14 +415,14 @@ The ESP is programmed to listen to changes to HA's input_number.target_flow_temp
     <img src="https://github.com/user-attachments/assets/12582661-d97b-43ec-b185-a310ce84cf0c" height="300" />
 </p>
 
-The [firmware for the Waveshare ESP32-P4-ETH](https://github.com/franzbu/HomeAssistantHeating/blob/main/firmware/ESP32-P4-ETH_Froeling_Lambdatronic3200.yml) can easily be adapted to other ESPs. Another example can be seen below.
+The [firmware for the Waveshare ESP32-P4-ETH](https://github.com/franzbu/HomeAssistantHeating/blob/main/firmware/ESP32-P4-ETH_Froeling_Lambdatronic3200.yml) can easily be adapted to other ESPs (it contains a few lines of code for an additional irrigation valve, which can be removed if not useful). Another example can be seen below.
 
 <p float="left">
   <img src="https://github.com/user-attachments/assets/29b461ea-b1f1-4f5a-834e-1a129d0c9ae3" height="300" />
   <img src="https://github.com/user-attachments/assets/b3757574-4caf-4d44-88d6-aee97cdbc305" height="300" />
 </p>
 
-The [firmware for the Waveshare ESP32-P4-NANO](https://github.com/franzbu/HomeAssistantHeating/blob/main/firmware/ESP32-P4-NANO_Froeling_Lambdatronic3200.yml) can easily be adapted to other ESPs.
+[Here](https://github.com/franzbu/HomeAssistantHeating/blob/main/firmware/ESP32-P4-NANO_Froeling_Lambdatronic3200.yml) is the firmware for the Waveshare ESP32-P4-NANO.
 
 To connect to the aforementioned Froeling SP Dual via Modbus, a TTL to RS232 converter is needed; the Waveshare Rail-Mount TTL To RS232 Galvanic Isolated Converter is a recommended choice for its interference immunity.
 
